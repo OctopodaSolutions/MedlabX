@@ -1,0 +1,5 @@
+{
+  "Product Key": "1234",
+  "Device Id": "AA000000000000005894",
+  "Expiry Date": "2025-08-12"
+}

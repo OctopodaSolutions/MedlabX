@@ -1,0 +1,241 @@
+{
+    "name": "XSpec_Plugin",
+    "version": "0.0.0",
+    "private": false,
+    "homepage": ".",
+    "main": "public/electron.js",
+    "author": "Varun Kashyap",
+    "description": "XCSM by Noki Technologies",
+    "license": "GPL-3.0",
+    "jest": {
+        "transform": {
+            "^.+\\.(js|jsx)$": "babel-jest"
+        }
+    },
+    "dependencies": {
+        "@canvasjs/react-charts": "^1.0.2",
+        "@emotion/react": "^11.11.3",
+        "@emotion/styled": "^11.11.0",
+        "@mui/icons-material": "^5.11.0",
+        "@mui/lab": "^5.0.0-alpha.117",
+        "@mui/material": "^5.11.16",
+        "@mui/system": "^5.15.8",
+        "@mui/x-data-grid": "^5.17.20",
+        "@mui/x-date-pickers": "^7.18.0",
+        "@reduxjs/toolkit": "^1.9.5",
+        "@testing-library/jest-dom": "^5.16.5",
+        "@testing-library/react": "^13.4.0",
+        "@types/react": "^18.0.27",
+        "@types/react-dom": "^18.0.10",
+        "axios": "^1.6.2",
+        "colors": "^1.4.0",
+        "connect-redis": "^7.1.0",
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "d3": "^7.9.0",
+        "date-fns": "^3.6.0",
+        "dayjs": "^1.11.13",
+        "dotenv": "^16.0.3",
+        "dotenv-webpack": "^8.0.1",
+        "ejs": "^3.1.9",
+        "electron-updater": "^4.6.5",
+        "express-fileupload": "^1.5.1",
+        "express-session": "^1.17.3",
+        "ioredis": "^5.3.2",
+        "jsonwebtoken": "^9.0.2",
+        "jspdf": "^2.5.1",
+        "jspdf-autotable": "^3.8.1",
+        "mitt": "^3.0.1",
+        "moment": "^2.30.1",
+        "mqtt": "^4.3.7",
+        "mui-datatables": "^4.3.0",
+        "mysql2": "^3.0.1",
+        "node-cron": "^3.0.3",
+        "node-polyfill-webpack-plugin": "^4.0.0",
+        "nodemon": "^3.0.1",
+        "os": "^0.1.2",
+        "papaparse": "^5.4.1",
+        "puppeteer": "^22.1.0",
+        "react": "^18.2.0",
+        "react-confirm-alert": "^3.0.6",
+        "react-d3-speedometer": "^2.2.1",
+        "react-dom": "^18.2.0",
+        "react-redux": "^8.0.5",
+        "react-router": "^6.7.0",
+        "react-scripts": "^5.0.1",
+        "react-toastify": "^9.1.1",
+        "react-use-websocket": "^4.3.1",
+        "redis": "^4.6.12",
+        "redux": "^4.2.1",
+        "redux-persist": "^6.0.0",
+        "redux-thunk": "^2.4.2",
+        "serial-number": "^1.3.0",
+        "serialport": "^12.0.0",
+        "socket.io": "^4.6.1",
+        "styled-components": "^5.3.9",
+        "systeminformation": "^5.23.4",
+        "typescript": "^4.9.4",
+        "uuid": "^9.0.1",
+        "web-vitals": "^2.1.4",
+        "websocket": "^1.0.34",
+        "win-ca": "^3.5.1",
+        "winston": "^3.11.0",
+        "winston-daily-rotate-file": "^4.7.1",
+        "ws": "^8.13.0"
+    },
+    "scripts": {
+        "start-react": "cross-env BROWSER=none react-scripts start",
+        "start": "webpack serve --mode development",
+        "react-build": "webpack --mode production",
+        "eject-react": "react-scripts eject",
+        "build-react": "react-scripts build",
+        "electron": "electron .",
+        "electron-dev": "nodemon --signal SIGUSR2 --exec electron . --trace-warnings",
+        "start-conc": "concurrently \"cross-env BROWSER=none \" \"npm run start-react\" \"npm run electron-dev\"",
+        "start-conc:webpack": "concurrently \"cross-env BROWSER=none \" \"npm run start\" \"npm run electron-dev\"",
+        "pack": "electron-builder --dir",
+        "preelectron-pack": "yarn build",
+        "electron-pack": "build --em.main=build/electron.js",
+        "build": "react-scripts build && electron-builder",
+        "dist": "electron-builder -w -c.extraMetadata.main=build/electron.js",
+        "electron:package:win": "npx webpack --config webpack.config.js && electron-builder -w -c.extraMetadata.main=public/electron.js",
+        "electron:package:mac": "npx webpack --config webpack.config.js && electron-builder -m -c.extraMetadata.main=public/electron.js",
+        "release": "electron-builder -p always",
+        "docs": "jsdoc -c jsdoc.json",
+        "build:custom-react": "webpack --config webpack.react.config.js",
+        "build:custom-node": "webpack --config webpack.node.config.js"
+    },
+    "build": {
+        "appId": "com.nokitechnologies.GSpec",
+        "productName": "XCSM",
+        "copyright": "Copyright @ 2024 - Noki Technologies Pvt Ltd",
+        "asar": true,
+        "directories": {
+            "buildResources": "src"
+        },
+        "extraResources": [
+            {
+                "from": "./.env",
+                "to": "resources/.env"
+            },
+            {
+                "from": "./certificates",
+                "to": "resources/certificates"
+            },
+            {
+                "from": "./public/config.json",
+                "to": "resources/config.json"
+            },
+            {
+                "from": "./public/skeleton/Config Files/CssConfig.json",
+                "to": "resources/CssConfig.json"
+            },
+            {
+                "from": "./public/restore-files.ps1",
+                "to": "resources/restore-files.ps1"
+            }
+        ],
+        "mac": {
+            "icon": "public/logo_X.icns",
+            "target": [
+                "dmg"
+            ]
+        },
+        "win": {
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ],
+            "icon": "public/logo_X.ico"
+        },
+        "nsis": {
+            "oneClick": false,
+            "perMachine": true,
+            "allowElevation": true,
+            "allowToChangeInstallationDirectory": true,
+            "installerIcon": "public/logo_X.ico",
+            "uninstallerIcon": "public/logo_X.ico",
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "XCSM"
+        },
+        "files": [
+            "package.json",
+            "public/electron.js",
+            "build/**/*",
+            "public/**/*",
+            "server.key",
+            "server.pem",
+            "rootCA.pem",
+            "index.html",
+            "node_modules/**/*",
+            "!public/config.json",
+            "!public/skeleton/Config Files/CssConfig.json",
+            "!.env",
+            "!public/restore-files.ps1"
+        ],
+        "publish": {
+            "provider": "github",
+            "repo": "GSpec",
+            "owner": "OctopodaSolutions",
+            "private": true
+        },
+        "artifactName": "${productName}-Setup-v${version}.${ext}"
+    },
+    "output": {
+        "publicPath": "./"
+    },
+    "eslintConfig": {
+        "extends": [
+            "react-app",
+            "react-app/jest"
+        ]
+    },
+    "browserslist": {
+        "production": [
+            "last 1 electron version",
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 electron version",
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    },
+    "devDependencies": {
+        "@babel/core": "^7.23.3",
+        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+        "@babel/plugin-syntax-import-assertions": "^7.22.5",
+        "@babel/preset-env": "^7.23.3",
+        "@babel/preset-flow": "^7.23.3",
+        "@babel/preset-react": "^7.24.1",
+        "babel-jest": "^29.7.0",
+        "concurrently": "^8.2.2",
+        "cross-env": "^7.0.3",
+        "electron-builder": "^24.3.0",
+        "electron-builder-squirrel-windows": "^20.32.0",
+        "electron-devtools-installer": "^3.2.0",
+        "electron-react-devtools": "^0.5.3",
+        "javascript-obfuscator": "^4.1.0",
+        "jest": "^27.5.1",
+        "jsdoc": "^4.0.3",
+        "react-devtools-electron": "^4.7.0",
+        "react-router-dom": "^6.18.0",
+        "redux-mock-store": "^1.5.4",
+        "sass": "^1.81.0",
+        "sass-loader": "^16.0.3",
+        "wait-on": "^7.2.0",
+        "webpack": "^5.84.0",
+        "webpack-cli": "^5.1.1",
+        "webpack-dev-server": "^4.15.2",
+        "worker-loader": "^3.0.8"
+    }
+
+}
