@@ -74,6 +74,7 @@
         "socket.io": "^4.6.1",
         "styled-components": "^5.3.9",
         "systeminformation": "^5.23.4",
+        "ts-loader": "^9.5.1",
         "typescript": "^4.9.4",
         "uuid": "^9.0.1",
         "web-vitals": "^2.1.4",
@@ -84,7 +85,7 @@
         "ws": "^8.13.0"
     },
     "scripts": {
-        "start-react": "cross-env BROWSER=none react-scripts start",
+        "start-react": "cross-env BROWSER=none PORT=4000 react-scripts start",
         "start": "webpack serve --mode development",
         "react-build": "webpack --mode production",
         "eject-react": "react-scripts eject",
@@ -210,15 +211,17 @@
         ]
     },
     "devDependencies": {
-        "@babel/core": "^7.23.3",
+        "@babel/core": "^7.26.0",
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "@babel/plugin-syntax-import-assertions": "^7.22.5",
-        "@babel/preset-env": "^7.23.3",
+        "@babel/preset-env": "^7.26.0",
         "@babel/preset-flow": "^7.23.3",
-        "@babel/preset-react": "^7.24.1",
+        "@babel/preset-react": "^7.26.3",
         "babel-jest": "^29.7.0",
+        "babel-loader": "^9.2.1",
         "concurrently": "^8.2.2",
         "cross-env": "^7.0.3",
+        "css-loader": "^7.1.2",
         "electron-builder": "^24.3.0",
         "electron-builder-squirrel-windows": "^20.32.0",
         "electron-devtools-installer": "^3.2.0",
@@ -229,13 +232,13 @@
         "react-devtools-electron": "^4.7.0",
         "react-router-dom": "^6.18.0",
         "redux-mock-store": "^1.5.4",
-        "sass": "^1.81.0",
-        "sass-loader": "^16.0.3",
+        "sass": "^1.82.0",
+        "sass-loader": "^16.0.4",
+        "style-loader": "^4.0.0",
         "wait-on": "^7.2.0",
         "webpack": "^5.84.0",
         "webpack-cli": "^5.1.1",
         "webpack-dev-server": "^4.15.2",
         "worker-loader": "^3.0.8"
     }
-
 }

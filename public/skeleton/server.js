@@ -208,9 +208,11 @@ const authenticateToken = (req, res, next) => {
 /**
  * Serves the html file on /
  */
-server_app.get('/', (req, res) => {
-    res.sendFile(path.join(staticPath, 'index.html'));
-});
+if(app.isPackaged){
+    server_app.get('/', (req, res) => {
+        res.sendFile(path.join(staticPath, 'index.html'));
+    });
+}
 
 /**
  * user login

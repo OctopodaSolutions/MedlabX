@@ -1,4 +1,5 @@
 import React from 'react';
+import CustomTab from '../custom/CustomTab';
 
 // Shared layout component
 const Layout = ({ children }) => {

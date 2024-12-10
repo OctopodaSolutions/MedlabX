@@ -7,9 +7,9 @@ const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources'
 const { exec } = require('child_process');
 const { getWebSocketServer } = require('./skeleton/websockets');
 const demoMode = (require(configPath))['DEMO_MODE'];
-const numMqtt = (require(configPath))['NUM_MQTT'];
-const numMCA = (require(configPath))['NUM_MCA'];
-const numAGM = (require(configPath))['NUM_AGM'];
+// const numMqtt = (require(configPath))['NUM_MQTT'];
+// const numMCA = (require(configPath))['NUM_MCA'];
+// const numAGM = (require(configPath))['NUM_AGM'];
 
 const { MqttManager } = require('./skeleton/mqtt_client');
 
@@ -91,7 +91,7 @@ function setDemoMode(bool) {
 function refreshMqtt() {
   global.MqttClient = MqttManager.getInstance(getWebSocketServer());
   if (!demoMode) {
-    logger.info(`Setting up connections for ${numMCA} MCA & ${numMqtt} Devices`);
+    // logger.info(`Setting up connections for ${numMCA} MCA & ${numMqtt} Devices`);
     // let i = 0;
     // for (let i = 1; i <= numMCA; i++) {
     //   if (global.MqttClient) {

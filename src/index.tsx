@@ -1,38 +1,37 @@
-// import React from 'react';
-// import ReactDOM from 'react-dom/client';
-// import Layout from './skeleton/Layout';
-import CustomTab from './custom/CustomTab';
-// import { Provider } from 'react-redux';
-// import { PersistGate } from 'redux-persist/integration/react';
-// import { persistor, store } from '../src/skeleton/store/';
-
-// // // Render the plugin
-// // ReactDOM.render(
-// //     <React.StrictMode>
-// //         <Layout>
-// //             <CustomTab />
-// //         </Layout>
-// //     </React.StrictMode>,
-// //     document.getElementById('root')
-// // );
-
-// const root = document.getElementById('root');
-// ReactDOM.createRoot(root).render(
-//   <React.StrictMode>
-//     <Provider store={store}>
-//       <PersistGate loading={null} persistor={persistor}>
-//         <CustomTab />
-//       </PersistGate>
-//     </Provider>
-//   </React.StrictMode>
-// );
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-// Import your main plugin component
-// import MainPluginComponent from './custom/components/MainPluginComponent';
-// Import (or define) your plugin’s reducers as an object: { reducerKey: reducerFunction }
+import { createFallbackStore } from './fallbackStore';
+import CustomTab from './custom/CustomTab';
+import Layout from './skeleton/Layout';
+
+
+
+function standaloneRender() {
+    const store = createFallbackStore();
+    const container = document.getElementById('root');
+    if (!container) {
+        console.error('No root element found for standalone mode.');
+        return;
+    }
+
+    const root = ReactDOM.createRoot(container);
+    root.render(
+        <Provider store={store}>
+           <Layout children={<CustomTab/>}/>
+        </Provider>
+    );
+}
+
+// If running as a standalone app (e.g., no parent call to initializePluginUI)
+// We can check an environment variable or simply run this code by default:
+if (!process.env.__PLUGIN_PARENT__) {
+    console.log("Rendering in Standalone Mode Child App!!!!!!!!!");
+    // Assume standalone mode
+    standaloneRender();
+}
+
+
 
 
 /**
@@ -41,7 +40,7 @@ import { Provider } from 'react-redux';
  * @param {string} containerId - The DOM element ID where the plugin should mount.
  * @param {function} injectReducer - A function passed from the parent to dynamically add reducers.
  */
-export function initializePluginUI(store, containerId, injectReducer) {
+export function initializePluginUI(store:object, containerId:string, injectReducer:any) {
     // Dynamically inject the plugin’s reducers into the parent store
     Object.entries({}).forEach(([key, reducer]) => {
         injectReducer(store, key, reducer);
@@ -53,6 +52,7 @@ export function initializePluginUI(store, containerId, injectReducer) {
         console.error(`Container with ID "${containerId}" not found.`);
         return;
     }
+    console.log("Render UI from Child!!!!!!!");
 
     const root = ReactDOM.createRoot(container);
     root.render(
