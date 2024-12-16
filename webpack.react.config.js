@@ -1,26 +1,70 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-    entry: './src/index.tsx',
-    output: {
-        path: path.resolve(__dirname, 'dist/react'),
-        filename: 'bundle.js',
-    },
-    resolve: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx'],
-    },
-    module: {
-        rules: [
-            {
-                test: /\.(ts|tsx)$/,
-                exclude: /node_modules/,
-                use: 'ts-loader',
-            },
-            {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader'],
-            },
-        ],
-    },
-    mode: 'production',
+  // ... other webpack configuration options ...
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './public/index.html', // Path to your HTML entry point
+    }),
+    new webpack.DefinePlugin({
+      global:'global'
+    }),
+    new webpack.ProvidePlugin({
+      global: 'global'
+    }),
+    new Dotenv(),
+    new NodePolyfillPlugin(),
+  ],
+  entry:'./src/index.tsx',
+  devtool: 'inline-source-map',
+  output:{
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js',
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader']
+      },
+      {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader']
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource',
+      },
+      {
+        test: /\.mp4$/,
+        use: 'file-loader?name=videos/[name].[ext]',
+      },
+      {
+        test: /\.worker\.js$/,
+        use: { loader: 'worker-loader' }
+      },
+        {
+            test: /\.(js|jsx|ts|tsx)$/,
+            // include: /plugins/, // Include the plugins directory,
+            exclude:/node_modules/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: ['@babel/preset-env', '@babel/preset-react',
+                  '@babel/preset-typescript']
+              }
+            }
+        },
+    ],
+},
+mode: 'production',
+
+  // ... other webpack configuration options ...
 };

@@ -1,0 +1,6 @@
+/* styles.css */
+body {
+    background-color: var(--body_background3);
+    color: var(--secondaryColor);
+    /* ... */
+}

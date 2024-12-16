@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { createFallbackStore } from './fallbackStore';
+import { createFallbackStore } from './skeleton/store/fallbackStore';
 import CustomTab from './custom/CustomTab';
 import Layout from './skeleton/Layout';
+import { Store } from 'redux';
 
 
 
@@ -25,7 +26,7 @@ function standaloneRender() {
 
 // If running as a standalone app (e.g., no parent call to initializePluginUI)
 // We can check an environment variable or simply run this code by default:
-if (!process.env.__PLUGIN_PARENT__) {
+if (process.env.__PLUGIN_PARENT__) {
     console.log("Rendering in Standalone Mode Child App!!!!!!!!!");
     // Assume standalone mode
     standaloneRender();
@@ -40,7 +41,7 @@ if (!process.env.__PLUGIN_PARENT__) {
  * @param {string} containerId - The DOM element ID where the plugin should mount.
  * @param {function} injectReducer - A function passed from the parent to dynamically add reducers.
  */
-export function initializePluginUI(store:object, containerId:string, injectReducer:any) {
+export function initializePluginUI(store:Store, containerId:string, injectReducer:any) {
     // Dynamically inject the plugin’s reducers into the parent store
     Object.entries({}).forEach(([key, reducer]) => {
         injectReducer(store, key, reducer);

@@ -1,0 +1,8 @@
+{
+    "signal": "SIGUSR2",
+    "ext": "js,json",
+    "ignore": ["src/*","public/config.json"],
+    "watch":["public/electron.js","main-process/"],
+    "delay":"1000"
+  }
+  

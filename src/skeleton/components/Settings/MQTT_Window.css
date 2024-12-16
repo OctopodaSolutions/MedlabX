@@ -1,0 +1,162 @@
+.left-sysid-selection-button {
+  padding: 10px 15px;
+  margin: 05px;
+  border: 1px solid #ccc;
+  
+  cursor: pointer;
+  font-size: 20px;
+  border-radius: 10px;
+  transition: background-color 0.3s ease; 
+  box-shadow: 2px 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.left-sysid-selection-button:hover {
+  background-color: #d7f7d4; 
+}
+
+.left-sysid-selection-button.selected {
+  background-color: #7894ff;
+  color: white;
+}
+
+
+.message-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    align-items: flex-start;
+    margin-bottom: 20px; 
+    
+   
+  }
+  
+  .message-item {
+    border: 0.5px solid #ccc;
+    border-radius: 10px;
+    padding: 14px;
+    margin: 5px 0;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    align-self: flex-end; 
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    
+  }
+  
+
+
+  .message-badge {
+    margin-right: 10px;
+    border: 0.5px solid  #ca4f88;
+    padding: 7px;
+    align-self: center;
+    background: white;
+    border-radius: 10px;
+    font-size: 18px;
+    color: rgb(26, 24, 161);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .message-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: center;
+  }
+  
+  .message-text {
+    font-size: 22px;
+    font-weight: 400;
+    color: #640154;
+  }
+  
+  .message-timestamp {
+    font-size: 17px;
+    font-weight: 100;
+    color: rgb(16, 78, 170);
+  }
+  
+
+  .message-item-hs1, .message-item-ss2{
+    background-color: #d81b6050;
+ 
+  }
+
+  .message-item-hs2,.message-item-ss3{
+    background-color: #1e88e53f;
+   
+  }
+
+  .message-item-hs3,.message-item-ss4{
+    background-color: #ff792548;
+  }
+
+  .message-item-hs4,.message-item-ss5{
+    background-color: #f700ff0c;
+  }
+
+  .message-item-hs5,.message-item-ss6{
+    background-color: #ff00c80c;
+  }
+
+  .message-item-hs6,.message-item-ss7{
+    background-color: #2f00ff0c;
+  }
+
+  .message-item-hs7,.message-item-ss1{
+    background-color: #ffd9000c;
+  }
+
+  .ss1-text {
+    display: inline-block;
+    padding: 3px;
+    margin-top: 3px;
+    margin-bottom:-2px;
+    border-radius: 4px;
+    font-size: 24px;
+    color: #ffffff;
+    font-weight: normal;
+    background-color: #cacaca;
+    transition: background-color 0.3s ease;  
+    border-radius:10px;
+}
+
+.subscription-down{
+  align-self: flex-end;
+  margin-top: auto;
+  width:100%;
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.Connect-Button {
+ background-color: white!important;
+  color: rgb(0, 27, 145) !important;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease!important;
+  border: none!important;
+  padding: 8px 16px!important;
+  cursor: pointer!important;
+  border: 1px solid rgb(204, 204, 204)!important;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.Disconnect-Button {
+  background-color: white!important;
+  color: rgb(0, 27, 145) !important;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; 
+  padding: 8px 16px;
+  cursor: pointer;
+  border: 1px solid rgb(204, 204, 204)!important;
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.newSubscription{
+  background-color: white!important;
+  color: rgb(94, 94, 216)!important;
+}
