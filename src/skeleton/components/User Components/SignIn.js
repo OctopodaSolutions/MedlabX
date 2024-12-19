@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import sample from '../../../assets/Xtract10_Reveal_720p.mp4';
+import sample from '../../assets/noki_logo_reveal.mp4';
 import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
@@ -16,7 +16,8 @@ import { performSignIn, performUserSignUp, userPasswordChange } from '../../func
 import './SignIn.css';
 // import jwtDecode from 'jwt-decode';
 import { useDispatch } from 'react-redux'; // Import useDispatch to dispatch actions
-import { setToken, setUser } from '../../../redux_stores/actions'
+import { setToken } from '../../store/userSlice';
+// import { }
 import { ErrorMessage, SuccessMessage } from '../UI Components/AlertMessage';
 import { useSelector } from 'react-redux';
 

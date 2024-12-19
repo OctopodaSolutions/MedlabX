@@ -1,44 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-// Action type constants (if previously defined elsewhere, import them instead)
-const ADD_MQTT = 'ADD_MQTT';
-const RESET_MQTT_CONNECTIONS = 'RESET_MQTT_CONNECTIONS';
-
-const initialState = [];
-
-const mqttConnectionSlice = createSlice({
-  name: 'mqttConnections',
-  initialState,
-  reducers: {
-    addMqtt(state, action) {
-      const getStatus = (timestamp) => {
-        const currentTime = Date.now();
-        const timeDifference = (currentTime - timestamp) / 1000; // in seconds
-        return timeDifference <= 5 ? 'active' : 'inactive';
-      };
-      
-      // Convert payload to the desired array format
-      const result = Object.entries(action.payload).map(([key, value]) => {
-        const { timestamp } = JSON.parse(value); 
-        const status = getStatus(timestamp);
-        return [key, status];
-      });
-      
-      // Replace the state with the new result array
-      return [...result];
-    },
-    resetMQTT() {
-      return [];
-    },
-  },
-});
-
-// Export actions and reducer
-export const { addMqtt, resetMQTT } = mqttConnectionSlice.actions;
-export const mqttConnectionReducer = mqttConnectionSlice.reducer;
-
-
-const ENABLE_DEMO_MODE = 'ENABLE_DEMO_MODE';
+const DEMO_MODE = 'DEMO_MODE';
 const SET_MQTT = 'SET_MQTT';
 const CHANGE_CONNECTION_STATE = 'CHANGE_CONNECTION_STATE';
 const SET_HTTP_SERVER_ADDR = 'SET_HTTP_SERVER_ADDR';
@@ -46,7 +8,7 @@ const SET_HTTP_SERVER_PORT = 'SET_HTTP_SERVER_PORT';
 const SET_NUM_CONNECTIONS = 'SET_NUM_CONNECTIONS';
 const SET_COMMS = 'SET_COMMS';
 
-const initialState1 = {
+const initialState = {
     HTTP_SERVER_ADDR: '',
     HTTP_SERVER_PORT: '',
     MQTT_SERVER_ADDR: '',
@@ -64,27 +26,38 @@ const initialState1 = {
 
 const connectionSlice = createSlice({
   name: 'connection_settings',
-  initialState1,
+  initialState,
   reducers: {
-    enableDemoMode(state, action) {
+    enableDemoMode:(state, action)=>{
       state.DEMO_MODE = action.payload;
+      return state;
     },
-    setMqtt(state, action) {
+    setMqtt:(state, action)=> {
       state.MQTT_CONNECTED = action.payload;
+      return state;
+
     },
-    changeConnectionState(state, action) {
+    changeConnectionState:(state, action)=> {
       state.SERVER_CONNECTED = action.payload;
+      return state;
+
     },
-    setHttpServerAddr(state, action) {
+    setHttpServerAddr:(state, action)=> {
       state.HTTP_SERVER_ADDR = action.payload;
+      return state;
+
     },
-    setHttpServerPort(state, action) {
+    setHttpServerPort:(state, action)=> {
       state.HTTP_SERVER_PORT = action.payload;
+      return state;
+
     },
-    setNumConnections(state, action) {
+    setNumConnections:(state, action)=> {
       state.NUM_SESSIONS = action.payload;
+      return state;
+
     },
-    setComms(state, action) {
+    setComms:(state, action)=> {
       const payload = action.payload;
       state.HTTP_SERVER_ADDR = payload.HTTP_SERVER_ADDR || 'Undefined';
       state.HTTP_SERVER_PORT = payload.HTTP_SERVER_PORT || 'Undefined';
@@ -103,6 +76,8 @@ const connectionSlice = createSlice({
       state.NUM_MQTT = payload.NUM_MQTT || '0';
       state.DEBUG_LEVEL = payload.DEBUG_LEVEL || 'info';
       state.REPORT_TEMPLATE = payload.REPORT_TEMPLATE || '';
+      return state;
+
     },
   },
 });

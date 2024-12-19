@@ -48,25 +48,25 @@ import { removeNotification,removeAllNotification, addNotification  } from '../.
 function ResponsiveAppBar() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  // console.log("User from State",user);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [logoutAlertCalled, setLogoutAlertCalled] = useState(false);
   const [avatarName, setAvatarName] = useState('Noki Xtract10');
   const [showIcon, setShowIcon] = useState(true);
   const dispatch = useDispatch();
+  const accessLevel = useSelector((state) => state.user.access_level);
+
   const isDemoMode = useSelector((state) => state.connection_settings.DEMO_MODE);
   // const [updateNotAvailable, setUpdateNotAvailable] = useState(false);
   // const downloadProgress = useSelector((state) => state.DownloadProgress);
   const [open, setOpen] = useState(false);
   const [memoryUsage, setMemoryUsage] = useState(0);
-  const accessLevel = useSelector((state) => state.user.access_level);
   const [nokiCSS, setNokiCSS] = useState(null);
   const [updateCheckDialog, setUpdateCheckDialog] = useState(false);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
   const notifications = useSelector((state) => state.notifications)
   const [anchorElNotification, setanchorElNotification] = useState(null);
-  useEffect(() => {
-    console.log('acce', accessLevel);
-  }, [])
+
 
   useEffect(() => {
     const initNokiCSS = async () => {

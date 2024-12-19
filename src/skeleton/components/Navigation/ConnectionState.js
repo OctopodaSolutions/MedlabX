@@ -9,7 +9,7 @@ import { getConnectedArduinos } from '../../functions/Arduino Functions/getLines
 // import { addMQTT, resetMQTT } from '../../../redux_stores/actions';
 import { useDispatch } from 'react-redux';
 import { Button, Menu, MenuItem } from '@mui/material';
-import { addMqtt, resetMQTT } from '../../store/connectionSlice';
+import { addMqtt, resetMQTT } from '../../store/mqttConnectionSlice';
 
 /**
  * ConnectionStack component renders a stack of icons with badges

@@ -5,6 +5,7 @@ import ResponsiveAppBar from '../skeleton/components/Navigation/AppBar';
 
 // Shared layout component
 const Layout = ({ children }) => {
+    console.log("RENDERING Layout");
     return (
         <div>
             <ResponsiveAppBar/>

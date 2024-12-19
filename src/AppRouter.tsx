@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter, MemoryRouter, Routes, Route } from 'react-router-dom';
 import Layout from './skeleton/Layout';
 import CustomTab from './custom/CustomTab';
+import SignIn, { ForgotPassword, SignUp } from './skeleton/components/User Components/SignIn';
+
 
 declare global {
   interface Window {
@@ -24,12 +26,12 @@ export function AppRouter() {
     <RouterComponent>
       <Routes>
         {/* Common skeleton route */}
-        <Route path="/" element={
-          <Layout>
-            <CustomTab />
-          </Layout>
-        } />
+        <Route path="/" element={<SignIn/>} />
+        <Route path="/signin" element={<SignIn />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path='/resetUser' element={<ForgotPassword />} />
 
+        
         {/* If needed, add plugin-specific routes only in plugin mode */}
         {isPluginMode && (
           <Route path="/plugin-feature" element={<CustomTab />} />

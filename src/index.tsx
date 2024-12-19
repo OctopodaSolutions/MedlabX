@@ -6,7 +6,7 @@ import CustomTab from './custom/CustomTab';
 import Layout from './skeleton/Layout';
 import { Store } from 'redux';
 import { WorkerPool } from './WorkerPool';
-
+import { AppRouter } from './AppRouter';
 
 declare global {
     interface Window {
@@ -22,8 +22,8 @@ console.log('Running in plugin mode');
 } else {
     const workerPool = new WorkerPool(4);
     console.log('Worker pool initialized:', workerPool);
-standaloneRender(workerPool);
-console.log('Running in standalone mode');
+    standaloneRender(workerPool);
+    console.log('Running in standalone mode');
 }
 
 function standaloneRender(workerPool:WorkerPool) {
@@ -44,10 +44,9 @@ function standaloneRender(workerPool:WorkerPool) {
     const root = ReactDOM.createRoot(container);
     root.render(
         <Provider store={store}>
-            
-           <Layout children={<CustomTab/>}/>
+            <AppRouter/>
         </Provider>
-    );
+    );  
 }
 
 

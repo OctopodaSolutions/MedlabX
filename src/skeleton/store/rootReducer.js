@@ -1,7 +1,7 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import { authReducer, userReducer } from './userSlice';
 import { downloadReducer } from './updateSlice';
-import { connectionReducer, mqttConnectionReducer } from './connectionSlice';
+import { connectionReducer } from './connectionSlice';
 import { themeReducer } from './themeSlice';
 import { messageReducer } from './messageSlice';
 import { serialMessagesReducer } from './serialMessageSlice';
@@ -9,6 +9,7 @@ import { serialConnectionReducer } from './serialConnectionSlice';
 import { notificationReducer } from './notificationSlice';
 import customRootReducer from '../../custom/store/customReducer';
 import { realTimeReducer } from './realTimeSlice';
+import { mqttConnectionReducer } from './mqttConnectionSlice';
 
 
 const rootReducerList = {
@@ -16,7 +17,7 @@ const rootReducerList = {
     user: userReducer ,
     notifications: notificationReducer,
     DownloadProgress: downloadReducer ,
-    // connection_settings: connectionReducer,
+    connection_settings: connectionReducer,
     theme: themeReducer,
     mqttMessages: messageReducer,
     mqttConnections: mqttConnectionReducer,

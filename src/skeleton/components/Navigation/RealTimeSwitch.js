@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import Stack from '@mui/material/Stack';
 import Switch from '@mui/material/Switch';
 import { useDispatch } from 'react-redux';
+import { activateRealTime, deactivateRealTime } from '../../store/realTimeSlice';
 // import { activateRealTime, deactivateRealTime } from '../../../redux_stores/actions';
 
 const label = { inputProps: { 'aria-label': 'Switch demo' } };

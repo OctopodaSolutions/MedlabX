@@ -5,6 +5,7 @@ let config = null;
 export async function fetchConfig() {
   if (config) return config; // Return cached config if already fetched
   try {
+    console.log("Running fetchConfig");
     const response = await fetch('/config.json');
     if (!response.ok) {
       throw new Error('Network response was not ok');
