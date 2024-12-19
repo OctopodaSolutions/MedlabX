@@ -1,11 +1,14 @@
 import React from 'react';
 import CustomTab from '../custom/CustomTab';
+// import { AppBar } from '@mui/material';
+import ResponsiveAppBar from '../skeleton/components/Navigation/AppBar';
 
 // Shared layout component
 const Layout = ({ children }) => {
     return (
         <div>
-            <header>Skeleton Header</header>
+            <ResponsiveAppBar/>
+            {/* <DashboardMenu/> */}
             <main>{children}</main>
         </div>
     );

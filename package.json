@@ -86,7 +86,7 @@
     },
     "scripts": {
         "start-react": "cross-env BROWSER=none PORT=4000 react-scripts start",
-        "start": "webpack serve --mode development --config webpack.react.config.js",
+        "start": "webpack serve --mode development --config webpack.react.standalone.js",
         "react-build": "webpack --mode production",
         "eject-react": "react-scripts eject",
         "build-react": "react-scripts build",

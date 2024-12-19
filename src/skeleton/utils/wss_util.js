@@ -6,10 +6,12 @@ import { logout } from "../functions/User Access Functions/logout_service";
 import { v4 as uuidv4 } from 'uuid';
 // import { store } from "../../../redux_stores/store";
 
-import { WorkerPool } from "./WorkerPool";
+import { WorkerPool } from "../../WorkerPool";
 import { changeConnectionState, setMqtt, setNumConnections } from "../store/connectionSlice";
 import { updateDownloadProgress } from "../store/updateSlice";
-import { store } from "../store/store";
+import { store } from "../store/fallbackStore";
+// import { store } from "../store/store";
+
 // import { ChartData } from "../Program Functions/";
 
 
@@ -20,8 +22,9 @@ export class WebSocketClient {
     /**
      * @param {string} url - The URL of the WebSocket server.
      * @param {Function} onDispatch - Function to dispatch actions.
+     * @param {object} workerPool - Sends the WorkerPool initialized in index.tsx or parent app
      */
-    constructor(url, onDispatch) {
+    constructor(url, onDispatch,workerPool) {
         if (WebSocketClient.instance) {
             return WebSocketClient.instance;
         }
@@ -35,10 +38,10 @@ export class WebSocketClient {
         this.handleProcessedData = this.handleProcessedData.bind(this);
         this.realTimeState = false;
         this.heartbeatInterval = 30000; // 30 seconds
-        console.log("----------------------------CREATED NEW WEBSOCKET SESSION------------------------------");
+        console.log("Creating Websocket Session");
 
-        this.workerPool = new WorkerPool(10, 'worker.js');
-        this.workerPool.onProcessedData = this.handleProcessedData.bind(this);
+        this.workerPool = workerPool;
+        // this.workerPool.onProcessedData = this.handleProcessedData.bind(this);
         this.startHeartbeat();
         WebSocketClient.instance = this;
     }

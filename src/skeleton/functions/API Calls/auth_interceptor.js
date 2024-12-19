@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { store } from '../../store/store';
+// import { store } from '../../store/store';
 import { ErrorMessage } from '../../components/UI Components/AlertMessage';
+import { store } from '../../store/fallbackStore';
 
 
 /**

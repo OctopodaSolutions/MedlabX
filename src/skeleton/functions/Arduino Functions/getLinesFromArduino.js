@@ -1,4 +1,4 @@
-import { ConnectionDetails, PrgObjToArduino, Server_Addr ,ObjFrmArduino , deleteFrmArduino ,scanQRCode } from "../../../redux_stores/xtract_constants";
+import { ConnectionDetails, PrgObjToArduino, Server_Addr ,ObjFrmArduino , deleteFrmArduino ,scanQRCode } from "../../utils/xtract_constants";
 import { axiosInstance as axios, axiosInstance} from '../API Calls/auth_interceptor';
 
 

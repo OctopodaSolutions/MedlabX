@@ -241,7 +241,7 @@ app.whenReady()
 app.on('before-quit', async (event) => {
   logger.info("-----------------------------------------------Before Quit Called---------------------------------------------------------");
   await server.stop();
-  console.log("Servers Stopped in Before-Quit");
+  console.log("Servers Stopped in   Before-Quit");
 });
 app.on('will-quit', (event) => {
   logger.info("-----------------------------------------------Will Quit Called---------------------------------------------------------");

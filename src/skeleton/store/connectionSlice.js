@@ -27,20 +27,17 @@ const mqttConnectionSlice = createSlice({
       // Replace the state with the new result array
       return [...result];
     },
-    resetMqttConnections() {
+    resetMQTT() {
       return [];
     },
   },
 });
 
 // Export actions and reducer
-export const { addMqtt, resetMqttConnections } = mqttConnectionSlice.actions;
+export const { addMqtt, resetMQTT } = mqttConnectionSlice.actions;
 export const mqttConnectionReducer = mqttConnectionSlice.reducer;
 
 
-// import { createSlice } from '@reduxjs/toolkit';
-
-// Action type constants (import or define these)
 const ENABLE_DEMO_MODE = 'ENABLE_DEMO_MODE';
 const SET_MQTT = 'SET_MQTT';
 const CHANGE_CONNECTION_STATE = 'CHANGE_CONNECTION_STATE';
@@ -48,18 +45,6 @@ const SET_HTTP_SERVER_ADDR = 'SET_HTTP_SERVER_ADDR';
 const SET_HTTP_SERVER_PORT = 'SET_HTTP_SERVER_PORT';
 const SET_NUM_CONNECTIONS = 'SET_NUM_CONNECTIONS';
 const SET_COMMS = 'SET_COMMS';
-
-// Ensure Connection_Settings is defined or imported
-// Example:
-// const Connection_Settings = {
-//   DEMO_MODE: false,
-//   MQTT_CONNECTED: false,
-//   SERVER_CONNECTED: false,
-//   HTTP_SERVER_ADDR: '',
-//   HTTP_SERVER_PORT: '',
-//   // ... include all required fields
-// };
-// import { Connection_Settings } from './path/to/connectionSettings';
 
 const initialState1 = {
     HTTP_SERVER_ADDR: '',
@@ -78,7 +63,7 @@ const initialState1 = {
 };
 
 const connectionSlice = createSlice({
-  name: 'connection',
+  name: 'connection_settings',
   initialState1,
   reducers: {
     enableDemoMode(state, action) {

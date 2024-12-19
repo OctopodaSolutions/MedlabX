@@ -33,10 +33,11 @@ import { SuccessMessage } from '../UI Components/AlertMessage';
 // import { LinearProgress } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Badge from '@mui/material/Badge';
-import { removeNotification, removeAllNotification, addNotification } from '../../../redux_stores/actions';
+// import { removeNotification, removeAllNotification, addNotification } from '../../../redux_stores/actions';
 import InfoIcon from '@mui/icons-material/Info';
 import ListItemText from '@mui/material/ListItemText';
 import CloseIcon from '@mui/icons-material/Close';
+import { removeNotification,removeAllNotification, addNotification  } from '../../store/notificationSlice';
 /**
  * ResponsiveAppBar component
  * 

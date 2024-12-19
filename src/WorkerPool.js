@@ -1,5 +1,5 @@
 // import Worker from "worker-loader!./worker.js";
-import Worker from "./worker";
+// import Worker from "./worker";
 /**
  * A class to manage a pool of Web Workers for parallel task processing.
  */
@@ -8,14 +8,15 @@ export class WorkerPool {
      * @param {number} workerCount - The number of workers to create in the pool.
      * @param {string} workerScript - The URL of the worker script.
      */
-    constructor(workerCount, workerScript) {
+    constructor(workerCount) {
         this.workers = [];
         this.freeWorkers = [];
         this._onProcessedData = null; // Initialize the callback to null
 
         // Create and initialize the workers
         for (let i = 0; i < workerCount; i++) {
-            const worker = new Worker(workerScript);
+            // const worker = new Worker(workerScript);
+            const worker = new Worker(new URL('./worker.js', import.meta.url));
             worker.onmessage = this.handleMessage.bind(this, worker);
             this.workers.push(worker);
             this.freeWorkers.push(worker);
@@ -70,4 +71,14 @@ export class WorkerPool {
         return this._onProcessedData;
     }
 }
+
+// workerPool.ts
+// export function createWorkerPool(size = 4) {
+//     const workers = [];
+//     for (let i = 0; i < size; i++) {
+//       const worker = new Worker(new URL('./myWorker.js', import.meta.url));
+//       workers.push(worker);
+//     }
+//     return workers;
+//   }
 

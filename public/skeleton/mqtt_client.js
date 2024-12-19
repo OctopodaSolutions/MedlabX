@@ -205,10 +205,15 @@ class MqttManager {
           this.connect();
         }
       }, this.reconnectDelay);
-    } else {
+    } 
+    else if(this.reconnectAttempts == process.env.MQTT_MAX_CONNECTIONS){
       logger.error(`Max MQTT Connection Attempts Reached`);
       this.wsClient.broadcast({ type: 'ConnUpdate', msg: JSON.stringify({ service: 'mqtt', status: false }) });
     }
+    // else {
+    //   logger.error(`Max MQTT Connection Attempts Reached`);
+    //   this.wsClient.broadcast({ type: 'ConnUpdate', msg: JSON.stringify({ service: 'mqtt', status: false }) });
+    // }
   }
 
   /**
@@ -295,10 +300,15 @@ class MqttManager {
         this.tryReconnect();
         this.reconnectAttempts++;
       }, this.reconnectDelay);
-    } else {
+    }
+    else if(this.reconnectAttempts == process.env.MQTT_MAX_CONNECTIONS){
       logger.error(`Max MQTT Connection Attempts Reached`);
       this.wsClient.broadcast({ type: 'ConnUpdate', msg: `${JSON.stringify({ service: 'mqtt', status: false })}` });
-    }
+    } 
+    // else {
+    //   logger.error(`Max MQTT Connection Attempts Reached`);
+    //   this.wsClient.broadcast({ type: 'ConnUpdate', msg: `${JSON.stringify({ service: 'mqtt', status: false })}` });
+    // }
   }
 
   handleOffline() {

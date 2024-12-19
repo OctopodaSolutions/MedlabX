@@ -2,15 +2,16 @@
 
 // eslint-disable-next-line no-restricted-globals
 self.addEventListener('message', function(e) {
-  console.log("Message from Worker",e);
   let data;
-    if (typeof(e)==Object){
-      data=e.data;
-    }
-    else{
+
+    try{
       data=JSON.parse(e.data);
     }
-    // const data = JSON.parse(e.data);
+    catch(e){
+      console.log("Unable to parse data",e);
+      data={};
+    }
+
     const processedData = processData(data);
     postMessage(JSON.stringify(processedData));
   });

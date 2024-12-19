@@ -1,12 +1,14 @@
 // fallbackStore.js
 import { configureStore } from '@reduxjs/toolkit';
-import { createStore, applyMiddleware ,combineReducers} from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
 import rootReducer from './rootReducer';
 import { WebSocketClient } from '../utils/wss_util';
 import axios from 'axios';
+let store;
+let websocketClient;
 
 const onMessage = (dataFunc) => {
     // console.log("DataFunc",dataFunc)
@@ -14,7 +16,7 @@ const onMessage = (dataFunc) => {
   };
   
 
-export const websocketClient = new WebSocketClient('wss://localhost:443',onMessage);
+// export const websocketClient = new WebSocketClient('wss://localhost:444',onMessage);
 
 const persistConfig = {
     key: 'root',
@@ -57,9 +59,9 @@ const syncMiddleware=(store) =>( next) => (action) =>{
   };
   
 
-let store;
-export function createFallbackStore() {
+export function createFallbackStore(workers) {
     console.log("!!!!!!!!!!!!!!!! Creating Fallback Store !!!!!!!!!!!!!");
+    websocketClient = new WebSocketClient('wss://localhost:444',onMessage,workers);
     store = createStore(
         persistedReducer,
         applyMiddleware(

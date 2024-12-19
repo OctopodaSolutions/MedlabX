@@ -141,34 +141,3 @@ export default function ControlCard() {
         </Card>
     );
 }
-
-
-// export  function WasteManager() {
-
-//     const navigate = useNavigate()
-
-//     const handleClick = () => {
-//         navigate('/nav');
-//     };
-
-//     return (
-//         <Card sx={{ maxWidth: 345, maxHeight: 245, marginLeft: 1, marginRight: 1 }} elevation={10} onClick={handleClick}>
-//             <CardActionArea>
-//                 <CardMedia
-//                     component="img"
-//                     height="140"
-//                     image={WasteManagerImage}
-//                     title="waste manager"
-//                     alt="green iguana"
-//                 />
-//                 <CardContent
-//                 sx={{backgroundColor:'black'}}
-//                 >
-//                     <Typography gutterBottom variant="h6" component="div" color={'white'} >
-//                         Waste Manager
-//                     </Typography>
-//                 </CardContent>
-//             </CardActionArea>
-//         </Card>
-//     );
-// }

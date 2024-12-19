@@ -1,6 +1,6 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import { authReducer, userReducer } from './userSlice';
-import { updateDownloadProgress } from './updateSlice';
+import { downloadReducer } from './updateSlice';
 import { connectionReducer, mqttConnectionReducer } from './connectionSlice';
 import { themeReducer } from './themeSlice';
 import { messageReducer } from './messageSlice';
@@ -8,23 +8,25 @@ import { serialMessagesReducer } from './serialMessageSlice';
 import { serialConnectionReducer } from './serialConnectionSlice';
 import { notificationReducer } from './notificationSlice';
 import customRootReducer from '../../custom/store/customReducer';
+import { realTimeReducer } from './realTimeSlice';
 
 
 const rootReducerList = {
     auth: authReducer,
     user: userReducer ,
     notifications: notificationReducer,
-    DownloadProgress: updateDownloadProgress ,
-    connection_settings: connectionReducer,
+    DownloadProgress: downloadReducer ,
+    // connection_settings: connectionReducer,
     theme: themeReducer,
     mqttMessages: messageReducer,
     mqttConnections: mqttConnectionReducer,
     messages: messageReducer,
     serialMessages: serialMessagesReducer,
     serialConnections: serialConnectionReducer,
+    realTime:realTimeReducer
 
 };
 
-const rootReducer = combineReducers([rootReducerList,customRootReducer])
+const rootReducer = combineReducers(rootReducerList);
 
 export default rootReducer;

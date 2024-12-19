@@ -6,9 +6,10 @@ import Stack from '@mui/material/Stack';
 import SvgIcon from '@mui/material/SvgIcon';
 import Badge from '@mui/material/Badge';
 import { getConnectedArduinos } from '../../functions/Arduino Functions/getLinesFromArduino';
-import { addMQTT, resetMQTT } from '../../../redux_stores/actions';
+// import { addMQTT, resetMQTT } from '../../../redux_stores/actions';
 import { useDispatch } from 'react-redux';
 import { Button, Menu, MenuItem } from '@mui/material';
+import { addMqtt, resetMQTT } from '../../store/connectionSlice';
 
 /**
  * ConnectionStack component renders a stack of icons with badges
@@ -31,7 +32,7 @@ export default function ConnectionStack() {
         try {
           await delay(3000); // Wait for 3 seconds
           const res = await getConnectedArduinos();
-          dispatch(addMQTT(res.data));
+          dispatch(addMqtt(res.data));
         } catch (err) {
           // ErrorMessage(`Unable to connect to Hardware`);
         }

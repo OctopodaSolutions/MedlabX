@@ -18,8 +18,8 @@ module.exports = {
     }),
     new Dotenv(),
     new NodePolyfillPlugin(),
-    new DefinePlugin({
-      __IS_PLUGIN_MODE__: JSON.stringify(true)
+    new webpack.DefinePlugin({
+      __IS_PLUGIN_MODE__: JSON.stringify(false)
     })
   ],
   entry:'./src/index.tsx',
@@ -30,6 +30,12 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
+  },
+  // Add devServer configuration here
+  devServer: {
+    port: 4000,          // Set the port to 4000
+    hot: true,           // Enable hot module replacement
+    historyApiFallback: true, // For React Router, if needed
   },
   module: {
     rules: [
@@ -67,7 +73,7 @@ module.exports = {
         },
     ],
 },
-mode: 'production',
+// mode: 'production',
 
   // ... other webpack configuration options ...
 };

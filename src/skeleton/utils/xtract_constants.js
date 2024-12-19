@@ -5,7 +5,7 @@ let config = null;
 export async function fetchConfig() {
   if (config) return config; // Return cached config if already fetched
   try {
-    const response = await fetch('/config');
+    const response = await fetch('/config.json');
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
@@ -27,10 +27,6 @@ async function getServerAddr() {
 }
 
 export const Server_Addr = await getServerAddr();
-// export const Server_Addr = 'https://xtract10.com:443';
-// export const Server_Addr = process.env.CONFIG ? process.env.CONFIG.API_URL : 'http://localhost:3001';
-
-
 
 export const Prg_Template = {
     UID: '',
