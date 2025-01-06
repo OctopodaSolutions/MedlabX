@@ -1,24 +1,94 @@
-
-
 const mysql = require('mysql2');
 const { logger } = require("../logger");
-const path = require('path');
-const { app } = require('electron');
-const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : '../../config.json';
 
+class MySQLConnection {
+    constructor() {
+      if (MySQLConnection.instance) {
+        return MySQLConnection.instance;
+      }
+      this.pools = {};
+      MySQLConnection.instance = this;
+    }
+  
+    addDatabase(alias, config) {
+      if (this.pools[alias]) {
+        throw new Error(`Database alias \"${alias}\" already exists.`);
+      }
+      this.pools[alias] = mysql.createPool({
+        host: config.MYSQL_HOST || 'localhost',
+        user: config.MYSQL_ROOT_USERNAME || 'root',
+        password: config.MYSQL_ROOT_PASSWORD || '',
+        database: config.MYSQL_SCHEMA_NAME || '',
+        waitForConnections: true,
+        connectionLimit: 10,
+        queueLimit: 0,
+      });
+    }
+  
+  //   async query(alias, sql, params) {
+  //     const pool = this.pools[alias];
+  //     if (!pool) {
+  //       throw new Error(`No database connection found for alias \"${alias}\".`);
+  //     }
+  //     try {
+  //       const [rows] = await pool.query(sql, params);
+  //       return rows;
+  //     } catch (error) {
+  //       console.error(`Database query error on alias \"${alias}\":`, error);
+  //       throw error;
+  //     }
+  //   }
+  
+    async close(alias) {
+      if (alias) {
+        const pool = this.pools[alias];
+        if (!pool) {
+          throw new Error(`No database connection found for alias \"${alias}\".`);
+        }
+        try {
+          await pool.end();
+          delete this.pools[alias];
+          console.log(`Database connection pool closed for alias \"${alias}\".`);
+        } catch (error) {
+          console.error(`Error closing the database connection pool for alias \"${alias}\":`, error);
+          throw error;
+        }
+      } else {
+        for (const key in this.pools) {
+          await this.close(key);
+        }
+      }
+    }
+  
+    async transaction(alias, callback) {
+      const pool = this.pools[alias];
+      if (!pool) {
+        throw new Error(`No database connection found for alias \"${alias}\".`);
+      }
+      const connection = await pool.getConnection();
+      try {
+        await connection.beginTransaction();
+        const result = await callback(connection);
+        await connection.commit();
+        return result;
+      } catch (error) {
+        await connection.rollback();
+        console.error(`Transaction error on alias \"${alias}\":`, error);
+        throw error;
+      } finally {
+        connection.release();
+      }
+    }
+  }
+  
 
-/**
- * Connection to Mysql
- */
-const mySqlConnection = mysql.createPool({
-    connectionLimit: 10,
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_ROOT_USERNAME,
-    password: process.env.MYSQL_ROOT_PASSWORD,
-    database: process.env.MYSQL_SCHEMA_NAME,
-    waitForConnections: true,
-    queueLimit: 0
-});
+const db = new MySQLConnection();
+
+db.addDatabase(process.env.MYSQL_SCHEMA_NAME, process.env);
+
+global.mySqlConnection = db.pools[process.env.MYSQL_SCHEMA_NAME];
+  
+  
 
 /*****************************  User Functions ********************************/
 
@@ -194,31 +264,6 @@ function toMysqlFormat(date) {
     }
 }
 
-const connect = () => {
-    logger.info(`MySQL Connect Called`);
-    // connection.connect((err) => {
-    //     if (err) {
-    //         logger.error(`Error connecting to the database: ${err}`);
-    //         sendMessage({type:'error',msg:'Error in MySQL Database'});
-    //         showErrorDialog(`Error in MySQL Database. Restart Service.`,3);
-    //         return;
-    //     }
-    //     logger.info('Connected to the MySQL server.');
-    // });
-}
-
-/**
- * Disconects mysql connection
- */
-const disconnect = () => {
-    mySqlConnection.end((err) => {
-        if (err) {
-            return logger.error(`Error in Disconnecting Database`);
-        }
-        logger.info(`Successfully Disconnected Database`);
-    })
-}
-
 
 module.exports = {
     verifyUser,
@@ -227,8 +272,6 @@ module.exports = {
     updateUserDetails,
     updatePasswordDetails,
     deleteUserAccount,
-    connect,
-    disconnect,
     mySqlConnection
 }
 

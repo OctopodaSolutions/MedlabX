@@ -17,6 +17,11 @@ const mqttPort = (require(configPath))['MQTT_SERVER_PORT'];
 // const fs = require('fs');
 // const { v4: uuidv4 } = require('uuid');
 
+const EventEmitter = require('events');
+class MQTTEmitter extends EventEmitter {}
+
+const mqttEmitter = new MQTTEmitter();
+
 /**
  * Creating a Deque class and creating methods to perform on deque
  */
@@ -277,6 +282,7 @@ class MqttManager {
    */
   handleMessage(topic, message) {
     this.updateLatestMessage({ topic: topic, msg: message.toString() });
+    mqttEmitter.emit('mqttMessage', topic, message);
     parseMsgToBuffer(topic, message, this);
     if (topic == 'xwpae1/data') {
       // this.setupCronJob(message);
@@ -287,6 +293,13 @@ class MqttManager {
     }
   }
 
+  onMessage(callback) {
+    if (this.localClient) {
+      this.localClient.on('message', (topic, message) => {
+        callback(topic, message.toString());
+      });
+    }
+  }
 
 
   /**
@@ -351,7 +364,7 @@ class MqttManager {
       if (!err) {
 
         //testing cronjob
-        this.setupCronJob('hello');
+        // this.setupCronJob('hello');
 
         logger.mqtt_debug(`"Successfully Connected to Feed -> ", ${feed.name}`);
         let tempName = feed.name;
@@ -416,6 +429,12 @@ const sendDataToBuffer = async (topic, msg, mqttManager) => {
   console.log("send data to buffer called", topic, msg);
   await MqttClient.publish(topic, msg);
 }
+
+mqttEmitter.on('mqttMessage', (topic, message) => {
+  if (topic === 'hs1') {
+    console.log('Received msg on event:', message.toString());
+  }
+});
 
 module.exports = {
   MqttManager,

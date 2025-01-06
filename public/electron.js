@@ -54,20 +54,23 @@ console.log('Config Path: ', configPath);
 const { logger } = require('./logger');
 logger.info(`Get App Path ${app.getAppPath()}`);
 const fs = require('fs');
-const server = require('./skeleton/server');
+const Server = require('./skeleton/server');
 const demoMode = require(configPath)['DEMO_MODE'];
 const numMqtt = require(configPath)['NUM_MQTT'];
 // const sendMessage = require('./skeleton/Websocket Calls/messageSender');
 const { showErrorDialog } = require('./dialogMessage');
 // const { clearAllUserSessions } = require('./skeleton/Redis API/redis');
 const { closeAppCompletely, refreshMqtt } = require('./actions');
-const { getWebSocketServer, getActiveSessions } = require('./skeleton/websockets');
+const wss = require('./skeleton/websockets');
 const { restoreFiles, checkIfUpdateAvailable } = require('./update');
 const userDataPath = app.getPath('userData');
 const backupDir = path.join(userDataPath, 'backup');
 let mainWindow = null;
 const { MqttManager } = require('./skeleton/mqtt_client');
+const redisClient = require('./skeleton/redis');
+// const { customStart } = require('./custom');
 
+global.server = new Server();
 
 /**
  * Handles the SIGUSR2 signal for performing cleanup tasks.
@@ -177,8 +180,8 @@ app.whenReady()
   })
   .then(() => {
     logger.info("Clearing LocalStorage Sessions");
-    logger.info(`Active Sessions ${getActiveSessions().size}`);
-    let localWs = getWebSocketServer();
+    logger.info(`Active Sessions ${wss.getActiveSessions().size}`);
+    let localWs = wss.getWebSocketServer();
     localWs.broadcast({ type: "Clean", msg: "Logout All Sessions" });
     setTimeout(() => { }, 2000);
 
@@ -207,7 +210,7 @@ app.whenReady()
       }).catch((error) => {
         console.error('Error getting cookies', error);
       });
-    // clearAllUserSessions();
+      redisClient.clearAllUserSessions();
   })
   .then(() => {
     session.defaultSession.setCertificateVerifyProc((request, callback) => {
@@ -219,7 +222,7 @@ app.whenReady()
     });
   })
   .then(()=>{
-    global.MqttClient=MqttManager.getInstance(getWebSocketServer());
+    global.MqttClient=MqttManager.getInstance(wss.getWebSocketServer());
     refreshMqtt();
   })
   .catch((err)=>{
@@ -233,6 +236,7 @@ app.whenReady()
   })
   .finally(()=>{
     createWindow();
+    // customStart();
     // checkIfUpdateAvailable().catch((err)=>{
     //   logger.info("Update not Downloaded");
     // });

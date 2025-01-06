@@ -1,116 +1,108 @@
 const WebSocket = require('ws');
-const {logger} = require('../logger');
-let wss = null;
+const { logger } = require('../logger');
 
-const activeSessions = new Map();
+class WebSocketServer {
+  constructor() {
+    if (WebSocketServer.instance) {
+      return WebSocketServer.instance;
+    }
 
-/**
- * Websoketserver creation and handling events
- * @param {String} server 
- */
-function createWebSocketServer(server) {
-  // return new Promise((resolve,reject)=>{
-    wss = new WebSocket.Server({server},() => {
+    this.wss = null;
+    this.activeSessions = new Map();
+    WebSocketServer.instance = this;
+  }
+
+  createWebSocketServer(server) {
+    if (this.wss) {
+      logger.warn('WebSocket server is already created.');
+      return;
+    }
+
+    this.wss = new WebSocket.Server({ server }, () => {
       logger.info(`WebSocket server has started on ${server}`);
-      // resolve();
     });
 
-  wss.on('connection', (ws) => {
-      let clientId ="";
+    this.wss.on('connection', (ws) => {
+      let clientId = "";
       logger.info(`Websocket Client connected: ${clientId}`);
+
       ws.on('message', (message) => {
-          let dataObj=JSON.parse(message);
-          if (dataObj.type === 'register') {
+        let dataObj = JSON.parse(message);
+
+        switch (dataObj.type) {
+          case 'register':
             clientId = dataObj.clientId;
-            activeSessions.set(clientId, ws);
-            return;
-          }
-          else if(dataObj.type=='sync'){
-            clientId=dataObj.clientId;
-            broadcastToOthers(dataObj.clientId,dataObj.message);
-          }
-          else if(dataObj.type == 'ping'){
-            // logger.debug(`Ping Recieved`);
-            if(!MqttClient.getStatus()){
-              MqttClient.connect()
+            this.activeSessions.set(clientId, ws);
+            break;
+
+          case 'sync':
+            clientId = dataObj.clientId;
+            this.broadcastToOthers(clientId, dataObj.message);
+            break;
+
+          case 'ping':
+            if (!MqttClient.getStatus()) {
+              MqttClient.connect();
               MqttClient.feeds.forEach(feed => {
                 MqttClient.subscribe(feed);
               });
-            }else{
-              sendActiveTopics()
+            } else {
+              this.sendActiveTopics();
             }
-          }
-          else{
+            break;
+
+          default:
             logger.error("Unknown Command Broadcasted");
-          }
-      
-        });
+        }
+      });
 
       ws.on('close', () => {
-          activeSessions.delete(clientId);
-          logger.info('Client disconnected');
+        this.activeSessions.delete(clientId);
+        logger.info('Client disconnected');
       });
-
-      // resolve()
-  });
-
-  // Helper function to broadcast messages to all clients except the sender
-    function broadcastToOthers(senderId, data) {
-      activeSessions.forEach((clientWs,clientId) => {
-        // console.log("Broadcast MSG",clientId);
-          if (clientWs.readyState === WebSocket.OPEN && clientId !== senderId) {
-              // console.log("Broadcast Message - ",clientId);
-              logger.debug(`Broadcasting Sync Message for ${clientId}. Msg - ${data}`);
-              clientWs.send(JSON.stringify({type:'Sync',origin:senderId,action:data,numSessions:activeSessions.size}));
-          }
-      });
+    });
   }
-  // })
 
+  broadcastToOthers(senderId, data) {
+    this.activeSessions.forEach((clientWs, clientId) => {
+      if (clientWs.readyState === WebSocket.OPEN && clientId !== senderId) {
+        logger.debug(`Broadcasting Sync Message for ${clientId}. Msg - ${data}`);
+        clientWs.send(JSON.stringify({
+          type: 'Sync',
+          origin: senderId,
+          action: data,
+          numSessions: this.activeSessions.size
+        }));
+      }
+    });
+  }
 
-    wss.broadcast = function broadcast(data) {
-        // logger.info(`Broadcast Message Called`);
-        wss.clients.forEach(function each(client) {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(data));
-          }
-        });
-      };
+  sendActiveTopics() {
+    this.broadcast({ type: 'activetopics', msg: MqttClient.feedsMsgs });
+  }
+
+  broadcast(data) {
+    this.wss.clients.forEach(client => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(data));
+      }
+    });
+  }
+
+  closeWebSocketServer() {
+    this.broadcast({ type: 'CloseSessions', origin: null, action: null });
+    this.wss.close();
+  }
+
+  getWebSocketServer() {
+    return this;
+  }
+
+  getActiveSessions() {
+    return this.activeSessions;
+  }
 }
 
-/**
- * 
- * @returns websocketserver
- */
+module.exports = new WebSocketServer();
 
-function getWebSocketServer() {
-  // if(wss==null || wss==undefined){
-  //   createWebSocketServer();
-  // }
-    return wss;
-}
-
-function sendActiveTopics() {
-  wss.broadcast({ type: 'activetopics', msg: MqttClient.feedsMsgs });
-}
-
-/**
- * Close the websocket server
- */
-
-function closeWebSocketServer(){
-  wss.broadcast(JSON.stringify({type:'CloseSessions',origin:null,action:null}));
-  wss.close();
-}
-
-/**
- * 
- * @returns active sessions of websocket clients
- */
-function getActiveSessions(){
-  return activeSessions;
-}
-
-module.exports = { createWebSocketServer, getWebSocketServer, closeWebSocketServer,getActiveSessions };
-
-
+// module.exports = { createWebSocketServer, getWebSocketServer, closeWebSocketServer,getActiveSessions };

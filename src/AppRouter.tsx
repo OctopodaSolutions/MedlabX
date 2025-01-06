@@ -3,6 +3,7 @@ import { BrowserRouter, MemoryRouter, Routes, Route } from 'react-router-dom';
 import Layout from './skeleton/Layout';
 import CustomTab from './custom/CustomTab';
 import SignIn, { ForgotPassword, SignUp } from './skeleton/components/User Components/SignIn';
+import UploadFile from './skeleton/components/User Components/UploadFile';
 
 
 declare global {
@@ -30,6 +31,7 @@ export function AppRouter() {
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path='/resetUser' element={<ForgotPassword />} />
+        <Route path='/dashboard' element={<UploadFile/>} />
 
         
         {/* If needed, add plugin-specific routes only in plugin mode */}

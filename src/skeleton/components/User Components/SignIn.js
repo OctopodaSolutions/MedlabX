@@ -92,10 +92,10 @@ export default function SignIn() {
       performSignIn(data.get('email'), data.get('password')).then((res) => {
         console.log("Result from Login", res);
         try {
+          navigate('/dashboard');
           document.cookie = `AuthToken=${res.data.token};max-age=3600;path=/;secure`;
           dispatch(setToken(res.data.token));
           dispatch(setUser(res.data.user));
-          navigate('/dashboard');
         } catch (err) {
           ErrorMessage(`Error Auth token: ${err}`);
         }

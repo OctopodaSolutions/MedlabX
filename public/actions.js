@@ -5,7 +5,7 @@ const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources'
 
 
 const { exec } = require('child_process');
-const { getWebSocketServer } = require('./skeleton/websockets');
+const wss = require('./skeleton/websockets');
 const demoMode = (require(configPath))['DEMO_MODE'];
 // const numMqtt = (require(configPath))['NUM_MQTT'];
 // const numMCA = (require(configPath))['NUM_MCA'];
@@ -89,8 +89,9 @@ function setDemoMode(bool) {
  * Establishes the MQTT connections based on the configuration.
  */
 function refreshMqtt() {
-  global.MqttClient = MqttManager.getInstance(getWebSocketServer());
+  global.MqttClient = MqttManager.getInstance(wss.getWebSocketServer());
   if (!demoMode) {
+    // global.MqttClient.subscribe({ name: `hs1`, returnFeed: `ss1` });
     // logger.info(`Setting up connections for ${numMCA} MCA & ${numMqtt} Devices`);
     // let i = 0;
     // for (let i = 1; i <= numMCA; i++) {
@@ -113,6 +114,11 @@ function refreshMqtt() {
     logger.info(`App running in DEMO_MODE ${demoMode}`);
     logger.info(`MQTT connections not attempted`);
   }
+  // MqttClient.onMessage((topic, message) => {
+  //   if (topic === 'hs1') {
+  //     console.log('Received msg:', message.toString());
+  //   }
+  // });
 }
 
 /**
