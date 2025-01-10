@@ -17,10 +17,10 @@ const mqttPort = (require(configPath))['MQTT_SERVER_PORT'];
 // const fs = require('fs');
 // const { v4: uuidv4 } = require('uuid');
 
-const EventEmitter = require('events');
-class MQTTEmitter extends EventEmitter {}
+// const EventEmitter = require('events');
+// class MQTTEmitter extends EventEmitter {}
 
-const mqttEmitter = new MQTTEmitter();
+// const mqttEmitter = new MQTTEmitter();
 
 /**
  * Creating a Deque class and creating methods to perform on deque
@@ -282,7 +282,7 @@ class MqttManager {
    */
   handleMessage(topic, message) {
     this.updateLatestMessage({ topic: topic, msg: message.toString() });
-    mqttEmitter.emit('mqttMessage', topic, message);
+    // mqttEmitter.emit('mqttMessage', topic, message);
     parseMsgToBuffer(topic, message, this);
     if (topic == 'xwpae1/data') {
       // this.setupCronJob(message);
@@ -430,11 +430,11 @@ const sendDataToBuffer = async (topic, msg, mqttManager) => {
   await MqttClient.publish(topic, msg);
 }
 
-mqttEmitter.on('mqttMessage', (topic, message) => {
-  if (topic === 'hs1') {
-    console.log('Received msg on event:', message.toString());
-  }
-});
+// mqttEmitter.on('mqttMessage', (topic, message) => {
+//   if (topic === 'hs1') {
+//     console.log('Received msg on event:', message.toString());
+//   }
+// });
 
 module.exports = {
   MqttManager,

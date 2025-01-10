@@ -2,7 +2,8 @@ const express = require('express');
 const redisClient = require('./redis.js');
 const { app } = require('electron');
 const jwt = require('jsonwebtoken');
-const fs = require('fs');
+const fs = require('fs-extra');
+const unzipper = require('unzipper');
 const path = require('path');
 const wss = require('./websockets');
 const { logger } = require('../logger.js');
@@ -12,7 +13,6 @@ const { restartApp, closeAppCompletely, refreshMqtt } = require('../actions.js')
 const { checkIfUpdateDownloaded, quitandInstallFromLocal, checkIfUpdateAvailable } = require('../update.js');
 const { readLicenseFile } = require('./verify.js');
 const { authenticateToken, isValid, isDeviceId, isValidityLive } = require('./authToken.js');
-const multer = require('multer');
 const cssConfig = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'CssConfig.json') : path.join(app.getAppPath(), 'public/skeleton/Config Files/CssConfig.json');
 const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : path.join(app.getAppPath(), 'public/config.json');
 
@@ -345,66 +345,160 @@ server_app.get('/license', (req, res) => {
 // Create an uploads directory if it doesn't exist
 const uploadDir = path.join(__dirname, "uploads");
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir);
+    fs.mkdirSync(uploadDir);
 }
 
 // File upload endpoint
-server_app.post("/uploadPlugin", (req, res) => {
+server_app.post("/uploadPlugin", async (req, res) => {
     console.log("Upload endpoint hit");
 
-  // Check if a file was uploaded
-  if (!req.files || Object.keys(req.files).length === 0) {
-    console.log("No files were uploaded.");
-    return res.status(400).send("No files were uploaded.");
-  }
-
-  // Access the uploaded file
-  const uploadedFile = req.files.file;
-  console.log("Uploaded file received:", uploadedFile.name);
-
-  // Save the file
-  const uploadDir = path.join(__dirname, "uploads");
-  const filePath = path.join(uploadDir, uploadedFile.name);
-
-  // Ensure the uploads directory exists
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-  }
-
-  uploadedFile.mv(filePath, (err) => {
-    if (err) {
-      console.error("Error saving file:", err);
-      return res.status(500).send("Failed to save file.");
+    if (!req.files || !req.files.zipFile) {
+        return res.status(400).send('No file uploaded.');
     }
-    res.status(200).send("File uploaded successfully.");
-  });
+
+    const zipFile = req.files.zipFile;
+    const pluginFolderPath = path.join(__dirname, '..', 'Plugin'); // Path to Plugin folder
+    let pluginIndex = 1;
+
+    // Find the next available plugin index by counting the current folders in the Plugin folder
+    const folders = await fs.readdir(pluginFolderPath);
+    const pluginFolders = folders.filter((folder) =>
+        folder.startsWith('plugin') && !isNaN(folder.slice(6))
+    );
+
+    // Get the next plugin number (plugin{i})
+    if (pluginFolders.length > 0) {
+        const maxIndex = pluginFolders
+            .map((folder) => parseInt(folder.slice(6)))
+            .reduce((max, current) => Math.max(max, current), 0);
+        pluginIndex = maxIndex + 1;
+    }
+
+    // Create the new plugin folder
+    const newPluginFolder = path.join(pluginFolderPath, `plugin${pluginIndex}`);
+    await fs.ensureDir(newPluginFolder); // Create the directory if it doesn't exist
+
+    // Save the uploaded zip file temporarily
+    const tempZipPath = path.join(__dirname, 'temp.zip');
+    await zipFile.mv(tempZipPath);
+
+    // Unzip the file into the new plugin folder
+    fs.createReadStream(tempZipPath)
+        .pipe(unzipper.Extract({ path: newPluginFolder }))
+        .on('close', async () => {
+            // Delete the temporary zip file after extraction
+            fs.removeSync(tempZipPath);
+
+            // Check if the required files are in the extracted folder
+            const requiredFiles = ['nodePlugin.js', 'config.json', 'reactPlugin.js'];
+            const extractedFiles = await fs.readdir(newPluginFolder);
+            const missingFiles = requiredFiles.filter(
+                (file) => !extractedFiles.includes(file)
+            );
+
+            if (missingFiles.length > 0) {
+                return res.status(400).send(`Invalid folder. Missing files: ${missingFiles.join(', ')}`);
+            }
+
+            // If all required files are present
+            res.send(`Plugin ${pluginIndex} uploaded and extracted successfully.`);
+        })
+        .on('error', (err) => {
+            fs.removeSync(tempZipPath); // Clean up the temp file if something goes wrong
+            res.status(500).send('Error during extraction: ' + err.message);
+        });
 });
-  
+
 // Endpoint to run the uploaded file
 server_app.post("/runPlugin", (req, res) => {
-    const filePath = path.join(__dirname, "uploads", "customBundle.js");
+    const pluginsDirectory = path.join(__dirname, '..', 'Plugin');
+    // Read the plugins directory
+    let group = [];
+    let failedPlugins = [];
+    let processedCount = 0;
+    let totalPlugins = 0;
 
-    // Check if the file exists
-    if (!fs.existsSync(filePath)) {
-      return res.status(400).send("File not found.");
-    }
-  
-    try {
-      // Dynamically load the file
-      const customPlugin = require(filePath);
-  
-      // Run the customStart function from the uploaded file
-      if (customPlugin.customStart) {
-        customPlugin.customStart();
-        res.status(200).json({ message: "File executed successfully." });
-      } else {
-        res.status(400).json({ message: "customStart function not found in file." });
-      }
-    } catch (error) {
-      console.error("Error running the file:", error);
-      res.status(500).json({ message: "Failed to execute file." });
-    }
+    fs.readdir(pluginsDirectory, (err, pluginDirs) => {
+        if (err) {
+            console.error('Unable to read Plugin directory:', err);
+            return res.status(500).json({ error: 'Unable to read Plugin directory' });
+        }
+
+        totalPlugins = pluginDirs.length;
+
+        // If there are no plugins, respond immediately
+        if (totalPlugins === 0) {
+            return res.json({ group, failedPlugins });
+        }
+
+        // Iterate through each plugin directory (plugin1, plugin2, etc.)
+        pluginDirs.forEach(pluginDir => {
+            const pluginPath = path.join(pluginsDirectory, pluginDir);
+
+            // Check if the plugin is a directory
+            fs.stat(pluginPath, (err, stats) => {
+                if (err || !stats.isDirectory()) {
+                    console.error('Error reading plugin path or not a directory:', err);
+                    failedPlugins.push({ pluginDir, error: 'Not a directory or stat error' });
+                    processedCount++;
+                    checkDone();
+                    return;
+                }
+
+                // Construct the path to config.json and backend.js
+                const configFilePath = path.join(pluginPath, 'config.json');
+                const backendFilePath = path.join(pluginPath, 'nodePlugin.js');
+                const frontendFilePath = path.join(pluginPath, 'reactPlugin.js');
+
+                // Read the config.json to get the MQTT object
+                fs.readFile(configFilePath, 'utf8', (err, data) => {
+                    if (err) {
+                        console.error(`Error reading config.json for ${pluginDir}:`, err);
+                        failedPlugins.push({ pluginDir, error: `Error reading config.json: ${err.message}` });
+                        processedCount++;
+                        checkDone();
+                        return;
+                    }
+
+                    try {
+                        const config = JSON.parse(data);
+                        const mqttConfig = config.mqtt; // Assuming the structure has mqtt object
+                        console.log('mqtt feeds', mqttConfig);
+
+                        // Import the backend.js dynamically (require it)
+                        const backend = require(backendFilePath);
+
+                        // Call the start function and pass the mqttConfig
+                        if (backend && typeof backend.customStart === 'function') {
+                            console.log(`Starting plugin: ${pluginDir}`);
+                            backend.customStart(`/${config.route}`, mqttConfig);
+                            group.push({ config: configFilePath, react: frontendFilePath });
+                        } else {
+                            console.error(`No start function in backend.js for ${pluginDir}`);
+                            failedPlugins.push({ pluginDir, error: 'No customStart function found in backend.js' });
+                        }
+                    } catch (e) {
+                        console.error(`Error parsing JSON for ${pluginDir}:`, e);
+                        failedPlugins.push({ pluginDir, error: `JSON parsing error: ${e.message}` });
+                    }
+
+                    processedCount++;
+                    checkDone();
+                });
+            });
+        });
+
+        // Check if all plugins have been processed and send the response
+        function checkDone() {
+            if (processedCount === totalPlugins) {
+                res.json({
+                    group,
+                    failedPlugins
+                });
+            }
+        }
+    });
 });
-  
+
 
 module.exports = server_app;

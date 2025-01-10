@@ -1,0 +1,4 @@
+{
+    "mqtt":[{"feed":"hs1","returnFeed":"ss1","id":"spectrum"}],
+    "route":"xspec1"
+}

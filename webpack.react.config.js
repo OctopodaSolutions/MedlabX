@@ -18,7 +18,7 @@ module.exports = {
     }),
     new Dotenv(),
     new NodePolyfillPlugin(),
-    new DefinePlugin({
+    new webpack.DefinePlugin({
       __IS_PLUGIN_MODE__: JSON.stringify(true)
     })
   ],

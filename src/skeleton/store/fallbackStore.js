@@ -8,6 +8,7 @@ import rootReducer from './rootReducer';
 import { WebSocketClient } from '../utils/wss_util';
 import axios from 'axios';
 let store;
+/** @type {WebSocketClient} */
 let websocketClient;
 
 const onMessage = (dataFunc) => {
@@ -71,8 +72,11 @@ export function createFallbackStore(workers) {
           syncMiddleware
           )
       );
+      // websocketClient.setMessageCallback((data) => {
+      //   console.log("Received WebSocket message:", data);
+      //   // Process the data as needed
+      // });
       return store;
 }
 
-
-export  {store };
+export  { store, websocketClient };
