@@ -267,7 +267,7 @@ function ResponsiveAppBar() {
   return (
     <div>
       <div>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'black', width: '100%', height: '6vh' }} style={{ minHeight: 0 }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'black', width: '97%', height: '6vh' }} style={{ minHeight: 0 }}>
           <Box sx={{width: '33%'}}>
             <ConnectionStack />
           </Box>
@@ -285,7 +285,7 @@ function ResponsiveAppBar() {
               cursor: 'pointer',
             }}
           >
-            XCSM{isDemoMode && '(DEMO)'}
+            MEDLABX{isDemoMode && '(DEMO)'}
           </Typography>
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '2vw', width: '33%' }}>

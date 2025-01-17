@@ -8,11 +8,19 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 // import McaHome from '../../../custom/components/Main Layout/McaPage';
 import { useDispatch } from 'react-redux';
-import { setTab } from '../../../redux_stores/actions';
+// import { setTab } from '../../../redux_stores/actions';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
-import { Avatar, Button, ButtonGroup, Divider, FormControlLabel, IconButton, ListItemIcon, Menu, MenuItem, Tooltip } from '@mui/material';
+import { Avatar, Button, ButtonGroup, Divider, FormControlLabel, IconButton, ListItemIcon, Menu, MenuItem, Tooltip, Typography } from '@mui/material';
 import { Logout, PersonAdd, Settings } from '@mui/icons-material';
+import MenuIcon from '@mui/icons-material/Menu';
+import CloseIcon from '@mui/icons-material/Close';
+import WysiwygSharpIcon from '@mui/icons-material/WysiwygSharp';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import GridComponent from '../GridComponent'
+import AddPluginPage from '../AddPluginPage'
+import TerminalSharpIcon from '@mui/icons-material/TerminalSharp';
 // import History from '../../../custom/components/Main Layout/History';
 
 /**
@@ -73,236 +81,230 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
  * return <AccountMenu />;
  */
 export function AccountMenu() {
-  const navigate = useNavigate();
-  const [anchorEl, setAnchorEl] = React.useState(null);
 
-  const open = Boolean(anchorEl);
 
-  /**
-   * Opens the account menu.
-   * @param {React.MouseEvent<HTMLElement>} event - The click event to set the anchor element.
-   */
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [activeComponent, setActiveComponent] = useState('dashboard');
+  const plugins = ['Plugin 1', 'Plugin 2', 'Plugin 3']; // Example array
+
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
   };
-
-  /**
-   * Closes the account menu.
-   */
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  /**
-   * Navigates to the dashboard page.
-   */
-  const navigateToDashboard = () => {
-    navigate('/');
-  };
-
-  /**
-   * Navigates to the login page.
-   */
-  const navigateToLogin = () => {
-    navigate('/login');
-  };
-
   return (
     <React.Fragment>
-      <Box className='navigationbar_layout' sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
-        <ButtonGroup>
-          <Button onClick={navigateToDashboard}>Dashboard</Button>
-          <Button onClick={navigateToDashboard}>Program</Button>
-          <Button onClick={navigateToDashboard}>Controls</Button>
-          <Button onClick={navigateToDashboard}>View</Button>
-        </ButtonGroup>
-        <Tooltip title="Account settings">
-          <IconButton
-            onClick={handleClick}
-            size="small"
-            sx={{ ml: 2 }}
-            aria-controls={open ? 'account-menu' : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? 'true' : undefined}
-          >
-            <Avatar sx={{ width: 32, height: 32 }}>X</Avatar>
-          </IconButton>
-        </Tooltip>
-      </Box>
-      <Menu
-        anchorEl={anchorEl}
-        id="account-menu"
-        open={open}
-        onClose={handleClose}
-        onClick={handleClose}
-        PaperProps={{
-          elevation: 0,
-          sx: {
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-            mt: 1.5,
-            '& .MuiAvatar-root': {
-              width: 32,
-              height: 32,
-              ml: -0.5,
-              mr: 1,
-            },
-            '&:before': {
-              content: '""',
-              display: 'block',
-              position: 'absolute',
-              top: 0,
-              right: 14,
-              width: 10,
-              height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
-              zIndex: 0,
-            },
-          },
-        }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      <Box
+        className="navigationbar_layout"
+        sx={{ display: 'flex', height: '94vh', backgroundColor: '#f4f4f4' }}
       >
-        <MenuItem>
-          {/* Placeholder for future menu item */}
-        </MenuItem>
-        <MenuItem>
-          <Avatar /> My account
-        </MenuItem>
-        <Divider />
-        <MenuItem>
-          <ListItemIcon>
-            <PersonAdd fontSize="small" />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <Settings fontSize="small" />
-          </ListItemIcon>
-          Settings
-        </MenuItem>
-        <MenuItem>
-          <FormControlLabel
-            control={<MaterialUISwitch sx={{ m: 1 }} defaultChecked />}
-            label="MUI switch"
-          />
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <Logout fontSize="small" />
-          </ListItemIcon>
-          Logout
-        </MenuItem>
-      </Menu>
-    </React.Fragment>
-  );
-}
+        {/* Sidebar */}
+        <Box
+          sx={{
+            width: isSidebarOpen ? '240px' : '60px',
+            background: 'black',
+            color: '#fff',
+            // padding: isSidebarOpen ? '20px' : '10px',
+            transition: 'width 0.3s ease',
+            display: 'flex',
+            flexDirection: 'column',
+            position: 'relative',
+          }}
+        >
+          {/* Toggle Button */}
+          <IconButton
+            onClick={toggleSidebar}
+            sx={{
+              position: 'absolute',
+              top: '10px',
+              right: '-20px',
+              backgroundColor: 'black',
+              color: '#fff',
+              borderRadius: '0 40% 40% 0',
+              transition: 'transform 0.3s ease, background-color 0.3s ease, color 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.2)',
+                backgroundColor: 'black',
+                color: '#fff',
+              },
+              zIndex: 1000,
+            }}
+          >
+            {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
+          </IconButton>
 
-/**
- * The TabPanel component is used to display content for each tab.
- * @component
- * @param {Object} props - The properties for the component.
- * @param {React.ReactNode} props.children - The content to be displayed in the panel.
- * @param {number} props.value - The value of the active tab.
- * @param {number} props.index - The index of the current panel.
- * @param {Object} [other] - Any additional properties to pass to the component.
- * @example
- * <TabPanel value={value} index={0}>
- *   <div>Content for Tab 0</div>
- * </TabPanel>
- */
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
+          {!isSidebarOpen && (
+            <>
+              <IconButton
+                sx={{
+                  backgroundColor: 'black',
+                  color: '#fff',
+                  marginTop: '50px',
+                  borderRadius: '50%',
+                  '&:hover': { backgroundColor: 'black' },
+                }}
+                onClick={() => setActiveComponent('dashboard')}
+              >
+                <DashboardIcon sx={{ fontSize: 30 }} />
+              </IconButton>
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
+              {plugins.length > 0 && (
+                plugins.map((plugin, index) => (
+                  <IconButton
+                    key={index}
+                    sx={{
+                      backgroundColor: 'black',
+                      color: '#fff',
+                      marginTop: '20px', // Adjust spacing
+                      borderRadius: '50%',
+                      '&:hover': { backgroundColor: 'black' },
+                    }}
+                  >
+                    <TerminalSharpIcon sx={{ fontSize: 30 }} /> {/* Replace with actual icon */}
+                  </IconButton>
+                ))
+              )}
+
+              {/* <IconButton
+                sx={{
+                  backgroundColor: 'black',
+                  color: '#fff',
+                  borderRadius: '50%',
+                  '&:hover': { backgroundColor: 'black' },
+                  marginTop: 'auto',
+                  width: '100%',
+                }}
+                onClick={() => setActiveComponent('addPlugin')}
+              >
+                <WysiwygSharpIcon sx={{ fontSize: 30 }} />
+              </IconButton> */}
+            </>
+          )}
+
+          {/* Sidebar Content */}
+          {isSidebarOpen && (
+            <Box
+              sx={{
+                height: '100vh', // Full height sidebar
+                display: 'flex',
+                flexDirection: 'column',
+                padding: '20px 20px 20px 0px',
+                backgroundColor: 'black',
+                marginTop: '10px',
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{  width: '100%' }}
+                onClick={() => setActiveComponent('addPlugin')}
+              >
+                Add Plugin
+              </Button>
+              {/* Top Section */}
+              <Box sx={{ padding: '20px', borderRadius: 2 }}>
+                <Typography
+                  variant="h5"
+                  sx={{
+                    marginBottom: '20px',
+                    cursor: 'pointer',
+                    fontWeight: 'bold',
+                    fontFamily: '"Roboto", sans-serif',
+                    color: 'white',
+                    '&:hover': { color: '#1976d2' }, // Adds hover color effect
+                  }}
+                  onClick={() => setActiveComponent('dashboard')}
+                >
+                  Dashboard
+                </Typography>
+
+                <Typography
+                  variant="h6"
+                  sx={{
+                    marginBottom: '20px',
+                    fontWeight: '600',
+                    fontFamily: '"Roboto", sans-serif',
+                    color: 'white',
+                  }}
+                >
+                  List of Plugins
+                </Typography>
+
+                <Box
+                  sx={{
+                    cursor: 'pointer',
+                    padding: '10px 20px',
+                    fontSize: '18px',
+                    fontFamily: '"Roboto", sans-serif',
+                    fontWeight: '500',
+                    color: 'white',
+                    borderRadius: '8px',
+                    '&:hover': {
+                      backgroundColor: '#3a475e',
+                      color: '#fff',
+                      transform: 'scale(1.05)', // Subtle scale on hover
+                    },
+                    transition: 'transform 0.3s ease, background-color 0.3s ease, color 0.3s ease',
+                  }}
+                >
+                  Plugin 1
+                </Box>
+
+                <Box
+                  sx={{
+                    cursor: 'pointer',
+                    padding: '10px 20px',
+                    fontSize: '18px',
+                    fontFamily: '"Roboto", sans-serif',
+                    fontWeight: '500',
+                    color: 'white',
+                    borderRadius: '8px',
+                    '&:hover': {
+                      backgroundColor: '#3a475e',
+                      color: '#fff',
+                      transform: 'scale(1.05)',
+                    },
+                    transition: 'transform 0.3s ease, background-color 0.3s ease, color 0.3s ease',
+                  }}
+                >
+                  Plugin 2
+                </Box>
+
+                <Box
+                  sx={{
+                    cursor: 'pointer',
+                    padding: '10px 20px',
+                    fontSize: '18px',
+                    fontFamily: '"Roboto", sans-serif',
+                    fontWeight: '500',
+                    color: 'white',
+                    borderRadius: '8px',
+                    '&:hover': {
+                      backgroundColor: '#3a475e',
+                      color: '#fff',
+                      transform: 'scale(1.05)',
+                    },
+                    transition: 'transform 0.3s ease, background-color 0.3s ease, color 0.3s ease',
+                  }}
+                >
+                  Plugin 3
+                </Box>
+              </Box>
+
+
+              {/* Fixed Button at Bottom */}
+
+            </Box>
+
+          )}
+
         </Box>
-      )}
-    </div>
-  );
-}
 
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
-
-/**
- * Provides accessibility props for tabs.
- * @param {number} index - The index of the tab.
- * @returns {Object} - The accessibility props for the tab.
- * @example
- * a11yProps(0);
- * // Returns { id: 'simple-tab-0', 'aria-controls': 'simple-tabpanel-0' }
- */
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
-/**
- * The NavTabs component provides a tab interface for navigation between different sections.
- * @component
- * @param {Object} props - The properties for the component.
- * @param {string} props.platform - The platform name to display.
- * @example
- * <NavTabs platform="Platform Name" />
- */
-export function NavTabs(props) {
-  const tabValue = useSelector((state) => state.current_tab.tab_value);
-
-  const [prgFromChild, getMessageFromChild] = React.useState([]);
-  const [currentLoadedReagents, getCurrentLoadedReagents] = React.useState([]);
-  const [prgLoadStatus, setPrgLoadStatus] = useState(0);
-  const dispatch = useDispatch();
-
-  /**
-   * Handles changes to the active tab.
-   * @param {React.ChangeEvent<{}>} event - The change event.
-   * @param {number} newValue - The new value of the active tab.
-   */
-  const handleChange = (event, newValue) => {
-    dispatch(setTab(newValue));
-    event.preventDefault();
-  };
-
-  React.useEffect(() => {
-    console.log("Platform", props.platform);
-  }, []);
-
-  return (
-    <div style={{ width: "100%", height: '94vh', backgroundColor: 'var(--body_background3)', color: 'var(--body_color)', overflowY: 'auto' }}>
-      <Box sx={{ borderBottom: 1, borderColor: ' var(--body_borderColor)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Tabs value={tabValue} onChange={handleChange}>
-          <Tab label="Dashboard" {...a11yProps(0)} style={{ color: 'var(--body_color)', fontSize: '1.4vh' }} />
-          <Tab label="XCSM" {...a11yProps(1)} style={{ color: 'var(--body_color)', fontSize: '1.4vh' }} />
-          <Tab label="History" {...a11yProps(2)} style={{ color: 'var(--body_color)', fontSize: '1.4vh' }} />
-        </Tabs>
+        {/* Main Content Area */}
+        <Box sx={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
+          {activeComponent === 'dashboard' && <GridComponent />}
+          {activeComponent === 'addPlugin' && <AddPluginPage />}
+        </Box>
       </Box>
-      <TabPanel value={tabValue} index={0}>
-        {/* <XAGM /> */}
-      </TabPanel>
-      <TabPanel value={tabValue} index={1}>
-        {/* <McaHome /> */}
-      </TabPanel>
-      <TabPanel value={tabValue} index={2}>
-        {/* <History /> */}
-      </TabPanel>
-      <div>{props.platform}</div>
-    </div>
+    </React.Fragment>
   );
 }

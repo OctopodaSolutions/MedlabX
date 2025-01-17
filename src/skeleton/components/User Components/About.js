@@ -20,7 +20,7 @@ export default function About() {
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" paragraph>
-              XCSM
+              MEDLABX
             </Typography>
           </Grid>
 
