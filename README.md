@@ -1,1 +1,1 @@
-# XSpec_Plugin
+# MedLabX

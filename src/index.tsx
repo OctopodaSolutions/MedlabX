@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { createFallbackStore } from './skeleton/store/fallbackStore';
@@ -7,6 +7,9 @@ import Layout from './skeleton/Layout';
 import { Store } from 'redux';
 import { WorkerPool } from './WorkerPool';
 import { AppRouter } from './AppRouter';
+import { toast, ToastContainer } from 'react-toastify';
+
+
 
 declare global {
     interface Window {
@@ -29,6 +32,17 @@ console.log('Running in plugin mode');
 function standaloneRender(workerPool:WorkerPool) {
     const store = createFallbackStore(workerPool);
     const container = document.getElementById('root');
+    // const location = useLocation();
+    // const toastContainer =     toast.error(location.pathname, {
+    //       position: "bottom-left",
+    //       hideProgressBar: true,
+    //       closeOnClick: true,
+    //       pauseOnHover: true,
+    //       draggable: true,
+    //       progress: undefined,
+    //     });
+    
+    // const getContainer = document.getElementById('root')?.appendChild(toastContainer);
     if (!container) {
         console.error('No root element found for standalone mode.');
         return;
@@ -45,6 +59,19 @@ function standaloneRender(workerPool:WorkerPool) {
     root.render(
         <Provider store={store}>
             <AppRouter/>
+
+            <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="dark"
+          />
         </Provider>
     );  
 }

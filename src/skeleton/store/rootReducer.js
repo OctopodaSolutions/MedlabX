@@ -28,6 +28,6 @@ const rootReducerList = {
 
 };
 
-const rootReducer = combineReducers(rootReducerList);
+const rootReducer = rootReducerList;
 
 export default rootReducer;

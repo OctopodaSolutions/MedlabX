@@ -1,11 +1,11 @@
 {
-    "name": "XSpec_Plugin",
+    "name": "MedlabX",
     "version": "0.0.0",
     "private": false,
     "homepage": ".",
     "main": "public/electron.js",
     "author": "Varun Kashyap",
-    "description": "XCSM by Noki Technologies",
+    "description": "MedlabX by Noki Technologies",
     "license": "GPL-3.0",
     "jest": {
         "transform": {
@@ -110,8 +110,8 @@
         "build:custom-node": "webpack --config webpack.node.config.js"
     },
     "build": {
-        "appId": "com.nokitechnologies.GSpec",
-        "productName": "XCSM",
+        "appId": "com.nokitechnologies.MedlabX",
+        "productName": "MedlabX",
         "copyright": "Copyright @ 2024 - Noki Technologies Pvt Ltd",
         "asar": true,
         "directories": {
@@ -165,7 +165,7 @@
             "uninstallerIcon": "public/logo_X.ico",
             "createDesktopShortcut": true,
             "createStartMenuShortcut": true,
-            "shortcutName": "XCSM"
+            "shortcutName": "MedlabX"
         },
         "files": [
             "package.json",
@@ -184,7 +184,7 @@
         ],
         "publish": {
             "provider": "github",
-            "repo": "GSpec",
+            "repo": "MedlabX",
             "owner": "OctopodaSolutions",
             "private": true
         },

@@ -76,7 +76,7 @@ function Copyright(props) {
 export default function SignIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const demoMode = useSelector((state) => state.connection_settings.DEMO_MODE);
+  const demoMode = useSelector((state) => state.connection_settings?.DEMO_MODE || false);
 
 
   /**

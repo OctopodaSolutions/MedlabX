@@ -3,6 +3,7 @@ import axios from "axios";
 import './UploadFile.css'; // Assuming you will create a separate CSS file for styling
 import { store, websocketClient } from "../../store/fallbackStore";
 import { combineReducers } from 'redux';
+import { Server_Addr } from "../../utils/xtract_constants";
 
 const UploadFile = () => {
   const [file, setFile] = useState(null);
@@ -70,46 +71,91 @@ const UploadFile = () => {
 
   const injectReducer = (store, key, reducer) => {
     // Combine the existing reducers with the new one
-    store.replaceReducer(
-      combineReducers({
-        ...store.getState(),
-        [key]: combineReducers({...reducer})
-      })
-    );
+    console.log('---------before',store.getState())
+    store.reducerManager.addSet(key, reducer);
+    store.replaceReducer(store.reducerManager.reduce);
+    console.log('---------after',store.getState())
   };
+
+  function loadScript(src, instanceId, pluginType) {
+    return new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = src;
+      script.async = true;
+  
+      script.onload = () => resolve({ instanceId, pluginType });
+      script.onerror = () => reject(new Error(`Failed to load plugin: ${src}`));
+  
+      document.body.appendChild(script);
+    });
+  }
 
   useEffect(() => {
     if (group && group.length > 0) {
       // Use Promise.all to handle all imports
-      Promise.all(
-        group.map((item) => 
-          import(item.react)
-            .then((module) => ({
-              plugin: module.default || module,  // Handle default export
-              config: item.config
-            }))
-            .catch((error) => {
-              console.error('Error loading plugin:', error);
-              return null; // Return null for failed imports to avoid breaking the promise chain
-            })
-        )
-      ).then((loadedPlugins) => {
-        // Filter out any null values in case of failed imports
-        const validPlugins = loadedPlugins.filter(plugin => plugin !== null);
-        setPlugins(validPlugins);  // Set the state with the successfully loaded plugins
-      });
+      // Promise.all(
+      //   group.map((item,index) => 
+      //     import(`C:/Users/HP/Desktop/MedlabX/public/Plugin/plugin${index+1}/reactPlugin.js`)
+      //       .then((module) => ({
+      //         plugin: module.default || module,  // Handle default export
+      //         config: item.config
+      //       }))
+      //       .catch((error) => {
+      //         console.error('Error loading plugin:', error);
+      //         return null; // Return null for failed imports to avoid breaking the promise chain
+      //       })
+      //   )
+      // ).then((loadedPlugins) => {
+      //   // Filter out any null values in case of failed imports
+      //   const validPlugins = loadedPlugins.filter(plugin => plugin !== null);
+      //   setPlugins(validPlugins);  // Set the state with the successfully loaded plugins
+      //   console.log('plugins are imported',validPlugins);
+      // });
+      async function loadMultiplePlugins() {
+        try {
+          // Load all plugins dynamically
+          const loadedInstances = await Promise.all(
+            group.map((item) =>
+              loadScript(`${Server_Addr}${item.react}`, item.config.route, item.config.pluginType)
+            )
+          );
+  
+          setPlugins(loadedInstances);
+  
+          
+  
+        } catch (error) {
+          console.error("Error loading plugins:", error);
+        }
+      }
+  
+      loadMultiplePlugins();
     }
   }, [group]);
 
   useEffect(()=>{
-    if(plugins){
-      plugins.map((item,index)=>{
-        if(item.plugin.initializePluginUI){
-          item.plugin.initializePluginUI(store, item.config.route, `plugin-container-${index}`, injectReducer, websocketClient)
-        }
-      })
+    if(plugins && plugins.length == group.length){
+      // plugins.forEach(({ instanceId, pluginType },index) => {
+      //   if (window.loadPlugin) {
+      //     window.loadPlugin(pluginType, store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient);
+      //   } else {
+      //     console.error(`loadPlugin function not found for ${instanceId}`,window);
+      //   }
+      // });
+      console.log(store.getState())
     }
   },[plugins])
+
+  const handleUiStart = () =>{
+    // Initialize each plugin instance using `window.loadPlugin`
+    plugins.forEach(({ instanceId, pluginType },index) => {
+      if (window.loadPlugin) {
+        window.loadPlugin(pluginType, store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient);
+      } else {
+        console.error(`loadPlugin function not found for ${instanceId}`,window);
+      }
+    });
+  }
 
   return (
     <div className="upload-container">
@@ -144,10 +190,11 @@ const UploadFile = () => {
         <button onClick={handleRun} className="run-button">
           Run Plugin
         </button>
+        <button onClick={handleUiStart} className="run-button">Start UI</button>
       </div>
 
       {group.map((item,index)=>(
-        <div id={`plugin-container-${index}`}></div>
+        <div id={`plugin-container-${index}`} style={{width:'100%', height:'20vh'}}></div>
       ))}
       
     </div>

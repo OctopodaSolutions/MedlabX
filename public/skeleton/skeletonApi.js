@@ -435,6 +435,9 @@ server_app.post("/runPlugin", (req, res) => {
         pluginDirs.forEach(pluginDir => {
             const pluginPath = path.join(pluginsDirectory, pluginDir);
 
+            //serve plugin path to access react file in frontend
+            server_app.use(`/plugins/${pluginDir}`, express.static(pluginPath));
+
             // Check if the plugin is a directory
             fs.stat(pluginPath, (err, stats) => {
                 if (err || !stats.isDirectory()) {
@@ -472,7 +475,7 @@ server_app.post("/runPlugin", (req, res) => {
                         if (backend && typeof backend.customStart === 'function') {
                             console.log(`Starting plugin: ${pluginDir}`);
                             backend.customStart(`/${config.route}`, mqttConfig);
-                            group.push({ config: configFilePath, react: frontendFilePath });
+                            group.push({ config: config, react: `/plugins/${pluginDir}/reactPlugin.js`, reactChunk: `/plugins/${pluginDir}/269reactPlugin.js` });
                         } else {
                             console.error(`No start function in backend.js for ${pluginDir}`);
                             failedPlugins.push({ pluginDir, error: 'No customStart function found in backend.js' });

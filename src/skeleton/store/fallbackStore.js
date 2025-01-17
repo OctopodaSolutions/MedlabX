@@ -1,82 +1,83 @@
 // fallbackStore.js
-import { configureStore } from '@reduxjs/toolkit';
-import { createStore, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware, combineReducers } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import thunk from 'redux-thunk';
-import rootReducer from './rootReducer';
-import { WebSocketClient } from '../utils/wss_util';
 import axios from 'axios';
+import { WebSocketClient } from '../utils/wss_util';
+import { createReducerManager } from './reducerManager'; // Path to your dynamic reducer manager
+import rootReducer from './rootReducer';
+
 let store;
-/** @type {WebSocketClient} */
 let websocketClient;
 
+// WebSocket message handler
 const onMessage = (dataFunc) => {
-    // console.log("DataFunc",dataFunc)
     store.dispatch(dataFunc);
-  };
-  
+};
 
-// export const websocketClient = new WebSocketClient('wss://localhost:444',onMessage);
-
+// Redux Persist Config
 const persistConfig = {
     key: 'root',
     storage,
     timeout: 10000,
-  };
+};
 
-const persistedReducer = persistReducer(persistConfig,rootReducer);
+// Static reducers (initial reducers)
+const staticReducers = {
+  user: (state = { name: '' }, action) => state, // Example static reducer
+};
+
+// Create a reducer manager to handle dynamic reducers
+const reducerManager = createReducerManager(rootReducer);
+
+// Create a persisted reducer with dynamic reducers
+const persistedReducer = persistReducer(persistConfig, reducerManager.reduce);
+
+// Custom middleware
 const actionLoggerMiddleware = store => next => action => {
-  // if(action.type!=='ADD_MESSAGE_FROM_HARDWARE' && action.type!=='ADD_LAST_MESSAGE_TO_RUN'){
-  //   console.log('Dispatching action:', action);
-  // }
   return next(action);
 };
 
-const syncMiddleware=(store) =>( next) => (action) =>{
-    if(action.sync && action.noProp==false ){
-      console.log("Sync Action Called",action);
-      websocketClient.sendMsgToServer((action));
-      // return next(null);
+const syncMiddleware = (store) => (next) => (action) => {
+    if (action.sync && action.noProp === false) {
+        websocketClient.sendMsgToServer(action);
     }
-  
-    if(action.type=='ACTIVATE' || action.type=='DEACTIVATE'){
-      websocketClient.changeRealTime();
-    }
-      // console.log("Non-Sync Action Called",action);
-      return next(action);
-    
-    // if()
-  }
-
-  const apiMiddleware = (store) =>( next) => (action) => {
-    if (action.type === 'API_CALL') {
-      // console.log("ADDING BEARER TOKEN");
-      const state = store.getState();
-      const token = state.auth.token;
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    if (action.type === 'ACTIVATE' || action.type === 'DEACTIVATE') {
+        websocketClient.changeRealTime();
     }
     return next(action);
-  };
-  
+};
 
+const apiMiddleware = (store) => (next) => (action) => {
+    if (action.type === 'API_CALL') {
+        const state = store.getState();
+        const token = state.auth.token;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+    return next(action);
+};
+
+// Create store with dynamic reducer support
 export function createFallbackStore(workers) {
-    console.log("!!!!!!!!!!!!!!!! Creating Fallback Store !!!!!!!!!!!!!");
-    websocketClient = new WebSocketClient('wss://localhost:444',onMessage,workers);
+    console.log("Creating Fallback Store with dynamic reducer manager");
+    websocketClient = new WebSocketClient('wss://localhost:444', onMessage, workers);
+    
+    // Create store with the persisted reducer and middleware
     store = createStore(
         persistedReducer,
         applyMiddleware(
-          thunk,
-          apiMiddleware, 
-          actionLoggerMiddleware,
-          syncMiddleware
-          )
-      );
-      // websocketClient.setMessageCallback((data) => {
-      //   console.log("Received WebSocket message:", data);
-      //   // Process the data as needed
-      // });
-      return store;
+            thunk,
+            apiMiddleware, 
+            actionLoggerMiddleware,
+            syncMiddleware
+        )
+    );
+
+    // Extend store with the reducer manager for dynamic reducer management
+    store.reducerManager = reducerManager;
+    
+    return store;
 }
 
-export  { store, websocketClient };
+export { store, websocketClient };

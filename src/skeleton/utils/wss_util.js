@@ -44,6 +44,9 @@ export class WebSocketClient {
         // this.workerPool.onProcessedData = this.handleProcessedData.bind(this);
         this.startHeartbeat();
         WebSocketClient.instance = this;
+
+        // Default message callback (empty if not set)
+        this.messageCallback = null;
     }
 
     /**
@@ -59,6 +62,10 @@ export class WebSocketClient {
         };
 
         this.socket.onmessage = (event) => {
+            // Process the message here
+            if (this.messageCallback) {
+                this.messageCallback(event.data);
+            }
             this.workerPool.postMessage(event.data);
         };
 
@@ -68,6 +75,15 @@ export class WebSocketClient {
             this.isConnected = false;
             this.onDispatch(changeConnectionState(false));
         };
+    }
+
+    
+    /**
+     * Sets the callback function to be invoked when a WebSocket message is received.
+     * @param {Function} callback - The callback function to handle incoming WebSocket messages.
+    */
+    setMessageCallback(callback) {
+        this.messageCallback = callback;
     }
 
     reconnect() {

@@ -3,10 +3,24 @@ import { BrowserRouter, MemoryRouter, Routes, Route } from 'react-router-dom';
 import Layout from './skeleton/Layout';
 import CustomTab from './custom/CustomTab';
 import SignIn, { ForgotPassword, SignUp } from './skeleton/components/User Components/SignIn';
-import { AccountMenu } from './skeleton/components/Landing Page Skeleton/MainLayout';
-import ResponsiveAppBar from '../src/skeleton/components/Navigation/AppBar';
-import { ProtectedRoute } from './skeleton/functions/User Access Functions/protectedRoute';
+import UploadFile from './skeleton/components/User Components/UploadFile';
+import { useLocation } from 'react-router';
+import { toast } from 'react-toastify';
 
+const CurrentPath = () => {
+    const location = useLocation();  // Hook to get the current location
+    // return <p>Current Path: {location.pathname}</p>;  // Display the pathname
+    return (
+      toast.error(location.pathname, {
+              position: "bottom-left",
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+            })
+    )
+  };
 
 declare global {
   interface Window {
@@ -27,24 +41,25 @@ export function AppRouter() {
 
   return (
     <RouterComponent>
+      <div>
+      <CurrentPath/>
       <Routes>
         {/* Common skeleton route */}
         <Route path="/" element={<SignIn/>} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path='/resetUser' element={<ForgotPassword />} />
-        <Route path='/dashboard' element={
-          <ProtectedRoute>
-          <ResponsiveAppBar />
-          <AccountMenu />
-        </ProtectedRoute>} />
+        <Route path='/dashboard' element={<UploadFile/>} />
 
         
         {/* If needed, add plugin-specific routes only in plugin mode */}
         {isPluginMode && (
           <Route path="/plugin-feature" element={<CustomTab />} />
         )}
+
       </Routes>
+      </div>
+
     </RouterComponent>
   );
 }
