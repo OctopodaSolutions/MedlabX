@@ -8,7 +8,7 @@ import { Store } from 'redux';
 import { WorkerPool } from './WorkerPool';
 import { AppRouter } from './AppRouter';
 import { toast, ToastContainer } from 'react-toastify';
-
+import './index.css';
 
 
 declare global {

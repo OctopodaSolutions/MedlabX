@@ -3,12 +3,13 @@ import { Box, Button, IconButton, InputAdornment } from '@mui/material';
 import { TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useSelector } from 'react-redux';
-import { addSerialConnection, addSerialFromHardware, addSerialFromSoftware, resetSerialConnections } from '../../../redux_stores/actions';
+import { addSerialFromHardware, addSerialFromSoftware } from '../../store/serialMessageSlice';
 import { useDispatch } from 'react-redux';
 import './MQTT_Window.css';
 import { convertByteStringToInt, convertByteToInt, endSerialConnections, getAvailableSerials, initSerial, sendSerialCommand } from '../../functions/Arduino Functions/serial_functions';
 import { ErrorMessage, SuccessMessage } from '../UI Components/AlertMessage';
 import React from 'react';
+import { resetSerialConnections } from '../../store/serialConnectionSlice';
 
 
 /**

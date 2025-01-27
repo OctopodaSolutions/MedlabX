@@ -11,7 +11,7 @@ import { CardActionArea, } from '@mui/material';
 import columnImage from '../../../assets/filter.png';
 import reportImage from  '../../../assets/report.jpg';
 // import WasteManagerImage from '../../../assets/125555603-open-box-white-flat-simple-icon-with-shadow.jpg'
-import { setTab } from '../../../redux_stores/actions';
+import { setTab } from '../../store/tabSlice';
 import { useDispatch } from 'react-redux';
 
 

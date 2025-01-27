@@ -6,19 +6,21 @@ import SignIn, { ForgotPassword, SignUp } from './skeleton/components/User Compo
 import UploadFile from './skeleton/components/User Components/UploadFile';
 import { useLocation } from 'react-router';
 import { toast } from 'react-toastify';
-
+import ResponsiveAppBar from './skeleton/components/Navigation/AppBar';
+import {AccountMenu} from './skeleton/components/Landing Page Skeleton/MainLayout'
 const CurrentPath = () => {
     const location = useLocation();  // Hook to get the current location
     // return <p>Current Path: {location.pathname}</p>;  // Display the pathname
+    toast.error(location.pathname, {
+      position: "bottom-left",
+      hideProgressBar: true,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    })
     return (
-      toast.error(location.pathname, {
-              position: "bottom-left",
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-            })
+      <></>
     )
   };
 
@@ -42,14 +44,18 @@ export function AppRouter() {
   return (
     <RouterComponent>
       <div>
-      <CurrentPath/>
+      {/* <CurrentPath/> */}
       <Routes>
         {/* Common skeleton route */}
         <Route path="/" element={<SignIn/>} />
         <Route path="/signin" element={<SignIn />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path='/resetUser' element={<ForgotPassword />} />
-        <Route path='/dashboard' element={<UploadFile/>} />
+        <Route path='/dashboard' element={<div>
+          {/* <UploadFile /> */}
+          <ResponsiveAppBar />
+          <AccountMenu />
+        </div>} />
 
         
         {/* If needed, add plugin-specific routes only in plugin mode */}

@@ -1,0 +1,106 @@
+:root {
+    --body_background1: white;
+    --body_background2: white;
+    --body_color: rgb(90, 90, 90);
+    --body_borderColor:grey;
+    --body_icon:rgb(77, 77, 77);
+    --body_background4: rgb(228, 228, 228);
+    --disabled_text_color:rgb(170, 170, 169);
+    --body_color1: rgb(0, 0, 0);
+    --body_background3: rgb(255, 246, 230);
+    --body_color3 : white;
+  }
+  [data-theme='dark'] {
+    --body_background1: rgb(59, 59, 59);
+    --body_background2:rgb(36, 36, 36);
+    --body_background3:rgb(92, 92, 92);
+    --body_background4: rgb(95, 95, 95);
+    --body_color: white;
+    --body_borderColor:rgb(59, 59, 59);
+    --body_color1: white;
+    --body_color3: black;
+  }
+  /* .table-custom-background {
+    background-color: var(--body_background1) !important;
+    color: var(--body_color) !important;
+  }
+  .table-custom-background thead,
+  .table-custom-background tbody,
+  .table-custom-background tr,
+  .table-custom-background td,
+  .table-custom-background th,
+  .table-custom-background,
+  .MuiTablePagination-root,
+  .MuiTable-root,
+  .MuiIconButton-root,
+  .MuiTablePagination-caption,
+  .MuiTablePagination-select {
+    background-color: var(--body_background1) !important;
+    color: var(--body_color) !important;
+    font-size:1.4vh !important;
+  }
+  .table-custom-background th {
+    font-size: 2.8vh
+  }
+  .MuiOutlinedInput-root {
+    &.Mui-disabled .MuiOutlinedInput-notchedOutline {
+      border-color: var(--body_color1) !important;
+    }
+    &.Mui-disabled .MuiInputBase-input {
+      color: var(--body_color1) !important;
+    }
+    .MuiInputBase-input {
+      color: var(--body_color1) !important;
+    }
+  }
+  .custom-textfield {
+    width: 100%;
+    color: var(--body_color1) !important;
+  }
+  .custom-textfield .MuiInputLabel-root,
+  .custom-textfield .MuiOutlinedInput-root fieldset,
+  .custom-textfield .MuiOutlinedInput-root input,
+  .custom-textfield .Mui-disabled .MuiOutlinedInput-root fieldset,
+  .custom-textfield .Mui-disabled .MuiOutlinedInput-root input {
+    color: var(--body_color1) !important;
+    font-size: 1.35vh !important;
+  }
+  .custom-textfield .MuiOutlinedInput-root fieldset,
+  .custom-textfield .Mui-disabled .MuiOutlinedInput-root fieldset {
+    border-color: var(--body_color1) !important;
+  }
+  .labelStyle {
+    font-size: 1.40vh;
+  } */
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+  }
+  /* WebKit browsers */
+::-webkit-scrollbar {
+    width: 12px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #F1F1F1;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 6px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+  /* Firefox */
+  .element {
+    scrollbar-color: #888 #F1F1F1;
+    scrollbar-width: thin;
+  }

@@ -3,13 +3,15 @@ import { Box, Button, IconButton, InputAdornment} from '@mui/material';
 import {TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useSelector } from 'react-redux';
-import { addMQTT, addMessageFromSoftware, resetMQTT, resetMessages } from '../../../redux_stores/actions';
+import { addMessageFromSoftware, resetMessages } from '../../store/messageSlice';
 import { useDispatch } from 'react-redux';
 import './MQTT_Window.css';
 import { disconnectConnectionWithBroker, getConnectedArduinos, sendSingleCommandToArduino } from '../../functions/Arduino Functions/getLinesFromArduino';
 import { ErrorMessage, SuccessMessage } from '../UI Components/AlertMessage';
 import { ConnectionDetails, PrgObjToArduino } from '../../../redux_stores/xtract_constants';
 import React from 'react';
+import { resetMQTT } from '../../store/mqttConnectionSlice';
+
 
 /**
  * MQTT_Window component allows users to interact with MQTT messages and manage connections.

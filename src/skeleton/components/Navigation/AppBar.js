@@ -267,7 +267,7 @@ function ResponsiveAppBar() {
   return (
     <div>
       <div>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'black', width: '97%', height: '6vh' }} style={{ minHeight: 0 }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'black', height: '6vh' }} style={{ minHeight: 0 }}>
           <Box sx={{width: '33%'}}>
             <ConnectionStack />
           </Box>
