@@ -1,12 +1,9 @@
 import { useSelector } from 'react-redux';
 import React, { useEffect } from 'react';
-// import Paper from '@mui/material/Paper';
 import Stack from '@mui/material/Stack';
-// import { styled } from '@mui/material/styles';
 import SvgIcon from '@mui/material/SvgIcon';
 import Badge from '@mui/material/Badge';
 import { getConnectedArduinos } from '../../functions/Arduino Functions/getLinesFromArduino';
-// import { addMQTT, resetMQTT } from '../../../redux_stores/actions';
 import { useDispatch } from 'react-redux';
 import { Button, Menu, MenuItem } from '@mui/material';
 import { addMqtt, resetMQTT } from '../../store/mqttConnectionSlice';

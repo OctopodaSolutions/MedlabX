@@ -1,10 +1,8 @@
-// import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-// import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
@@ -27,13 +25,11 @@ import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 import { logout } from '../../functions/User Access Functions/logout_service';
 import { eventBus } from '../../functions/User Access Functions/event_bus';
 import RealTimeSwitch from './RealTimeSwitch';
-import NokiCSS from '../UI Components/NokiCSSClass/NokiCSS';
+// import NokiCSS from '../UI Components/NokiCSSClass/NokiCSS';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { SuccessMessage } from '../UI Components/AlertMessage';
-// import { LinearProgress } from '@mui/material';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import Badge from '@mui/material/Badge';
-// import { removeNotification, removeAllNotification, addNotification } from '../../../redux_stores/actions';
 import InfoIcon from '@mui/icons-material/Info';
 import ListItemText from '@mui/material/ListItemText';
 import CloseIcon from '@mui/icons-material/Close';
@@ -68,15 +64,15 @@ function ResponsiveAppBar() {
   const [anchorElNotification, setanchorElNotification] = useState(null);
 
 
-  useEffect(() => {
-    const initNokiCSS = async () => {
-      const cssInstance = new NokiCSS();
-      await cssInstance.initialize();
-      setNokiCSS(cssInstance);
-    };
+  // useEffect(() => {
+  //   const initNokiCSS = async () => {
+  //     const cssInstance = new NokiCSS();
+  //     await cssInstance.initialize();
+  //     setNokiCSS(cssInstance);
+  //   };
 
-    initNokiCSS();
-  }, []);
+  //   initNokiCSS();
+  // }, []);
 
   /**
    * Handles the logout process and navigation to signin page.

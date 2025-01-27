@@ -1,6 +1,5 @@
 const express = require('express')
 const { fetchXspecHistory, fetchXspecCalibration, updateXspecCalibration } = require('./customDatabase');
-const { logger } = require('./customlogger');
 
 const server_app = express.Router();
 const authenticateToken = global.authenticateToken;
@@ -8,7 +7,7 @@ const authenticateToken = global.authenticateToken;
 /** Get calibration values */
 
 server_app.get('/getXspecCalibration', (request, response) => {
-    logger.info('conversion factors called')
+    // logger.info('conversion factors called')
     try {
         fetchXspecCalibration()
             .then((CF) => {

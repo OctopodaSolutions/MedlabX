@@ -4,6 +4,8 @@
   "HTTP_SERVER_ADDR": "http://localhost",
   "MQTT_SERVER_ADDR": "10.0.0.2",
   "MQTT_SERVER_PORT": "1883",
+  "WEBSOCKET_SERVER_ADDR": "wss://localhost",
+  "WEBSOCKET_SERVER_PORT": "8080",
   "DEMO_MODE": false,
   "DEBUG_LEVEL": "info",
   "REPORT_TEMPLATE": "C:\\Users\\Varun Kashyap\\AppData\\Roaming\\Xtract10\\templates\\report_2.ejs"

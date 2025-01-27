@@ -10,6 +10,8 @@ import rootReducer from './rootReducer';
 
 let store;
 let websocketClient;
+/** @type {any} */
+let persistor;
 
 // WebSocket message handler
 const onMessage = (dataFunc) => {
@@ -73,11 +75,11 @@ export function createFallbackStore(workers) {
             syncMiddleware
         )
     );
-
+    persistor = persistStore(store);
     // Extend store with the reducer manager for dynamic reducer management
     store.reducerManager = reducerManager;
     
     return store;
 }
 
-export { store, websocketClient };
+export { store, websocketClient, persistor };

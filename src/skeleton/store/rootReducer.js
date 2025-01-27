@@ -10,7 +10,7 @@ import { notificationReducer } from './notificationSlice';
 import customRootReducer from '../../custom/store/customReducer';
 import { realTimeReducer } from './realTimeSlice';
 import { mqttConnectionReducer } from './mqttConnectionSlice';
-
+import { aboutReducer } from './aboutSlice';
 
 const rootReducerList = {
     auth: authReducer,
@@ -24,7 +24,8 @@ const rootReducerList = {
     messages: messageReducer,
     serialMessages: serialMessagesReducer,
     serialConnections: serialConnectionReducer,
-    realTime:realTimeReducer
+    realTime: realTimeReducer,
+    about: aboutReducer
 
 };
 

@@ -12,7 +12,8 @@ const { verifyUser, addUser, getUsers, updateUserDetails, updatePasswordDetails,
 const { restartApp, closeAppCompletely, refreshMqtt } = require('../actions.js');
 const { checkIfUpdateDownloaded, quitandInstallFromLocal, checkIfUpdateAvailable } = require('../update.js');
 const { readLicenseFile } = require('./verify.js');
-const { authenticateToken, isValid, isDeviceId, isValidityLive } = require('./authToken.js');
+const { authenticateToken, getLicenseInfo } = require('./authToken.js');
+const { getDataFromBuffer } = require('./mqtt_client.js');
 const cssConfig = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'CssConfig.json') : path.join(app.getAppPath(), 'public/skeleton/Config Files/CssConfig.json');
 const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : path.join(app.getAppPath(), 'public/config.json');
 
@@ -229,7 +230,146 @@ server_app.post('/config', authenticateToken, (req, res) => {
 
 /*****************************  Arduino APIs ********************************/
 
+server_app.get('/arduino_get_status', (request, response) => {
+    try {
+        let res = getDataFromBuffer(request.query.feed);
+        response.json({ success: true, data: res });
+    }
+    catch (err) {
+        console.error(err);
+        response.status(500).json({ success: false });
+    }
+});
+
+server_app.post('/arduino_send_command', (request, response) => {
+    logger.debug("Command  to Arduino", request.body.cmd.type);
+    if (request.body.cmd.type == "TelemetryToggle") {
+        toggleTelemetry(client, request.body.cmd.feed).then((res) => {
+            response.json({ success: true, data: res });
+        }).catch((err) => {
+            response.status(500).json({ success: false });
+        });
+    }
+    else if (request.body.cmd.type == "SingleCmd") {
+        logger.debug(`Single Command called (server.js) ${JSON.stringify(request.body, null, 2)}`);
+
+        // console.log('request.body.cmd.feed.returnFeed',request.body.cmd.feed.returnFeed);
+        console.log('request.body.cmd.prg.steps[0]', request.body.cmd.prg.steps);
+
+
+        sendSingleCommand(request.body.cmd.feed.name, request.body.cmd.prg.steps)
+            .then((res) => {
+                response.json({ success: true, data: res });
+            })
+            .catch((err) => {
+                response.status(500).json({ success: false, error: err });
+            });
+
+    } else if (request.body.cmd.type === "sendChartDetails") {
+        console.log('request.body', request.body);
+
+        // Extract command and regions
+        const command = request.body.cmd.messageType;
+        const selectedRanges = request.body.selectedRanges;
+
+        // Format the command and regions
+        const data = {
+            command: command,
+            regions: selectedRanges
+        };
+
+        console.log('data', data);
+
+        sendSingleCommandWithFormatting(request.body.cmd.feed, data)
+            .then((res) => {
+                response.json({ success: true, data: res });
+            }).catch((err) => {
+                response.status(500).json({ success: false, error: err });
+            });
+    }
+    else if (request.body.cmd.type === "sendCalibrate") {
+        console.log('request.body', request.body);
+
+        // Extract command and regions
+        const command = request.body.cmd.messageType;
+        const selectedRanges = request.body.selectedRanges;
+
+        // Transform selectedRanges to the desired format
+        const dataPoints = selectedRanges.map(range => {
+            const [key, value] = Object.entries(range)[0];  // Get the first key-value pair
+            return [parseInt(key), parseInt(value)];        // Convert both key and value to integers
+        });
+
+        // Format the command and dataPoints
+        const data = {
+            command: command,
+            dataPoints: dataPoints
+        };
+
+        console.log('Formatted data for calibration:', data);
+
+        sendSingleCommandWithFormatting(request.body.cmd.feed, data)
+            .then((res) => {
+                response.json({ success: true, data: res });
+            }).catch((err) => {
+                response.status(500).json({ success: false, error: err });
+            });
+    }
+    else if (request.body.cmd.type === "getPeaks") {
+        const formattedData = {
+            "type": request.body.cmd.messageType,
+            "data": request.body.ChartData
+        };
+
+        console.log('Formatted peak data:', formattedData);
+
+        sendSingleCommandWithFormatting(request.body.cmd.feed, formattedData)
+            .then((res) => {
+                response.jsonp({ success: true, data: res });
+            })
+            .catch((err) => {
+                response.status(500).json({ success: false, error: err });
+            });
+    }
+
+
+    else if (request.body.cmd.type === "identifyPeaks") {
+        console.log('request.body.cmd.type',request.body.cmd.type );
+        const formattedData = {
+            "type": request.body.cmd.messageType,
+            "data": request.body.ChartData
+        };
+
+        console.log('Formatted peak data:', formattedData);
+
+        sendSingleCommandWithFormatting(request.body.cmd.feed, formattedData)
+            .then((res) => {
+                response.jsonp({ success: true, data: res });
+            })
+            .catch((err) => {
+                response.status(500).json({ success: false, error: err });
+            });
+    }
+
+    else if (request.body.cmd.type == "CloseConnections") {
+        ``
+        logger.debug("Close Connections called");
+        disconnectMQTTClient(client, request.body).then((res) => {
+            response.json({ success: true, data: res });
+        }).catch((err) => {
+            response.status(500).json({ success: false, data: err });
+        });
+    }
+    else {
+        logger.debug("Command Not Found");
+        response.status(500).json({ success: false });
+
+    }
+
+});
+
 /***************************** update APIs ********************************/
+
 server_app.get('/checkIfUpdateAvailable', (request, response) => {
     checkIfUpdateAvailable().then((res) => {
         response.json({ success: true, data: res });
@@ -293,34 +433,72 @@ server_app.post('/app_actions', authenticateToken, (request, response) => {
     }
 });
 
-/**
- * Update converion factors
- */
-server_app.post('/setConversionFactors', authenticateToken, (request, response) => {
+
+/******************* Report Generation API's **********************/
+
+const chromePath = {
+    win32: 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe', // Path to Chrome on Windows
+    darwin: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', // Path to Chrome on macOS
+    linux: '/usr/bin/google-chrome' // Path to Chrome on Linux
+};
+
+server_app.post('/generateReport', authenticateToken, async (request, response) => {
+    const { chartData, data } = request.body;
+    console.log('request', request.body);
+    logger.info(`Generate Report called with data---------: ${chartData.length}`);
+
     try {
-        const factors = request.body;
-        if (factors) {
-            updateConversionFactors(factors)
-                .then((result) => {
-                    if (result) {
-                        response.json({ success: true });
-                        MqttClient.fetchAlpha()
-                    } else {
-                        response.json({ success: false });
-                    }
-                })
-                .catch((error) => {
-                    console.error(error);
-                    response.status(500).json({ success: false, msg: error });
-                });
-        } else {
-            response.status(400).json({ success: false, msg: 'Invalid request. Missing Factors property in the request body.' });
-        }
+        // Generate the HTML content using the EJS template
+        const htmlContent = await generateHtmlFromJson({ chartData, data }, templateDir);
+
+        // Use Puppeteer to generate PDF from HTML content
+        const browser = await puppeteer.launch({
+            headless: "new",
+            executablePath: chromePath[process.platform] // Use system Chrome/Chromium
+        });
+        const page = await browser.newPage();
+        await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+        const pdfBuffer = await page.pdf({ format: 'A4' });
+        await browser.close();
+
+        // Set headers to indicate content type and disposition
+        response.setHeader('Content-Type', 'application/pdf');
+        response.setHeader('Content-Disposition', 'inline; filename=report.pdf');
+
+        // Stream the PDF buffer to the response
+        response.send(pdfBuffer);
     } catch (error) {
-        console.error(error);
-        response.status(500).json({ success: false });
+        logger.error('Error generating PDF:', error);
+        response.status(500).send({ success: false, msg: 'Error generating PDF' });
     }
 });
+
+
+server_app.post('/uploadReportTemplate', (req, res) => {
+    console.log('Upload endpoint hit');
+
+    if (!req.files || Object.keys(req.files).length === 0) {
+        console.log('No files were uploaded.');
+        return res.status(400).send('No files were uploaded.');
+    }
+
+    // Access the uploaded file
+    const uploadedFile = req.files.file;
+    console.log('Uploaded file received:', uploadedFile.name);
+
+    updateReportTemplate(uploadedFile)
+        .then((result) => {
+            res.send(result);
+        })
+        .catch((error) => {
+            res.status(500).send({ success: false, message: error.message });
+        });
+
+
+});
+
+
+/********** App Specific API's  **********/
 
 server_app.get('/about', (req, res) => {
     try {
@@ -335,12 +513,15 @@ server_app.get('/about', (req, res) => {
 });
 
 server_app.get('/license', (req, res) => {
+    const { isValid, isDeviceId, isValidityLive } = getLicenseInfo();
     if (isValid && isDeviceId && isValidityLive.val) {
         res.send(isValidityLive);
     } else {
         res.send({ val: false, display: true, message: 'License is not valid' })
     }
 });
+
+/*********** Plugin upload API's ***********/
 
 // Create an uploads directory if it doesn't exist
 const uploadDir = path.join(__dirname, "uploads");

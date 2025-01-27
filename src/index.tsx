@@ -1,14 +1,13 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { createFallbackStore } from './skeleton/store/fallbackStore';
+import { createFallbackStore, persistor } from './skeleton/store/fallbackStore';
 import CustomTab from './custom/CustomTab';
-import Layout from './skeleton/Layout';
 import { Store } from 'redux';
 import { WorkerPool } from './WorkerPool';
 import { AppRouter } from './AppRouter';
-import { toast, ToastContainer } from 'react-toastify';
 import './index.css';
+import { PersistGate } from 'redux-persist/integration/react';
 
 
 declare global {
@@ -32,17 +31,7 @@ console.log('Running in plugin mode');
 function standaloneRender(workerPool:WorkerPool) {
     const store = createFallbackStore(workerPool);
     const container = document.getElementById('root');
-    // const location = useLocation();
-    // const toastContainer =     toast.error(location.pathname, {
-    //       position: "bottom-left",
-    //       hideProgressBar: true,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined,
-    //     });
-    
-    // const getContainer = document.getElementById('root')?.appendChild(toastContainer);
+
     if (!container) {
         console.error('No root element found for standalone mode.');
         return;
@@ -58,20 +47,9 @@ function standaloneRender(workerPool:WorkerPool) {
     const root = ReactDOM.createRoot(container);
     root.render(
         <Provider store={store}>
-            <AppRouter/>
-
-            <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-          />
+            <PersistGate loading={null} persistor={persistor}>
+                <AppRouter/>
+            </PersistGate>
         </Provider>
     );  
 }

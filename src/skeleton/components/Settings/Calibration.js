@@ -3,7 +3,6 @@ import { Accordion, AccordionSummary, AccordionDetails, Typography, Box, Select,
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useSelector, useDispatch } from 'react-redux';
 import { saveCalibrationValues } from '../../functions/API Calls/database_calls';
-// import { CalibrationObj } from '../../functionalities/redux_stores/xtract_constants';
 import { fetchCalibrationValues } from '../../functions/API Calls/database_calls';
 import { setCalibrationValues } from '../../../redux_stores/actions'
 import EditIcon from "@mui/icons-material/Edit";

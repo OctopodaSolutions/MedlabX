@@ -2,14 +2,9 @@ const { app } = require('electron');
 const path = require('path');
 const { logger } = require('./logger');
 const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : './config.json';
-
-
 const { exec } = require('child_process');
 const wss = require('./skeleton/websockets');
 const demoMode = (require(configPath))['DEMO_MODE'];
-// const numMqtt = (require(configPath))['NUM_MQTT'];
-// const numMCA = (require(configPath))['NUM_MCA'];
-// const numAGM = (require(configPath))['NUM_AGM'];
 
 const { MqttManager } = require('./skeleton/mqtt_client');
 

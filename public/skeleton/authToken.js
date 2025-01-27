@@ -59,4 +59,8 @@ global.authenticateToken = (req, res, next) => {
     }
 };
 
-module.exports = {authenticateToken, isDeviceId , isValid, isValidityLive};
+function getLicenseInfo(){
+    return{ isValid, isDeviceId, isValidityLive }
+}
+
+module.exports = {authenticateToken, isDeviceId , isValid, isValidityLive, getLicenseInfo};

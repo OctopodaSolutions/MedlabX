@@ -1,6 +1,5 @@
 const { subscribeAndListenToTopic } = require("./customMqtt");
 const { server_app } = require("./customApi");
-const { logger } = require("./customlogger");
 const { fetchXspecHistory, fetchXspecCalibration, updateXspecCalibration } = require('./customDatabase');
 
 const customStart = () =>{
@@ -8,7 +7,7 @@ const customStart = () =>{
         const server = global.server;
         server.setupCustomRoutes('/',server_app);
         subscribeAndListenToTopic('hs1','ss1');
-        logger.info('custom functions started');
+        // logger.info('custom functions started');
     }catch(err){
         console.log('error in starting the custom functions',err);
     }

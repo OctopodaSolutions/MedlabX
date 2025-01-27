@@ -419,6 +419,13 @@ const parseMsgToBuffer = async (topic, msg, mqttManager) => {
   mqttManager.feedsMsgs[topic] = JSON.stringify({ timestamp: Date.now(), msg: msg.toString() });
 };
 
+const getDataFromBuffer = (req)=>{
+  // logger.debug(`getDataFromBuffer ${feedsMsgs} `);
+  if(MqttClient.feedsMsgs) return MqttClient.feedsMsgs;
+  return null;
+}
+
+
 /**
  * Publish data to mqtt
  * @param {String} topic 
@@ -439,5 +446,6 @@ const sendDataToBuffer = async (topic, msg, mqttManager) => {
 module.exports = {
   MqttManager,
   Deque,
+  getDataFromBuffer,
   sendDataToBuffer
 };

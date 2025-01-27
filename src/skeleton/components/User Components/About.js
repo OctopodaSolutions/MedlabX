@@ -32,7 +32,7 @@ export default function About() {
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" paragraph>
-              {about['version']}
+              {about['version'] || 'N/A'}
             </Typography>
           </Grid>
 
@@ -44,7 +44,7 @@ export default function About() {
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" paragraph>
-              {about['Product Key']}
+              {about['Product Key'] || 'N/A'}
             </Typography>
           </Grid>
 
@@ -56,7 +56,7 @@ export default function About() {
           </Grid>
           <Grid item xs={6}>
             <Typography variant="body1" paragraph>
-              {about['Expiry Date']}
+              {about['Expiry Date'] || 'N/A'}
             </Typography>
           </Grid>
 

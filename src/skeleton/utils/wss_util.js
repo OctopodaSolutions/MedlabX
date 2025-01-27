@@ -1,18 +1,13 @@
 import { ErrorMessage, SuccessMessage } from "../components/UI Components/AlertMessage";
 import { eventBus } from "../functions/User Access Functions/event_bus";
 import { logout } from "../functions/User Access Functions/logout_service";
-// import { mcaInfo, updateDownloadProgress, resetMQTT, sendDataToRedux, serverConnected, serverDisconnected, setSessions, setVoltage, sendRoiDataToRedux, updateAgmValues, updateSpeedValues, updateAgmControls, mqttConnected, setTelemetryStatus, updateSettings, setPeaks, addMQTT } from "../../../redux_stores/actions";
-// import { serverConnected, serverDisconnected, updateDownloadProgress, mqttConnected, setSessions}  from "../../../redux_stores/actions";
 import { v4 as uuidv4 } from 'uuid';
-// import { store } from "../../../redux_stores/store";
-
 import { WorkerPool } from "../../WorkerPool";
 import { changeConnectionState, setMqtt, setNumConnections } from "../store/connectionSlice";
 import { updateDownloadProgress } from "../store/updateSlice";
 import { store } from "../store/fallbackStore";
-// import { store } from "../store/store";
+import { addMqtt } from "../store/mqttConnectionSlice";
 
-// import { ChartData } from "../Program Functions/";
 
 
 /**
@@ -41,7 +36,7 @@ export class WebSocketClient {
         console.log("Creating Websocket Session");
 
         this.workerPool = workerPool;
-        // this.workerPool.onProcessedData = this.handleProcessedData.bind(this);
+        this.workerPool.onProcessedData = this.handleProcessedData.bind(this);
         this.startHeartbeat();
         WebSocketClient.instance = this;
 
@@ -148,100 +143,14 @@ export class WebSocketClient {
      * @param {Object} tempObj - The processed data.
      */
     handleProcessedData(tempObj) {
-        const agmControls = store.getState().agmControls;
 
         switch (tempObj.type) {
-            // case 'agm':
-            //     if (tempObj.msg.split(',')[0] === 'volts') {
-            //         this.onDispatch(setVoltage('xagm/hs1', tempObj.msg.split(',')[1]));
-            //     } else {
-            //         const cpm = tempObj.msg.split(',')[1];
-            //         let smoothedCpm = 0;
-            //         const alpha = agmControls.alpha;
-            //         smoothedCpm = alpha * cpm + (1 - alpha) * smoothedCpm;
-            //         const mSv = smoothedCpm * agmControls.uSvhr / (1000 * 60 * 60) + agmControls.mSv;
-            //         const mR = smoothedCpm * agmControls.mRhr / (60 * 60) + agmControls.mR;
-
-            //         this.onDispatch(updateAgmControls('mSv', mSv));
-            //         this.onDispatch(updateAgmControls('mR', mR));
-
-            //         const agmArr = [smoothedCpm, smoothedCpm * agmControls.mRhr, smoothedCpm * agmControls.uSvhr, smoothedCpm * agmControls.uSvhr / 1000, mSv, mR];
-            //         this.onDispatch(updateAgmValues(`xagm/hs1`, agmArr));
-            //     }
-            //     break;
-
-            // case 'speed':
-            //     const speedCpm = tempObj.msg.split(',')[1];
-            //     const smoothedSpeedCpm = 0;
-            //     const speedAlpha = agmControls.alpha;
-            //     const smoothedSpeed = speedAlpha * speedCpm + (1 - speedAlpha) * smoothedSpeedCpm;
-            //     const speedArr = tempObj.msg.split(',').slice(1, 7);
-            //     speedArr[0] = smoothedSpeed;
-            //     this.onDispatch(updateSpeedValues(`xagm/hs1`, speedArr));
-            //     break;
-
-            // case 'history':
-            //     console.log('------------->', tempObj.msg);
-            //     break;
-
-            // case 'info':
-                // Handle 'info' type if necessary
-                // break;
 
             case 'error':
                 ErrorMessage(tempObj.msg);
                 break;
 
-            // case 'spectrum':
-            //     const spectrumData = JSON.parse(tempObj.msg);
-            //     // console.log('spectrumData', spectrumData);
-            //     if (spectrumData && Array.isArray(spectrumData.spectrum)) {
-            //         const mappedData = spectrumData.spectrum.map((value, index) => {
-            //             const xValue = index + 1;
-            //             return {
-            //                 x: xValue,
-            //                 y: value,
-            //             };
-            //         });
-            //         this.onDispatch(setTelemetryStatus('CONNECTED'));
-            //         this.onDispatch(sendDataToRedux(mappedData));
-
-            //         clearTimeout(this.telemetryTimer);
-            //         this.telemetryTimer = setTimeout(() => {
-            //             this.onDispatch(setTelemetryStatus('NOT CONNECTED'));
-            //         }, 15000);
-            //     }
-            //     break;
-
-
-            // case 'roiData':
-            //     const roiData = JSON.parse(tempObj.msg);
-            //     console.log('ROI Data:', roiData);
-            //     this.onDispatch(sendRoiDataToRedux(roiData));
-            //     break;
-
-            // case 'peaks':
-            //     const peaks = JSON.parse(tempObj.msg);
-            //     console.log('peaks', peaks);
-            //     this.onDispatch(setPeaks(peaks))
-            //     break
-
-            // case 'settings':
-            //     const settingsCSV = tempObj.msg;
-            //     const settingsArray = settingsCSV.split(',');
-            //     const settings = {
-            //         liveTime: settingsArray[0],
-            //         startTime: settingsArray[1],
-            //         elapsedTime: settingsArray[2],
-            //         deadTime: settingsArray[3],
-            //         serialNumber: settingsArray[4],
-            //         version: settingsArray[5],
-            //         dateMeasurement: settingsArray[6],
-            //         endMeasurement: settingsArray[7]
-            //     };
-            //     this.onDispatch(updateSettings(settings));
-            //     break;
-
+            
             case 'downloadProgess':
                 const parsedMsg = JSON.parse(tempObj.msg);
                 const progressData = parsedMsg.msg;
@@ -265,9 +174,9 @@ export class WebSocketClient {
                 }
                 break;
             
-            // case 'activetopics':
-            //     this.onDispatch(addMQTT(tempObj.msg))
-            //     break;
+            case 'activetopics':
+                this.onDispatch(addMqtt(tempObj.msg))
+                break;
 
             case 'Sync':
                 if (this.clientId !== tempObj.origin) {
@@ -276,10 +185,6 @@ export class WebSocketClient {
                 }
                 break;
 
-            // case 'xspecInfoHist':
-            //     console.log('xspecInfo', tempObj.msg);
-            //     this.onDispatch(mcaInfo(tempObj.msg));
-            //     break;
 
             case 'Clean':
                 console.log("Navigate Called");
@@ -300,7 +205,7 @@ export class WebSocketClient {
                 break;
 
             default:
-                console.log("Unhandled WebSocket message type:", tempObj.type);
+                // console.log("Unhandled WebSocket message type:", tempObj.type);
                 break;
         }
     }

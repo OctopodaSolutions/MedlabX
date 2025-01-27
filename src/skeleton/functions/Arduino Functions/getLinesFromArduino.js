@@ -1,6 +1,5 @@
-import { ConnectionDetails, PrgObjToArduino, Server_Addr ,ObjFrmArduino , deleteFrmArduino ,scanQRCode } from "../../utils/xtract_constants";
+import { ConnectionDetails, PrgObjToArduino, Server_Addr  } from "../../utils/medlab_constants";
 import { axiosInstance as axios, axiosInstance} from '../API Calls/auth_interceptor';
-
 
 
 
@@ -96,20 +95,6 @@ export function setTelemetryDelayAndLogLevel(numLines, delay) {
     });
 }
 
-export function disconnectConnectionWithBroker(feedsObj){
-    
-    return new Promise((resolve,reject)=>{
-        let fetchURL = ""+Server_Addr+'/arduino_connection';
-        axiosInstance.post(fetchURL,feedsObj)
-        .then((res)=>{
-            resolve(res.data);
-        }).catch((err)=>{
-            reject(err);
-        });
-
-    });
-}
-
 export function changeConnectionBroker(broker){
     let tempObj = {
         cmd:{
@@ -147,6 +132,20 @@ export function checkConnectionStatus(){
     })
 }
 
+export function disconnectConnectionWithBroker(feedsObj){
+    
+    return new Promise((resolve,reject)=>{
+        let fetchURL = ""+Server_Addr+'/arduino_connection';
+        axiosInstance.post(fetchURL,feedsObj)
+        .then((res)=>{
+            resolve(res.data);
+        }).catch((err)=>{
+            reject(err);
+        });
+
+    });
+}
+
 export function getConnectedArduinos(){
     return new Promise((resolve,reject)=>{
         let fetchURL=Server_Addr+'/arduino_get_status';
@@ -160,58 +159,6 @@ export function getConnectedArduinos(){
     })
 }
 
-// export function getCmdFrmArduino(prg){
-//     return new Promise ((resolve , reject)=> {
-//         console.log("Getting commands from Arduino");
-//         let fetchURL = Server_Addr+'/arduino_send_command';
-//         let requestObj = ObjFrmArduino;
-//         requestObj.cmd.prg_id = prg.UID;
-//         requestObj.cmd.type="SendPrg";
-//         requestObj.cmd.feeds=ConnectionDetails.feeds;
-//         requestObj.cmd.steps= prg.steps;
-//         fetch(fetchURL , {
-//             method:"POST",
-//             headers:{
-//                 'Accept': 'application/json',
-//                 'Content-Type': 'application/json'
-//               },
-//               body:JSON.stringify(requestObj)
-//         }).then((res)=>{
-//             console.log( "Res from aurdino cmg to react", res);
-//             resolve(res);
-//         }).catch((err)=>{
-//             console.log(err);
-//             reject(err);
-//         });
-//     })
-// }
-
-// export function deleteCmdFrmAruino(prg){
-//     return new Promise((resolve , reject) => {
-//         console.log("deleting command from arduino");
-
-//         let fetchURL = Server_Addr+'/arduino_send_command';
-//         let requestObj = deleteFrmArduino;
-//         requestObj.cmd.prg_id = prg.UID;
-//         requestObj.cmd.type="DeletePrgStep";
-//         requestObj.cmd.feeds=ConnectionDetails.feeds;
-//         fetch(fetchURL , {
-//             method:"POST",
-//             headers:{
-//                 'Accept': 'application/json',
-//                 'Content-Type': 'application/json'
-//               },
-//               body:JSON.stringify(requestObj)
-//         }).then((res)=>{
-//             console.log("DEl res from aurdino to react" , res);
-//             resolve(res);
-//         }).catch((err) => {
-//             console.log(err);
-//             reject(err);
-//         });
-
-//     })
-// }
 
 export function sendSingleCommandToArduino(msg,feed){
     console.log('msg',msg);

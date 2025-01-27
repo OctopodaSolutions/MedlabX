@@ -8,9 +8,9 @@ import { useDispatch } from 'react-redux';
 import './MQTT_Window.css';
 import { disconnectConnectionWithBroker, getConnectedArduinos, sendSingleCommandToArduino } from '../../functions/Arduino Functions/getLinesFromArduino';
 import { ErrorMessage, SuccessMessage } from '../UI Components/AlertMessage';
-import { ConnectionDetails, PrgObjToArduino } from '../../../redux_stores/xtract_constants';
+import { ConnectionDetails, PrgObjToArduino } from '../../utils/medlab_constants';
 import React from 'react';
-import { resetMQTT } from '../../store/mqttConnectionSlice';
+import { addMqtt, resetMQTT } from '../../store/mqttConnectionSlice';
 
 
 /**
@@ -165,7 +165,7 @@ export default function MQTT_Window() {
                 dispatch(resetMQTT());
                 dispatch(resetMessages());
                 getConnectedArduinos().then((res) => {
-                    dispatch(addMQTT(res.data));
+                    dispatch(addMqtt(res.data));
                 }).catch((err) => {
                     ErrorMessage(`Unable to connect to Hardware ${err}`);
                 });
@@ -180,7 +180,7 @@ export default function MQTT_Window() {
     };
 
     return (
-        <div style={{ display: 'flex', padding: '14px 10px', height: '84vh' }}>
+        <div style={{ display: 'flex', padding: '14px 10px', height: '80vh' }}>
             <Box
                 boxShadow={5}
                 borderRadius={3}

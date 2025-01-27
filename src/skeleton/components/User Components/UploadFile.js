@@ -3,7 +3,7 @@ import axios from "axios";
 import './UploadFile.css'; // Assuming you will create a separate CSS file for styling
 import { store, websocketClient } from "../../store/fallbackStore";
 import { combineReducers } from 'redux';
-import { Server_Addr } from "../../utils/xtract_constants";
+import { Server_Addr } from "../../utils/medlab_constants";
 
 const UploadFile = () => {
   const [file, setFile] = useState(null);

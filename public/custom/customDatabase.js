@@ -1,5 +1,3 @@
-const { logger } = require("./customlogger");
-
 const mySqlConnection = global.mySqlConnection;
 
 const fetchXspecHistory = () => {
@@ -49,12 +47,12 @@ const updateXspecCalibration = (factors) => {
         mySqlConnection.query(query, values, (err, result) => {
             if (err) {
                 console.error('Error inserting data into the database:', err);
-                logger.error('Calibration factor Error inserting data into the database');
+                // logger.error('Calibration factor Error inserting data into the database');
                 // return res.status(500).send('Error inserting data into the database');
                 reject(err)
             } else {
                 console.log('Data inserted successfully:', result);
-                logger.info('Calibration factor Data inserted successfully');
+                // logger.info('Calibration factor Data inserted successfully');
                 resolve(result);
             }
             // res.send('Data received and processed successfully');

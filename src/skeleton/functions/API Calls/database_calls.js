@@ -1,5 +1,5 @@
 import { axiosInstance as axios, axiosInstance} from './auth_interceptor.js';
-import { Server_Addr } from '../../utils/xtract_constants.js';
+import { Server_Addr } from '../../utils/medlab_constants.js';
 
 
 
@@ -176,25 +176,8 @@ export function logout_user(uid) {
 }
 
 
-/********************** Run History API Calls *****************************/
+/********************** Report  API Calls *****************************/
 
-/**
- * Get batch run history from the server.
- * 
- * @returns {Promise<Object>} - A promise that resolves with the run history data.
- */
-export function get_batch_history() {
-    return new Promise((resolve, reject) => {
-        const fetchURL = `${Server_Addr}/run_history?${new URLSearchParams({ uid: 'NokiXtract' })}`;
-        axiosInstance.get(fetchURL)
-            .then(res => {
-                resolve(res.data);
-            })
-            .catch(err => {
-                reject(err);
-            });
-    });
-}
 
 /**
  * Generate a report based on the provided chart data and other data.
@@ -406,7 +389,7 @@ export function quitandInstallFromLocal(){
     })
 }
 
-
+/************ App Specific API Calls ***********/
 
 export function getAbout(){
     return new Promise((resolve,reject)=>{

@@ -5,17 +5,16 @@ import { TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { enableDarkMode, enableLightMode, mqttSettingsWhole } from '../../../redux_stores/actions';
 import { ConnectionDetails, UploadConnectionSettings } from '../../functions/Program Functions/connection_functions';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import UploadIcon from '@mui/icons-material/Upload';
-import { Connection_Settings } from '../../../redux_stores/xtract_constants';
+import { Connection_Settings } from '../../utils/medlab_constants';
 import { ErrorMessage, SuccessMessage } from '../UI Components/AlertMessage';
 import Divider from '@mui/material/Divider';
 import Chip from '@mui/material/Chip';
-import { useTheme } from '../../../ThemeContext';
+import { useTheme } from '../../utils/ThemeContext';
 import AntSwitch from '@mui/material/Switch';
 import { update_template } from '../../functions/API Calls/database_calls';
 import { InputAdornment } from '@mui/material';
@@ -142,7 +141,7 @@ export default function CommunicationSettings() {
     newConnectionObj.NUM_MQTT = numMqtt;
     newConnectionObj.NUM_LINES = numLines;
     newConnectionObj.REPORT_TEMPLATE = templateFilePath;
-    dispatch(mqttSettingsWhole(newConnectionObj));
+    // dispatch(mqttSettingsWhole(newConnectionObj));
     setEditMode(false);
   };
 
@@ -161,7 +160,7 @@ export default function CommunicationSettings() {
     setEditMode(false);
     ConnectionDetails().then((res) => {
       console.log("Get Connection Details", res);
-      dispatch(mqttSettingsWhole(res));
+      // dispatch(mqttSettingsWhole(res));
     }).catch((err) => {
       console.log("error Get Connection Details", err);
     });
