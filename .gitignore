@@ -1,1 +1,13 @@
 node_modules
+.env
+certificates/license.sig
+certificates/license.sig.b64
+certificates/license.txt
+certificates/public_key.pem
+certificates/rootCA.crt
+certificates/rootCA.key
+certificates/rootCA.srl
+certificates/server.crt
+certificates/server.csr
+certificates/server.key
+certificates/server.pem

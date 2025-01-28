@@ -78,7 +78,7 @@ function ResponsiveAppBar() {
    * Handles the logout process and navigation to signin page.
    */
   const handleLogout = () => {
-    logout(user, dispatch);
+    logout(user, dispatch).then((res)=>{}).catch((err)=>{console.log('logout error',err)});
     eventBus.emit('navigate', '/signin');
   };
 
@@ -446,7 +446,7 @@ function ResponsiveAppBar() {
               {showIcon && (
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ padding: '0', backgroundColor: 'transparent' }}>
-                    <Avatar alt={avatarName} sx={{ width: 35, height: 35 }} />
+                    <Avatar alt={avatarName} sx={{ width: 35, height: 35 }} data-testid="avatar"/>
                   </IconButton>
                 </Tooltip>
               )}
@@ -490,7 +490,7 @@ function ResponsiveAppBar() {
                 </MenuItem>
                 <MenuItem onClick={hanldeLogout}>
                   <LogoutIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>Logout</Typography>
+                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }} id='logout'>Logout</Typography>
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={handleUpdateClick}>
@@ -522,18 +522,18 @@ function ResponsiveAppBar() {
           </Box>
         </Toolbar>
 
-        <Dialog open={logoutAlertCalled} onClose={handleLogoutDialogClose}>
-          <DialogTitle>Confirm Logout</DialogTitle>
+        <Dialog open={logoutAlertCalled} onClose={handleLogoutDialogClose} data-testid="logout-dialog">
+          <DialogTitle data-testid="dialog-heading">Confirm Logout</DialogTitle>
           <DialogContent>
-            <DialogContentText>
+            <DialogContentText data-testid="dialog-text">
               Are you sure you want to logout?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleLogoutDialogClose} color="primary">
+            <Button onClick={handleLogoutDialogClose} color="primary" data-testid="cancel-button">
               Cancel
             </Button>
-            <Button onClick={handleLogout} color="primary" autoFocus>
+            <Button onClick={handleLogout} color="primary" autoFocus data-testid="logout-button">
               Logout
             </Button>
           </DialogActions>

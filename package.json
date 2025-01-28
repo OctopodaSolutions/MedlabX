@@ -107,7 +107,10 @@
         "release": "electron-builder -p always",
         "docs": "jsdoc -c jsdoc.json",
         "build:custom-react": "webpack --config webpack.react.config.js",
-        "build:custom-node": "webpack --config webpack.node.config.js"
+        "build:custom-node": "webpack --config webpack.node.config.js",
+        "test-cypress": "cypress open",
+        "test-cypress-headless": "cypress run",
+        "test-cypress-cucumber": "cypress open"
     },
     "build": {
         "appId": "com.nokitechnologies.MedlabX",
@@ -217,6 +220,9 @@
         "@babel/core": "^7.26.0",
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "@babel/plugin-syntax-import-assertions": "^7.22.5",
+        "@badeball/cypress-cucumber-preprocessor": "^21.0.3",
+        "@bahmutov/cypress-esbuild-preprocessor": "^2.2.3",
+        "cypress-cucumber-preprocessor": "^4.3.1",
         "@babel/preset-env": "^7.26.0",
         "@babel/preset-flow": "^7.23.3",
         "@babel/preset-react": "^7.26.3",
@@ -224,6 +230,7 @@
         "babel-loader": "^9.2.1",
         "concurrently": "^8.2.2",
         "cross-env": "^7.0.3",
+        "cypress": "^13.16.0",
         "css-loader": "^7.1.2",
         "electron-builder": "^24.3.0",
         "electron-builder-squirrel-windows": "^20.32.0",
