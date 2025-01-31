@@ -18,10 +18,11 @@ import CloseIcon from '@mui/icons-material/Close';
 import WysiwygSharpIcon from '@mui/icons-material/WysiwygSharp';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import GridComponent from '../GridComponent'
-import AddPluginPage from '../AddPluginPage'
-import PluginContainer from '../PluginContainer'
-import TerminalSharpIcon from '@mui/icons-material/TerminalSharp';
+import GridComponent from '../PluginComponents/GridComponent'
+import AddPluginPage from '../PluginComponents/AddPluginPage'
+import PluginContainer from '../PluginComponents/PluginContainer'
+// import TerminalSharpIcon from '@mui/icons-material/TerminalSharp';
+import LaptopMacSharpIcon from '@mui/icons-material/LaptopMacSharp';
 import ChevronLeftSharpIcon from '@mui/icons-material/ChevronLeftSharp';
 import ChevronRightSharpIcon from '@mui/icons-material/ChevronRightSharp';
 import { v4 as uuidv4 } from 'uuid';
@@ -94,7 +95,7 @@ export function AccountMenu() {
   const [selectedPlugin, setSelectedPlugin] = useState(null); // To store the selected plugin
   const [activePlugins, setActivePlugins] = useState([]); // To store the list of active plugins
   const [openPlugin, setOpenPlugin] = useState(null);
-  
+
 
   const availablePlugins = [
     {
@@ -273,7 +274,7 @@ export function AccountMenu() {
                     setSelectedPlugin(plugin);
                   }}
                 >
-                  <TerminalSharpIcon sx={{ fontSize: 30 }} />
+                  <LaptopMacSharpIcon sx={{ fontSize: 30 }} />
                 </IconButton>
               ))}
 
@@ -452,7 +453,7 @@ export function AccountMenu() {
                       setSelectedPlugin(plugin);
                     }}// Toggle the dropdown for this specific plugin
                   >
-                    <TerminalSharpIcon sx={{ fontSize: 30, marginRight: '10px' }} />
+                    <LaptopMacSharpIcon sx={{ fontSize: 30, marginRight: '10px' }} />
                     <Box style={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
                       <Typography sx={{ fontWeight: '600', color: 'inherit' }}>
                         {plugin.name}
@@ -553,30 +554,88 @@ export function AccountMenu() {
           {activeComponent === 'dashboard' && <GridComponent />}
           {activeComponent === 'addPlugin' && <AddPluginPage />}
           {activeComponent === 'plugincontainer' && selectedPlugin && (
-              <PluginContainer plugin={selectedPlugin} /> // Show PluginContainer with selectedPlugin data
-            )
+            <PluginContainer plugin={selectedPlugin} /> // Show PluginContainer with selectedPlugin data
+          )
           }
+          
         </Box>
 
       </Box>
 
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle>Select a Plugin to Start</DialogTitle>
-        <DialogContent>
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        PaperProps={{
+          sx: {
+            background: 'linear-gradient(145deg,rgb(194, 194, 194),rgb(238, 236, 236), #b5b5b5)',
+            border: "1px solid #d1d1d1",
+            boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)",
+            borderRadius: "8px",
+            padding: "16px",
+          },
+        }}
+      >
+        <DialogTitle
+          sx={{
+            fontWeight: "bold",
+            fontSize: "18px",
+            textAlign: "center",
+            color: "#4e4e4e",
+            textShadow: "1px 1px 2px #fff, 0 0 1em #ccc",
+          }}
+        >
+          Select a Plugin to Start
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            color: "#333",
+          }}
+        >
           <List>
             {availablePlugins.map((plugin, index) => (
-              <ListItem button key={index} onClick={() => handleSelectPlugin(plugin)}>
-                <ListItemText primary={`${plugin.name} - Version ${plugin.version}`} />
+              <ListItem
+                button
+                key={index}
+                onClick={() => handleSelectPlugin(plugin)}
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "#e6e6e6",
+                    // boxShadow: "inset 0px 0px 4px rgba(0,0,0,0.3)",
+                  },
+                }}
+              >
+                <ListItemText
+                  primary={`${plugin.name} - Version ${plugin.version}`}
+                  primaryTypographyProps={{
+                    sx: { color: "#444", fontWeight: "500" },
+                  }}
+                />
               </ListItem>
             ))}
           </List>
         </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setDialogOpen(false)} color="primary">
+        <DialogActions
+          sx={{
+            justifyContent: "space-between",
+            padding: "8px 16px",
+          }}
+        >
+          <Button
+            onClick={() => setDialogOpen(false)}
+            sx={{
+              color: "#fff",
+              background: "linear-gradient(135deg, #6c7a89, #abb7b7)",
+              "&:hover": {
+                background: "linear-gradient(135deg, #abb7b7, #6c7a89)",
+              },
+              boxShadow: "0px 2px 4px rgba(0,0,0,0.2)",
+            }}
+          >
             Cancel
           </Button>
         </DialogActions>
       </Dialog>
+
     </React.Fragment>
   );
 }

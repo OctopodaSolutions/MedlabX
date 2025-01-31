@@ -3,7 +3,7 @@ import { BrowserRouter, MemoryRouter, Routes, Route } from 'react-router-dom';
 import Layout from './skeleton/Layout';
 import CustomTab from './custom/CustomTab';
 import SignIn, { ForgotPassword, SignUp } from './skeleton/components/User Components/SignIn';
-import UploadFile from './skeleton/components/User Components/UploadFile';
+import UploadFile from './skeleton/components/PluginComponents/UploadFile';
 import { useLocation } from 'react-router';
 import { toast, ToastContainer } from 'react-toastify';
 import { AccountMenu } from './skeleton/components/Landing Page Skeleton/MainLayout'
@@ -118,7 +118,7 @@ export function AppRouter() {
             <Route path="/" element={<SignIn />} />
             <Route path="/signin" element={<SignIn />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path='/resetUser' element={<ForgotPassword />} />
+            <Route path='/resetPassword' element={<ForgotPassword />} />
             <Route path='/dashboard' element={
               <ProtectedRoute>
                 {/* <UploadFile /> */}

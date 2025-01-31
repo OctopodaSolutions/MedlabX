@@ -330,8 +330,8 @@ export default function UsersDetails() {
   }
 
   return (
-    <div style={{ backgroundColor: 'var(--body_background3)', height: '94vh' }}>
-      <Box sx={{ padding: 5, width: '100%' }}>
+    <div style={{ backgroundColor: 'var(--body_background3)', height: '93vh' }}>
+      <Box sx={{ padding: 5 }}>
         <CustomMUIDataTable
           columns={columns}
           data={rows}

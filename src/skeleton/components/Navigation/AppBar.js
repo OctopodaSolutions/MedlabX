@@ -60,7 +60,7 @@ function ResponsiveAppBar() {
   const [nokiCSS, setNokiCSS] = useState(null);
   const [updateCheckDialog, setUpdateCheckDialog] = useState(false);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
-  const notifications = useSelector((state) => state.notifications)
+  const  notifications= useSelector((state) => state.notifications.notifications)
   const [anchorElNotification, setanchorElNotification] = useState(null);
 
 
@@ -505,7 +505,7 @@ function ResponsiveAppBar() {
                 <Divider />
                 <MenuItem>
                   <RefreshIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }} onClick={handleRefresh}>Refresh</Typography>
+                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }} onClick={handleRefresh}>Restart</Typography>
                 </MenuItem>
                 <Divider />
                 <MenuItem>

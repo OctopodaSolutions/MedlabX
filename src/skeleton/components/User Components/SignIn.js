@@ -37,7 +37,7 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="lightgrey" align="center" {...props}>
       {'Copyright © '}
-      <Link style={{color: 'yellow'}} href="https://nokitechnologies.com/">
+      <Link style={{ color: 'yellow' }} href="https://nokitechnologies.com/">
         Noki Technologies Pvt Ltd.
       </Link>{' '}
       {new Date().getFullYear()}
@@ -87,26 +87,29 @@ export default function SignIn() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    const email = data.get('email');
+    const password = data.get('password');
+    if (!email) {
+      ErrorMessage("Email cannot be empty.");
+      return;
+    } else if (!password) {
+      ErrorMessage("Password cannot be empty.");
+      return;
+    }
 
     try {
-      performSignIn(data.get('email'), data.get('password')).then((res) => {
-        console.log("Result from Login", res);
-        try {
-          document.cookie = `AuthToken=${res.data.token};max-age=3600;path=/;secure`;
-          dispatch(setToken(res.data.token));
-          dispatch(setUser(res.data.user));
-          navigate('/dashboard');
-        } catch (err) {
-          ErrorMessage(`Error Auth token: ${err}`);
-        }
-      }).catch((err) => {
-        console.log("Error from Login", err);
-        ErrorMessage(`Error from Login ${err}`);
-      });
+      const res = await performSignIn(email, password);
+      console.log("Result from Login", res);
+      document.cookie = `AuthToken=${res.data.token};max-age=3600;path=/;secure`;
+      dispatch(setToken(res.data.token));
+      dispatch(setUser(res.data.user));
+      navigate('/dashboard');
     } catch (err) {
-      console.log(err);
-      ErrorMessage(`Unauthorized Access For The User !!! ${err}`);
+      console.error("Error from Login", err);
+      const errorMessage = err.response?.data?.message || err.message;
+      console.log('errorMessage', errorMessage)
     }
+
   };
 
   return (
@@ -193,8 +196,8 @@ export default function SignIn() {
             <Box sx={{ width: 'inherit', marginBottom: 1, marginTop: 1 }}>
               <Grid container>
                 <Grid item xs sx={{ fontSize: '1.55vh' }}>
-                  <Link to="/resetUser" variant="body2" style={{ color: 'white' }}>
-                    {"Reset User Details?"}
+                  <Link to="/resetPassword" variant="body2" style={{ color: 'white' }}>
+                    {"Reset Password?"}
                   </Link>
                 </Grid>
                 <Grid item sx={{ fontSize: '1.55vh' }}>
@@ -246,13 +249,53 @@ export function SignUp() {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     console.log("Submit SignIn Form");
     console.log(firstName, access_level);
+    if (!firstName) {
+      ErrorMessage('First Name cannot be empty');
+      return;
+    } else if (!emailRegex.test(email)) {
+      ErrorMessage('Please enter a valid email address');
+      return;
+    } else if (!lastName) {
+      ErrorMessage('Last Name cannot be empty');
+      return;
+    } else if (!email) {
+      ErrorMessage('Email not provided');
+      return;
+    } else if (!password) {
+      ErrorMessage('Password not Provided');
+      return;
+    } else if (password.length <= 6) {
+      ErrorMessage('Password length is less than 6 characters!');
+      return;
+    } else if (!confirm_password) {
+      ErrorMessage('Confirm your password again');
+      return;
+    } else if (confirm_password.length <= 6) {
+      ErrorMessage('Confirm password length is less than 6 characters!');
+      return;
+    } else if (confirm_password !== password) {
+      ErrorMessage('Confirm password should match with password')
+    } else if (!access_level) {
+      ErrorMessage('Please select access level')
+      return;
+    }
+
     if (confirm_password === password) {
       console.log("Passwords Match");
       performUserSignUp(firstName + " " + lastName, password, 0, access_level, '', email).then((res) => {
         if (res.success) {
-          SuccessMessage("New User Added");
+          let userType = ''
+          if (access_level == 1) {
+            userType = 'Support';
+          } else if (access_level == 2) {
+            userType = 'User';
+          } else {
+            userType = 'Engineer';
+          }
+          SuccessMessage(`Accounted created for ${userType} successfully`);
           console.log(res);
           resetFields();
         } else {
@@ -533,19 +576,45 @@ export function ForgotPassword() {
    */
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (password === confirm_password) {
-      userPasswordChange(email, password).then((res) => {
+    if (!email) {
+      ErrorMessage('Email cannot be empty');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      ErrorMessage('Please enter a valid email address.');
+      return;
+    }
+    if (!password) {
+      ErrorMessage('Password cannot be empty');
+      return;
+    }
+    if (password.length <= 6) {
+      ErrorMessage('Password length should more than 6 characters')
+      return;
+    }
+    if (!confirm_password) {
+      ErrorMessage('Confirm password cannot be empty');
+      return;
+    }
+
+
+    if (password !== confirm_password) {
+      ErrorMessage('Passwords does not match');
+      return;
+    }
+    userPasswordChange(email, password)
+      .then((res) => {
         navigate('/signin');
         console.log("Password changed", res);
         SuccessMessage('Password changed Successfully');
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log("Error", err);
         ErrorMessage('Error changing password.');
       });
-    } else {
-      ErrorMessage("Passwords do not match");
-    }
-  }
+  };
+
 
   return (
     <div className="container">

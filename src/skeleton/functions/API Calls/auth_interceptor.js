@@ -48,20 +48,23 @@ axiosInstance.interceptors.request.use(
  * @throws {Promise<Error>} If there is an error, it will be rejected.
  */
 axiosInstance.interceptors.response.use(
-  response => {
-    // Return the response directly if no errors need to be handled
-    return response;
-  },
-  error => {
-    // Handle specific response errors
-    if (error.response && error.response.status === 403) {
-      console.log('Forbidden request detected: ', error.response);
-      ErrorMessage('Forbidden request detected.');
-    } else if (error.response && error.response.status === 401) {
-      console.log('Unauthorized request detected: ', error.response);
-      ErrorMessage('Unauthorized request detected.');
+  (response) => response, // Return response if no errors
+  (error) => {
+    if (error.response) {
+      const { status, data } = error.response;
+      // Log the specific error
+      if (status === 403) {
+        console.log('Forbidden request detected: ', error.response);
+        ErrorMessage(data?.message || 'Forbidden request detected.');
+      } else if (status === 401) {
+        console.log('Unauthorized request detected: ', error.response);
+        ErrorMessage(data?.message || 'Unauthorized request detected.');
+      }
+      // Pass the error for further handling in the caller
+      return Promise.reject(error);
     }
-    // Return a rejected promise so the error can be handled by the caller
-    return Promise.reject(error);
+    // For network or other unknown errors
+    ErrorMessage('Network error occurred.');
+    return Promise.reject(new Error('Network error occurred.'));
   }
 );
