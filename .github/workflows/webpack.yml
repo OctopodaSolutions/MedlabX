@@ -1,0 +1,119 @@
+name: Build and Deploy Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build_windows:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm install
+
+    # - name: Check GitHub Token Permissions  # Debugging step
+    #   run: gh auth status
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    - name: Build Electron app
+      run: npm run electron:package:win
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    - name: List dist directory
+      run: Get-ChildItem -Path ./dist
+
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+
+    - name: Upload Release Asset (Setup EXE)
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/MedlabX-Setup-${{ github.ref_name }}.exe
+        asset_name: MedlabX-Setup-${{ github.ref_name }}.exe
+        asset_content_type: application/x-msdownload
+    
+    - name: Upload Release Asset (Latest YAML)
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/latest.yml
+        asset_name: latest.yml
+        asset_content_type: application/x-yaml
+
+    - name: Upload Release Asset (Blockmap)
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./dist/MedlabX-Setup-${{ github.ref_name }}.exe.blockmap
+        asset_name: MedlabX-Setup-${{ github.ref_name }}.exe.blockmap
+        asset_content_type: application/octet-stream
+
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}  
+
+  build_macos:
+    runs-on: macos-latest
+    needs: build_windows
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: |
+        brew install python@3.10
+        brew link --overwrite python@3.10
+        python3.10 -m ensurepip
+        python3.10 -m pip install --upgrade pip setuptools wheel
+        npm install
+
+    - name: Build Electron app for macOS
+      run: npm run electron:package:mac
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    - name: Debug - Output passed upload_url
+      run: |
+        echo "Passed upload URL: ${{ needs.build_windows.outputs.upload_url }}"  # Debugging output
+
+    - name: Upload macOS Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      with:
+        upload_url: ${{ needs.build_windows.outputs.upload_url }}
+        asset_path: ./dist/MedlabX-Setup-${{ github.ref_name }}.dmg
+        asset_name: MedlabX-Setup-${{ github.ref_name }}.dmg
+        asset_content_type: application/x-apple-diskimage

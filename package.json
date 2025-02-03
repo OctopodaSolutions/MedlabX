@@ -104,6 +104,7 @@
         "dist": "electron-builder -w -c.extraMetadata.main=build/electron.js",
         "electron:package:win": "npx webpack --config webpack.config.js && electron-builder -w -c.extraMetadata.main=public/electron.js",
         "electron:package:mac": "npx webpack --config webpack.config.js && electron-builder -m -c.extraMetadata.main=public/electron.js",
+        "electron:package:linux": "npx webpack --config webpack.config.js && electron-builder -l -c.extraMetadata.main=public/electron.js",
         "release": "electron-builder -p always",
         "docs": "jsdoc -c jsdoc.json",
         "build:custom-react": "webpack --config webpack.react.config.js",
@@ -144,6 +145,10 @@
             "target": [
                 "dmg"
             ]
+        },
+        "linux": {
+            "target": ["AppImage", "deb", "rpm"],
+            "icon": "public/logo_X.png"
         },
         "win": {
             "target": [

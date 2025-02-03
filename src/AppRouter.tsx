@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter, MemoryRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, MemoryRouter, HashRouter as RouterComponent, Routes, Route } from 'react-router-dom';
 import Layout from './skeleton/Layout';
 import CustomTab from './custom/CustomTab';
 import SignIn, { ForgotPassword, SignUp } from './skeleton/components/User Components/SignIn';
@@ -21,6 +21,7 @@ import { setComms } from './skeleton/store/connectionSlice';
 import UsersDetails from './skeleton/components/User Components/UsersDetails';
 import SettingsMenu from './skeleton/components/Settings/SettingsMenu';
 import About from './skeleton/components/User Components/About';
+import CssBaseline from '@mui/material/CssBaseline';
 
 
 const CurrentPath = () => {
@@ -49,7 +50,7 @@ declare global {
  * Create a router element that chooses the router type and routes
  * based on whether we are in plugin mode or standalone mode.
  */
-export function AppRouter() {
+export default function AppRouter() {
 
   const isPluginMode = window.__APP_CONFIG__?.isPluginMode === true;
   const dispatch = useDispatch();
@@ -58,7 +59,7 @@ export function AppRouter() {
 
   // In plugin mode, use MemoryRouter to avoid interfering with the parent app's routing.
   // In standalone mode, use BrowserRouter for normal navigation.
-  const RouterComponent = isPluginMode ? MemoryRouter : BrowserRouter;
+  // const RouterComponent = isPluginMode ? MemoryRouter : (process.env.NODE_ENV === 'production' ? HashRouter : BrowserRouter);
 
   useEffect(() => {
     if (!isSignIn) {
@@ -109,9 +110,10 @@ export function AppRouter() {
   }, [isSignIn]);
 
   return (
-    <ThemeProvider >
-      <RouterComponent>
-        <div>
+    <div className='RoutingWrapper'>
+      <ThemeProvider>
+        <CssBaseline />
+        <RouterComponent>
           {/* <CurrentPath/> */}
           <Routes>
             {/* Common skeleton route */}
@@ -154,9 +156,9 @@ export function AppRouter() {
             pauseOnHover
             theme="dark"
           />
-        </div>
 
-      </RouterComponent>
-    </ThemeProvider>
+        </RouterComponent>
+      </ThemeProvider>
+    </div>
   );
 }

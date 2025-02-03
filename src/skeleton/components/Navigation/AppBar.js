@@ -551,13 +551,8 @@ function ResponsiveAppBar() {
             </div>
           </DialogContent>
           <DialogActions>
-            <button
-              onClick={() => handleInstallNow()}
-              style={{ ...nokiCSS.getButton('cancel', accessLevel, 3) }}>Yes</button>
-
-            <button
-              onClick={() => handleInstallLater()}
-              style={{ ...nokiCSS.getButton('cancel', accessLevel, 3) }}>No</button>
+            <Button variant='outlined' onClick={() => handleInstallNow()} >Yes</Button>
+            <Button variant='outlined' onClick={() => handleInstallLater()} >No</Button>
           </DialogActions>
         </Dialog>
       )}

@@ -5,7 +5,7 @@ import { createFallbackStore, persistor } from './skeleton/store/fallbackStore';
 import CustomTab from './custom/CustomTab';
 import { Store } from 'redux';
 import { WorkerPool } from './WorkerPool';
-import { AppRouter } from './AppRouter';
+import  AppRouter  from './AppRouter';
 import './index.css';
 import { PersistGate } from 'redux-persist/integration/react';
 

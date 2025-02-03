@@ -523,11 +523,6 @@ server_app.get('/license', (req, res) => {
 
 /*********** Plugin upload API's ***********/
 
-// Create an uploads directory if it doesn't exist
-const uploadDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-}
 
 // File upload endpoint
 server_app.post("/uploadPlugin", async (req, res) => {

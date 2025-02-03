@@ -9,6 +9,7 @@ export async function fetchConfig() {
   if (config) return config; // Return cached config if already fetched
   try {
     console.log("Running fetchConfig");
+    const isElectron = typeof window !== 'undefined' && window.process && window.process.type;
     const response = await fetch('/config.json');
     if (!response.ok) {
       throw new Error('Network response was not ok');
