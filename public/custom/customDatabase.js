@@ -2,7 +2,7 @@ const mySqlConnection = global.mySqlConnection;
 
 const fetchXspecHistory = () => {
     return new Promise((resolve, reject) => {
-        const query = `SELECT * FROM history ORDER BY id_no DESC LIMIT ${historyLimit}`;
+        const query = `SELECT * FROM history ORDER BY id_no DESC LIMIT 20`;
 
         mySqlConnection.execute(query, (error, results) => {
             if (error) {

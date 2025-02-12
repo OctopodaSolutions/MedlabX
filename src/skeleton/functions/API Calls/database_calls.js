@@ -411,3 +411,15 @@ export function getLicense(){
     })
 }
 
+/************* Plugin API Calls *************/
+
+export function startPlugin(){
+    return new Promise((resolve,reject)=>{
+        let fetchURL=Server_Addr+'/runPlugin';
+        axiosInstance.post(fetchURL).then((res)=>{
+            resolve(res.data)
+        }).catch((err)=>{
+            reject(err);
+        })
+    })
+}

@@ -11,6 +11,7 @@ import customRootReducer from '../../custom/store/customReducer';
 import { realTimeReducer } from './realTimeSlice';
 import { mqttConnectionReducer } from './mqttConnectionSlice';
 import { aboutReducer } from './aboutSlice';
+import { pluginReducer } from './pluginSlice'
 
 const rootReducerList = {
     auth: authReducer,
@@ -25,7 +26,8 @@ const rootReducerList = {
     serialMessages: serialMessagesReducer,
     serialConnections: serialConnectionReducer,
     realTime: realTimeReducer,
-    about: aboutReducer
+    about: aboutReducer,
+    plugin: pluginReducer,
 
 };
 

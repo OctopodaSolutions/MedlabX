@@ -5,7 +5,7 @@ const DEACTIVATE = 'DEACTIVATE';
 
 const realTimeSlice = createSlice({
     name:'realTime',
-    initialState:[],
+    initialState:false,
     reducers:{
         activateRealTime:(state,action)=>{
             return true;

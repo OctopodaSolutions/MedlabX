@@ -1,5 +1,0 @@
-{
-    "mqtt" : [{"feed":"hs2","returnFeed":"ss2","id":"spectrum"}],
-    "route" : "xspec2",
-    "pluginType" : "xspecPlugin"
-}

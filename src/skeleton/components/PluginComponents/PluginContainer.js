@@ -1,35 +1,59 @@
-import { Box } from '@mui/system';
-import { Typography } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import { store, websocketClient } from "../../store/fallbackStore";
+import { Server_Addr } from "../../utils/medlab_constants";
+import { axiosInstance } from "../../functions/API Calls/auth_interceptor";
 
-function PluginContainer({ plugin }) {
+const PluginRenderer = ({ plugins }) => {
+
+    const injectReducer = (store, key, reducer) => {
+        // Combine the existing reducers with the new one
+        let pluginData = store.getState();
+        if (!pluginData[key]) {
+            console.log('---------before', store.getState());
+            store.reducerManager.addSet(key, reducer);
+            store.replaceReducer(store.reducerManager.reduce);
+            console.log('---------after', store.getState());
+        }
+    };
+
+    const loadPluginWithRetry = (pluginType, instanceId, index, retries = 3, delay = 3000) => {
+        const attemptLoad = (remainingRetries) => {
+            if (window.loadPlugin) {
+                window.loadPlugin(pluginType, store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient, Server_Addr, axiosInstance);
+            } else {
+                if (remainingRetries > 0) {
+                    console.error(`loadPlugin not found for ${instanceId}. Retrying in ${delay / 1000} seconds...`);
+                    setTimeout(() => attemptLoad(remainingRetries - 1), delay);
+                } else {
+                    console.error(`Failed to load plugin ${instanceId} after multiple attempts.`);
+                }
+            }
+        };
+
+        attemptLoad(retries);
+    };
+
+    useEffect(() => {
+        let pluginContainerData;
+        try {
+            pluginContainerData = document.getElementById('plugin-container-0').textContent;
+        } catch (err) {
+            console.log('Container not yet created');
+        }
+
+        if (plugins.length > 0 && pluginContainerData === 'Loading') {
+            plugins.forEach(({ instanceId, pluginType }, index) => {
+                loadPluginWithRetry(pluginType, instanceId, index);
+            });
+        }
+    }, [plugins]);
+
     return (
-        <Box sx={{ padding: '20px', backgroundColor: '#fff', borderRadius: '8px' }}>
-            <Typography variant="h4">{plugin.name}</Typography>
-            <Typography variant="body1" sx={{ marginBottom: '10px' }}>
-                <strong>Version:</strong> {plugin.version}
-            </Typography>
-            <Typography variant="body2" sx={{ marginBottom: '10px' }}>
-                <strong>Description:</strong> {plugin.description}
-            </Typography>
-            <Typography variant="body2" sx={{ marginBottom: '10px' }}>
-                <strong>Author:</strong> {plugin.author}
-            </Typography>
-            <Typography variant="body2" sx={{ marginBottom: '10px' }}>
-                <strong>Installation:</strong> {plugin.installation}
-            </Typography>
-            <Typography variant="body2" sx={{ marginBottom: '10px' }}>
-                <strong>Dependencies:</strong> {plugin.dependencies.join(', ')}
-            </Typography>
-            <Typography variant="body2" sx={{ marginBottom: '10px' }}>
-                <strong>Last Updated:</strong> {plugin.lastUpdated}
-            </Typography>
-            <Typography variant="body2">
-                <strong>Compatible With:</strong> {plugin.compatibleWith.join(', ')}
-            </Typography>
-        </Box>
+        <>
+            {/* You can return null or some loading UI here if needed */}
+        </>
     );
-}
+};
 
-
-export default PluginContainer;
+export default PluginRenderer;

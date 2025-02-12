@@ -147,7 +147,11 @@
             ]
         },
         "linux": {
-            "target": ["AppImage", "deb", "rpm"],
+            "target": [
+                "AppImage",
+                "deb",
+                "rpm"
+            ],
             "icon": "public/logo_X.png"
         },
         "win": {

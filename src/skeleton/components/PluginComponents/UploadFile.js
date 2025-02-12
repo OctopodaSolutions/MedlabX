@@ -4,8 +4,14 @@ import './UploadFile.css'; // Assuming you will create a separate CSS file for s
 import { store, websocketClient } from "../../store/fallbackStore";
 import { combineReducers } from 'redux';
 import { Server_Addr } from "../../utils/medlab_constants";
+import { axiosInstance } from "../../functions/API Calls/auth_interceptor";
+import { useDispatch, useSelector } from "react-redux";
+import { addPlugin, setGroup, setPlugins } from "../../store/pluginSlice";
 
-const UploadFile = () => {
+const UploadFile = (getCompFromChild) => {
+
+  const dispatch = useDispatch();
+
   const [file, setFile] = useState(null);
   const [dragging, setDragging] = useState(false);
 
@@ -56,14 +62,14 @@ const UploadFile = () => {
     }
   };
 
-  const [group, setGroup] = useState([])
-  const [plugins, setPlugins] = useState([])
+  const group = useSelector((state)=>state.plugin.group);
+  const plugins = useSelector((state)=>state.plugin.plugins);
 
   const handleRun = async () => {
     try {
       const runResponse = await axios.post("http://localhost:3003/runPlugin");
       console.log(runResponse.data);
-      setGroup(runResponse.data.group)
+      dispatch(setGroup(runResponse.data.group));
     } catch (err) {
       console.log("Run failed");
     }
@@ -71,10 +77,13 @@ const UploadFile = () => {
 
   const injectReducer = (store, key, reducer) => {
     // Combine the existing reducers with the new one
-    console.log('---------before',store.getState())
-    store.reducerManager.addSet(key, reducer);
-    store.replaceReducer(store.reducerManager.reduce);
-    console.log('---------after',store.getState())
+    let pluginData = store.getState();
+    if(!pluginData[key]){
+      console.log('---------before',store.getState())
+      store.reducerManager.addSet(key, reducer);
+      store.replaceReducer(store.reducerManager.reduce);
+      console.log('---------after',store.getState())
+    }
   };
 
   function loadScript(src, instanceId, pluginType) {
@@ -91,7 +100,7 @@ const UploadFile = () => {
   }
 
   useEffect(() => {
-    if (group && group.length > 0) {
+    if (group && group.length > 0 && plugins.length == 0) {
       // Use Promise.all to handle all imports
       // Promise.all(
       //   group.map((item,index) => 
@@ -108,7 +117,7 @@ const UploadFile = () => {
       // ).then((loadedPlugins) => {
       //   // Filter out any null values in case of failed imports
       //   const validPlugins = loadedPlugins.filter(plugin => plugin !== null);
-      //   setPlugins(validPlugins);  // Set the state with the successfully loaded plugins
+      //   dispatch(setPlugins(validPlugins));  // Set the state with the successfully loaded plugins
       //   console.log('plugins are imported',validPlugins);
       // });
       async function loadMultiplePlugins() {
@@ -120,8 +129,9 @@ const UploadFile = () => {
             )
           );
   
-          setPlugins(loadedInstances);
-  
+          dispatch(setPlugins(loadedInstances));
+          console.log("Plugin ",loadedInstances);
+          console.log("Group ",group);
           
   
         } catch (error) {
@@ -150,7 +160,7 @@ const UploadFile = () => {
     // Initialize each plugin instance using `window.loadPlugin`
     plugins.forEach(({ instanceId, pluginType },index) => {
       if (window.loadPlugin) {
-        window.loadPlugin(pluginType, store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient);
+        window.loadPlugin(pluginType, store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient, Server_Addr, axiosInstance);
       } else {
         console.error(`loadPlugin function not found for ${instanceId}`,window);
       }
@@ -193,9 +203,6 @@ const UploadFile = () => {
         <button onClick={handleUiStart} className="run-button">Start UI</button>
       </div>
 
-      {group.map((item,index)=>(
-        <div id={`plugin-container-${index}`} style={{width:'100%', height:'20vh'}}></div>
-      ))}
       
     </div>
   );
