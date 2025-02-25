@@ -19,8 +19,9 @@ const PluginRenderer = ({ plugins }) => {
 
     const loadPluginWithRetry = (pluginType, instanceId, index, retries = 3, delay = 3000) => {
         const attemptLoad = (remainingRetries) => {
-            if (window.loadPlugin) {
-                window.loadPlugin(pluginType, store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient, Server_Addr, axiosInstance);
+            if (window.pluginInstances && window.pluginInstances[pluginType]) {
+                window.pluginInstances[pluginType].initializePluginUI( store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient, Server_Addr, axiosInstance);
+                // window.pluginInstances[instanceId].initializePluginUI(store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient, Server_Addr, axiosInstance)
             } else {
                 if (remainingRetries > 0) {
                     console.error(`loadPlugin not found for ${instanceId}. Retrying in ${delay / 1000} seconds...`);
