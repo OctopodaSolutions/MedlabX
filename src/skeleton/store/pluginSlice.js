@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   group: [],  // Stores plugin UI config [{config: {mqtt: Array(1), route: 'xspec1', pluginType: 'xspecPlugin'},react: "/plugins/plugin1/reactPlugin.js" }]
-  plugins: [], // Stores plugin metadata like instanceId,pluginType [{instanceId: 'xspec1', pluginType: 'xspecPlugin', pluginData: ''}]
+  plugins: [], // Stores plugin metadata like instanceId,pluginType [{instanceId: 'xspec1', pluginType: 'xspecPlugin', containerId: 'plugin-container-0'}]
 };
 
 const pluginSlice = createSlice({
@@ -15,7 +15,11 @@ const pluginSlice = createSlice({
     },
     // Action to set plugin metadata
     setPlugins: (state, action) => {
-      state.plugins = action.payload;
+      state.plugins = action.payload.map((plugin, index) => {
+        plugin['containerId'] = `plugin-container-${index}`;
+        return plugin; // Returning the modified object
+    });
+    
     },
     // Action to add a plugin to the plugins list
     addPlugin: (state, action) => {
