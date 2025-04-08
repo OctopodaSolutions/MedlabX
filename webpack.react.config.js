@@ -22,7 +22,7 @@ module.exports = {
       __IS_PLUGIN_MODE__: JSON.stringify(true)
     })
   ],
-  entry:'./src/index.tsx',
+  entry:'./src/index.js',
   devtool: 'inline-source-map',
   output:{
     path: path.resolve(__dirname, 'dist'),

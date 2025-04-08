@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 // import Paper from '@mui/material/Paper';
-import { changeUserMembership, getAllUsers, deleteUser, userPasswordChange } from '../../functions/User Access Functions/user_functions';
+import { changeUserMembership, getAllUsers, deleteUser, userPasswordChange, performUserSignUp } from '../../functions/User Access Functions/user_functions';
 import Fab from '@mui/material/Fab';
 import DoneIcon from '@mui/icons-material/Done';
 import ClearIcon from '@mui/icons-material/Clear';
 import { Box, styled } from '@mui/system';
 import {
   Button, Dialog, DialogActions, DialogContent,
-  DialogTitle, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, TextField, Tooltip
+  DialogTitle, FormControl, Grid, IconButton, InputAdornment, InputLabel, MenuItem, OutlinedInput, Paper, Select, TextField, Tooltip,
+  Typography,TableFooter,TableRow, TableCell
 } from '@mui/material';
 import MUIDataTable from 'mui-datatables';
 import { GridToolbar } from '@mui/x-data-grid';
@@ -41,6 +42,20 @@ const CustomMUIDataTable = styled(MUIDataTable)({
   },
 });
 
+const CustomFooter = ({ openDialog }) => (
+  <TableFooter>
+    <TableRow>
+      <TableCell colSpan={100} align="right">
+        <Tooltip title="Add New">
+          <Button onClick={openDialog} color="primary">
+            Add User
+          </Button>
+        </Tooltip>
+      </TableCell>
+    </TableRow>
+  </TableFooter>
+);
+
 /**
  * Component for managing and displaying user details.
  * 
@@ -50,12 +65,94 @@ const CustomMUIDataTable = styled(MUIDataTable)({
 export default function UsersDetails() {
   const [rows, setRows] = useState([]);
   const [openEdit, setOpenEdit] = useState(false);
+  const [addUserOpen, SetAdduserOpen] = useState(false);
   const [pass, setPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
   const [user, setUser] = useState("");
   const [userForPasswordChange, setUserForPasswordChange] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const currentUser = useSelector((state) => (state.user));
+
+  // for adding new user
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirm_password, setConfirmPassword] = useState("");
+  const [access_level, setAccessLevel] = useState("");
+
+  // handle new user add
+  const handleAddUser = (event) => {
+    event.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    console.log("Submit SignIn Form");
+    console.log(firstName, access_level);
+    if (!firstName) {
+      ErrorMessage('First Name cannot be empty');
+      return;
+    } else if (!emailRegex.test(email)) {
+      ErrorMessage('Please enter a valid email address');
+      return;
+    } else if (!lastName) {
+      ErrorMessage('Last Name cannot be empty');
+      return;
+    } else if (!email) {
+      ErrorMessage('Email not provided');
+      return;
+    } else if (!password) {
+      ErrorMessage('Password not Provided');
+      return;
+    } else if (password.length <= 6) {
+      ErrorMessage('Password length is less than 6 characters!');
+      return;
+    } else if (!confirm_password) {
+      ErrorMessage('Confirm your password again');
+      return;
+    } else if (confirm_password.length <= 6) {
+      ErrorMessage('Confirm password length is less than 6 characters!');
+      return;
+    } else if (confirm_password !== password) {
+      ErrorMessage('Confirm password should match with password')
+    } else if (!access_level) {
+      ErrorMessage('Please select access level')
+      return;
+    }
+
+    if (confirm_password === password) {
+      console.log("Passwords Match");
+      performUserSignUp(firstName + " " + lastName, password, 0, access_level, '', email).then((res) => {
+        if (res.success) {
+          let userType = ''
+          if (access_level == 1) {
+            userType = 'Support';
+          } else if (access_level == 2) {
+            userType = 'User';
+          } else {
+            userType = 'Engineer';
+          }
+          SuccessMessage(`Accounted created for ${userType} successfully`);
+          console.log(res);
+          resetFields();
+        } else {
+          ErrorMessage(`Error in adding User ${res.message}`);
+          console.log(res);
+        }
+      }).catch((err) => {
+        console.log(err);
+        ErrorMessage(`Error in adding User ${err}`);
+      });
+    }
+  }
+
+  //reset fields for new user adding
+  const resetFields = () => {
+    setFirstName("");
+    setLastName("");
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+    setAccessLevel("");
+  }
 
   /**
    * Toggle the visibility of the password.
@@ -102,9 +199,9 @@ export default function UsersDetails() {
    */
   const createUserRows = (id, name, UID, access_level, designation, membership, email, last_login) => {
     let d = "";
-    if (access_level === 0) d = "User";
-    else if (access_level === 1) d = "Administrator";
-    else if (access_level >= 2) d = "Engineer";
+    if (access_level === 1) d = "User";
+    else if (access_level === 2) d = "Administrator";
+    else if (access_level == 3) d = "Engineer";
     else d = "Unknown";
     return {
       id, name, UID, access_level, d, membership, email, last_login
@@ -170,8 +267,28 @@ export default function UsersDetails() {
         customBodyRender: (value, tableMeta, updateValue) => {
           if (value === 1) {
             return (
+              <Typography>Added</Typography>
+            );
+          }
+          else {
+            return (
+              <Typography>Not Added</Typography>
+            );
+          }
+        },
+      },
+    },
+    {
+      label: 'Update Membership',
+      name: 'membership',
+      options: {
+        filter: false,
+        sort: false,
+        customBodyRender: (value, tableMeta, updateValue) => {
+          if (value === 1) {
+            return (
               <Tooltip title="Revoke Membership" >
-                <IconButton onClick={() => changeMembership(tableMeta, 0)} size="large" disabled={currentUser.UID === tableMeta.rowData[0]}>
+                <IconButton onClick={() => changeMembership(tableMeta, 0)} size="large" disabled={currentUser.UID === tableMeta.rowData[0] || currentUser.access_level == 1}>
                   <ClearIcon />
                 </IconButton>
               </Tooltip>
@@ -180,7 +297,7 @@ export default function UsersDetails() {
           else {
             return (
               <Tooltip title="Add Member">
-                <IconButton onClick={() => changeMembership(tableMeta, 1)} size="large" disabled={currentUser.UID === tableMeta.rowData[0]}>
+                <IconButton onClick={() => changeMembership(tableMeta, 1)} size="large" disabled={currentUser.UID === tableMeta.rowData[0] || currentUser.access_level == 1}>
                   <DoneIcon />
                 </IconButton>
               </Tooltip>
@@ -199,7 +316,7 @@ export default function UsersDetails() {
           return (
             <div >
               <Tooltip title="Change Password">
-                <Fab aria-label="edit" onClick={() => editAction(tableMeta)}>
+                <Fab aria-label="edit" disabled={currentUser.access_level == 1} onClick={() => editAction(tableMeta)}>
                   <EditIcon />
                 </Fab>
               </Tooltip>
@@ -263,10 +380,18 @@ export default function UsersDetails() {
     selectableRows: 'single',
     selectableRowsOnClick: true,
     onRowsDelete: (deleteObj) => {
-      executeDelete(rows[deleteObj.data[0].dataIndex].UID);
+      // Check if currentUser's access level is 1
+      if (currentUser.access_level === 1) {
+        // If access level is 1, disable delete
+        return false; // Prevent deletion
+      } else {
+        // Otherwise, proceed with the delete
+        executeDelete(rows[deleteObj.data[0].dataIndex].UID);
+      }
     },
+    customFooter: () => <CustomFooter openDialog={handleDialogOpen} />,
   };
-
+  const handleDialogOpen = () => currentUser.access_level == 1?null: SetAdduserOpen(true);
   /**
    * Execute the delete action for a user.
    * 
@@ -306,7 +431,7 @@ export default function UsersDetails() {
    */
   const handleSaveEdit = () => {
     if (pass === confirmPass) {
-      if (pass.length < 4) {
+      if (pass.length < 6) {
         ErrorMessage("Password Too Short");
       }
       else {
@@ -330,19 +455,33 @@ export default function UsersDetails() {
   }
 
   return (
-    <div style={{ backgroundColor: 'var(--body_background3)', height: '93vh' }}>
+    <div style={{
+      backgroundImage: 'linear-gradient(to right, rgb(39, 39, 39),rgb(0, 0, 0))',
+      // backgroundColor: '#d5e5e5',
+      color: 'var(--body_color)',
+      overflowY: 'auto',
+      backdropfilter: 'blur(8.6px)',
+      WebkitBackdropFilter: 'blur(8.6px)', height: '94vh'
+    }}>
       <Box sx={{ padding: 5 }}>
-        <CustomMUIDataTable
-          columns={columns}
-          data={rows}
-          title='Users'
-          options={options}
-          components={{
-            Toolbar: GridToolbar,
-          }}
-        />
-      </Box>
+        <Paper>
+          <CustomMUIDataTable
+            columns={columns}
+            data={rows}
+            title='Users'
+            options={options}
+            components={{
+              Toolbar: GridToolbar,
+            }}
+          />
 
+
+
+        </Paper>
+      </Box>
+      <Paper>
+
+      </Paper>
       <Dialog
         open={openEdit}
         onClose={handleCloseEdit}
@@ -350,7 +489,7 @@ export default function UsersDetails() {
         aria-describedby="dialog-description"
         PaperProps={{
           sx: {
-            backgroundColor: 'rgba(255, 255, 255, 0.7)', // Medium transparent white background
+            // backgroundColor: 'rgba(255, 255, 255, 0.7)', // Medium transparent white background
             backdropFilter: 'blur(10px)', // Adds a blur effect to the background
             boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)', // Box shadow for elevation
             borderRadius: '12px', // Rounded corners
@@ -358,18 +497,9 @@ export default function UsersDetails() {
         }}
       >
         <DialogTitle
-          id="dialog-title"
-          sx={{
-            textAlign: 'center',
-            fontSize: '1.8rem', // Increased font size
-            fontWeight: 'bold',
-            backgroundColor: '#f0f0f0', // Light grey background
-            color: '#333', // Darker text color
-            borderBottom: '1px solid #ddd', // Divider line
-            padding: '0%', // Increased padding
-          }}
+          className='bordered-text'
         >
-          Change Password
+            Change Password
         </DialogTitle>
         <DialogContent
           sx={{
@@ -399,13 +529,16 @@ export default function UsersDetails() {
                 sx: { fontSize: '1.2rem' } // Set label text size
               }}
               sx={{
-                '& .MuiInputBase-root': {
-                  border: 'none', // Ensure no border
-                  outline: 'none', // Ensure no outline
+                '& .MuiInputLabel-root': {
+                  color: 'black',
+                  fontSize: '1.55vh',
                 },
-                '& .Mui-disabled': {
-                  color: 'var(--body_color1)' // Adjust disabled text color if needed
-                }
+                '& .MuiOutlinedInput-root': {
+                  '& input': {
+                    color: 'black',
+                    fontSize: '1.55vh',
+                  },
+                },
               }}
             />
           </Box>
@@ -417,7 +550,7 @@ export default function UsersDetails() {
                 label="Password"
                 onChange={(e) => setPass(e.target.value)}
                 type={showPassword ? 'text' : 'password'}
-                sx={{ fontSize: '2rem' }} // Set text size
+                sx={{ fontSize: '1.5rem' }} // Set text size
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -441,7 +574,7 @@ export default function UsersDetails() {
                 label="Confirm Password"
                 onChange={(e) => setConfirmPass(e.target.value)}
                 type={showConfirmPassword ? 'text' : 'password'}
-                sx={{ fontSize: '2rem' }} // Set text size
+                sx={{ fontSize: '1.5rem' }} // Set text size
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -460,19 +593,17 @@ export default function UsersDetails() {
         </DialogContent>
         <DialogActions
           sx={{
-            display: 'flex',
-            justifyContent: 'space-evenly',
-            padding: '12px 20px', // Increased padding
+            display: 'flex', gap: '10px'
           }}
         >
           <Button
             onClick={handleCloseEdit}
             sx={{
-              backgroundColor: '#e0e0e0', // Light grey for cancel button
+              // backgroundColor: '#e0e0e0', // Light grey for cancel button
               color: '#333', // Dark text color
               border: '1px solid #ccc',
-              fontSize: '1rem', // Increased font size
-              padding: '10px 20px', // Increased padding
+              // fontSize: '1rem', // Increased font size
+              // padding: '10px 20px', // Increased padding
               '&:hover': {
                 backgroundColor: '#d0d0d0', // Slightly darker grey on hover
               },
@@ -482,20 +613,248 @@ export default function UsersDetails() {
           </Button>
           <Button
             onClick={handleSaveEdit}
-            sx={{
-              backgroundColor: '#1976d2', // Primary color for apply button
-              color: '#fff', // White text color
-              border: '1px solid #155a8a',
-              fontSize: '1rem', // Increased font size
-              padding: '10px 20px', // Increased padding
-              marginLeft: '12px', // Space between buttons
-              '&:hover': {
-                backgroundColor: '#155a8a', // Darker shade of primary color on hover
-              },
-            }}
+            variant='outlined'
           >
             Apply
           </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog
+        open={addUserOpen}
+        onClose={() => SetAdduserOpen(false)}
+        aria-labelledby="dialog-title"
+        aria-describedby="dialog-description"
+        PaperProps={{
+          sx: {
+            // backgroundColor: 'rgba(255, 255, 255, 0.7)', // Medium transparent white background
+            backdropFilter: 'blur(10px)', // Adds a blur effect to the background
+            boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)', // Box shadow for elevation
+            borderRadius: '12px', // Rounded corners
+          },
+        }}
+      >
+        <DialogTitle
+          className='bordered-text'
+        >
+          Add New User
+        </DialogTitle>
+        <DialogContent
+          sx={{
+            marginTop: 2,
+            color: '#555', // Slightly grey text color for content
+            padding: '20px', // Increased padding
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1rem'
+          }}
+        >
+          <Box component="form" noValidate sx={{ mt: 1, justifyContent: 'space-evenly', display: '-ms-flexbox', marginLeft: 'auto', width: 1 }}>
+            <Box sx={{ alignItems: 'center', textAlign: 'center', width: 'inherit', marginBottom: 1, marginTop: 1 }}>
+              <TextField
+                autoComplete="fname"
+                name="firstName"
+                variant="outlined"
+                required
+                fullWidth
+                id="firstName"
+                label="First Name"
+                onChange={event => setFirstName(event.target.value)}
+                autoFocus
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: 'black',
+                    fontSize: '1.55vh',
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& input': {
+                      color: 'black',
+                      fontSize: '1.55vh',
+                    },
+                  },
+                }}
+              />
+            </Box>
+
+            <Box sx={{ alignItems: 'center', textAlign: 'center', width: 'inherit', marginBottom: 1, marginTop: 1 }}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="lastName"
+                label="Last Name"
+                name="lastName"
+                onChange={event => setLastName(event.target.value)}
+                autoComplete="lname"
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: 'black',
+                    fontSize: '1.55vh',
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& input': {
+                      color: 'black',
+                      fontSize: '1.55vh',
+                    },
+                  },
+                }}
+              />
+            </Box>
+
+            <Box sx={{ alignItems: 'center', textAlign: 'center', width: 'inherit', marginBottom: 1, marginTop: 1 }}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                onChange={event => setEmail(event.target.value)}
+                autoComplete="email"
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: 'black',
+                    fontSize: '1.55vh',
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& input': {
+                      color: 'black',
+                      fontSize: '1.55vh',
+                    },
+                  },
+                }}
+              />
+            </Box>
+
+            <Box sx={{ alignItems: 'center', textAlign: 'center', width: 'inherit', marginBottom: 1, marginTop: 1 }}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                onChange={event => setPassword(event.target.value)}
+                autoComplete="current-password"
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: 'black',
+                    fontSize: '1.55vh',
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& input': {
+                      color: 'black',
+                      fontSize: '1.55vh',
+                    },
+                  },
+                }}
+              />
+            </Box>
+
+            <Box sx={{ alignItems: 'center', textAlign: 'center', width: 'inherit', marginBottom: 1, marginTop: 1 }}>
+              <TextField
+                variant="outlined"
+                required
+                fullWidth
+                name="confirm_password"
+                label="Confirm Password"
+                type="password"
+                id="confirm_password"
+                onChange={event => setConfirmPassword(event.target.value)}
+                autoComplete="current-password"
+                sx={{
+                  '& .MuiInputLabel-root': {
+                    color: 'black',
+                    fontSize: '1.55vh',
+                  },
+                  '& .MuiOutlinedInput-root': {
+                    '& input': {
+                      color: 'black',
+                      fontSize: '1.55vh',
+                    },
+                  },
+                }}
+              />
+            </Box>
+            <Box sx={{ width: 'inherit', marginBottom: 1, marginTop: 1 }}>
+              <FormControl sx={{
+                m: 1, width: 300, '& label': { color: 'white' },
+                '& input': { color: 'white' },
+              }}>
+                <InputLabel id="demo-multiple-name-label" sx={{ fontSize: '1.55vh' }}>Access Level</InputLabel>
+                <Select
+                  value={access_level}
+                  onChange={event => setAccessLevel(event.target.value)}
+                  input={
+                    <OutlinedInput
+                      label="Access Level"
+
+                      classes={{
+                        root: 'outlined-input',
+                      }}
+                      sx={{
+                        '& .MuiInputLabel-root': {
+                          color: 'black', fontSize: '1.55vh',
+                        },
+                        '& .MuiOutlinedInput-root': {
+                          '& input': {
+                            color: 'black', fontSize: '1.55vh',
+                          },
+                        },
+                      }}
+                    />
+                  }
+                  MenuProps={{
+                    classes: {
+                      paper: 'dark-menu',
+                    },
+                  }}
+                  sx={{
+                    '& .MuiInputLabel-root': {
+                      color: 'black', fontSize: '1.55vh',
+                    },
+                    '& .MuiOutlinedInput-root': {
+                      '& input': {
+                        color: 'black', fontSize: '1.55vh',
+                      },
+                    },
+                  }}
+                >
+                  <MenuItem value={1} sx={{ fontSize: '1.55vh' }}>User</MenuItem>
+                  <MenuItem value={2} sx={{ fontSize: '1.55vh' }}>Administrator</MenuItem>
+                  <MenuItem value={3} sx={{ fontSize: '1.55vh' }}>Engineer</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
+
+          </Box>
+        </DialogContent>
+        <DialogActions
+        >
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <Button
+              onClick={() => SetAdduserOpen(false)}
+              sx={{
+                // backgroundColor: '#e0e0e0', // Light grey for cancel button
+                color: '#333', // Dark text color
+                border: '1px solid #ccc',
+                // fontSize: '1rem', // Increased font size
+                // padding: '10px 20px', // Increased padding
+                '&:hover': {
+                  backgroundColor: '#d0d0d0', // Slightly darker grey on hover
+                },
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              variant="outlined"
+              onClick={handleAddUser}
+            >
+              Submit
+            </Button>
+          </div>
         </DialogActions>
       </Dialog>
     </div >

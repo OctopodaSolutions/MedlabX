@@ -1,5 +1,5 @@
 {
-  "HTTPS_SERVER_PORT": "3033",
+  "HTTPS_SERVER_PORT": "444",
   "HTTP_SERVER_PORT": "3003",
   "HTTP_SERVER_ADDR": "http://localhost",
   "MQTT_SERVER_ADDR": "development.nokitechnologies.com",

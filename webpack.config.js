@@ -2,14 +2,14 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
-const rendererConfig = require('./webpack.renderer.config.js');
+// const rendererConfig = require('./webpack.renderer.config.js');
 const { merge } = require('webpack-merge');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
 
 const baseConfig = {
   mode: 'development',
   target: 'electron-renderer',
-  entry: './src/index.tsx',
+  entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
@@ -94,4 +94,6 @@ const baseConfig = {
   cache: false,
 };
 
-module.exports = merge(baseConfig, rendererConfig);
+// module.exports = merge(baseConfig, rendererConfig);
+module.exports = baseConfig;
+

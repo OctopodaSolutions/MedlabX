@@ -1,0 +1,8 @@
+{
+    "rules": {
+        "no-restricted-globals": ["error", {
+            "name": "self",
+            "message": "Use 'self' carefully; try to avoid it as a global variable unless in a Web Worker."
+        }]
+    }
+}

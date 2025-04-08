@@ -99,25 +99,31 @@ global.mySqlConnection = db.pools[process.env.MYSQL_SCHEMA_NAME];
  * @returns Success or Failure
  */
 const verifyUser = (uname, pass) => {
-    const query = `SELECT * FROM users_list WHERE (UID = '${uname}' OR email='${uname}' OR name='${uname}') AND password = '${pass}' AND membership = true`;
+    const query = `SELECT * FROM users_list WHERE (UID = '${uname}' OR email='${uname}' OR name='${uname}') AND password = '${pass}' `;
     return new Promise((resolve, reject) => {
         mySqlConnection.query(query, (error, results) => {
             if (error) {
                 logger.debug(error);
-                reject(error);
+                reject("Login Denied");
             }
             else {
                 if (results.length === 1) {
-                    resolve(results[0]);
+                    if(results[0].membership==1){
+
+                        resolve(results[0]);
+                    }else {
+                        reject('Login failed due to Membership not Accepted');
+                    }
                 }
                 else {
-                    reject(false);
+                    reject('Invalid Email Id or Password');
                 }
             }
         });
     });
 
 };
+
 
 /**
  * Adds new user

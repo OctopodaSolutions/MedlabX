@@ -1,8 +1,0 @@
-{
-    "mqtt":[{"feed":"xspec1/data","returnFeed":"xspec1/control","id":"spectrum"},
-            {"feed":"xspec1/roi","returnFeed":"xspec1/control","id":"roiData"},
-            {"feed":"xspec1/settings","returnFeed":"xspec1/control","id":"settings"},
-            {"feed":"xspec1/peaks","returnFeed":"xspec1/control","id":"peaks"}],
-    "route":"xspec1",
-    "pluginType" : "xspecPlugin"
-}

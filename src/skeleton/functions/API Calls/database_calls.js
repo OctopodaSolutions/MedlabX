@@ -22,8 +22,24 @@ export function verifyUserLogin(uname, pass) {
                 resolve(res.data);
             })
             .catch(err => {
-                console.log(`Error in logging in user ${err}`);
-                reject(err.message);
+                 // Accessing more detailed error information
+                 if (err.response) {
+                    // Server responded with a status code outside the 2xx range
+                    console.log(`Error Status: ${err.response.status}`);
+                    console.log(`Error Data: ${JSON.stringify(err.response.data)}`);
+                    // Assuming 'msg' is in the response data
+                    console.log(`Error Message: ${err.response.data.msg}`);
+
+                    reject(err.response.data.msg);  // Reject with the message sent in the response
+                } else if (err.request) {
+                    // Request was made but no response received
+                    console.log(`No response received: ${err.request}`);
+                    reject('No response from server');
+                } else {
+                    // Something went wrong setting up the request
+                    console.log(`Error: ${err.message}`);
+                    reject(err.message);
+                }
             });
     });
 }

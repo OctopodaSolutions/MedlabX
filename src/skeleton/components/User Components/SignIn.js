@@ -37,7 +37,7 @@ function Copyright(props) {
   return (
     <Typography variant="body2" color="lightgrey" align="center" {...props}>
       {'Copyright © '}
-      <Link style={{ color: 'yellow' }} href="https://nokitechnologies.com/">
+      <Link style={{color: 'yellow'}} href="https://nokitechnologies.com/">
         Noki Technologies Pvt Ltd.
       </Link>{' '}
       {new Date().getFullYear()}
@@ -106,8 +106,10 @@ export default function SignIn() {
       navigate('/dashboard');
     } catch (err) {
       console.error("Error from Login", err);
-      const errorMessage = err.response?.data?.message || err.message;
-      console.log('errorMessage', errorMessage)
+      ErrorMessage(err);
+      // const errorMessage = err.response?.data?.message || err.message;
+      // console.log('errorMessage', errorMessage)
+      // ErrorMessage()
     }
 
   };
@@ -518,8 +520,8 @@ export function SignUp() {
                     },
                   }}
                 >
-                  <MenuItem value={1} sx={{ fontSize: '1.55vh' }}>Support</MenuItem>
-                  <MenuItem value={2} sx={{ fontSize: '1.55vh' }}>User</MenuItem>
+                  <MenuItem value={1} sx={{ fontSize: '1.55vh' }}>User</MenuItem>
+                  <MenuItem value={2} sx={{ fontSize: '1.55vh' }}>Administrator</MenuItem>
                   <MenuItem value={3} sx={{ fontSize: '1.55vh' }}>Engineer</MenuItem>
                 </Select>
               </FormControl>
@@ -739,5 +741,4 @@ export function ForgotPassword() {
     </div>
   )
 }
-
 

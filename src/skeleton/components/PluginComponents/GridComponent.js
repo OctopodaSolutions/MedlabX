@@ -2,9 +2,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { Box, IconButton, Typography, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemButton, Paper, Button } from "@mui/material";
 import { useSelector } from "react-redux";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import { CanvasJSChart } from 'canvasjs-react-charts';
-import { height } from "@mui/system";
-import Speedometer from 'react-d3-speedometer';
 
 const GridComponent = ({ keyId }) => {
   const plugins = useSelector((state) => state.plugin.plugins);

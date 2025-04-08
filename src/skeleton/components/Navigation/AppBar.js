@@ -487,11 +487,11 @@ function ResponsiveAppBar() {
                   <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>{avatarName}</Typography>
                 </MenuItem>
                 <Divider />
-                <MenuItem onClick={openAdmin} disabled={!(user.access_level >= 1)}>
+                <MenuItem onClick={openAdmin} disabled={user.access_level < 2}>
                   <PermIdentityIcon style={{ marginRight: '8px' }} />
                   <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>Users</Typography>
                 </MenuItem>
-                <MenuItem onClick={openSetting} disabled={!(user.access_level >= 2)}>
+                <MenuItem onClick={openSetting} disabled={user.access_level < 3}>
                   <SettingsIcon style={{ marginRight: '8px' }} />
                   <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>Settings</Typography>
                 </MenuItem>
@@ -500,7 +500,7 @@ function ResponsiveAppBar() {
                   <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>Logout</Typography>
                 </MenuItem>
                 <Divider />
-                <MenuItem onClick={handleUpdateClick}>
+                <MenuItem onClick={handleUpdateClick} disabled={user.access_level < 3}>
                   <Box display="flex" alignItems="center">
                     <BrowserUpdatedIcon style={{ marginRight: '8px' }} />
                     <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>
