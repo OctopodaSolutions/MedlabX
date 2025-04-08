@@ -69,21 +69,16 @@ export function Dashboard() {
           }}
         >
           {/* Toggle Button */}
-          <IconButton
+          <div
             onClick={toggleSidebar}
-            sx={{
+            style={{
               position: 'absolute',
+              padding: '5px',
               top: '10px',
-              right: '-20px',
+              right: '-30px',
               backgroundColor: 'black',
               color: '#fff',
               borderRadius: '0 40% 40% 0',
-              transition: 'transform 0.3s ease, background-color 0.3s ease, color 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.2)',
-                backgroundColor: 'black',
-                color: '#fff',
-              },
               zIndex: 1000,
             }}
           >
@@ -114,25 +109,49 @@ export function Dashboard() {
                 />
               )}
             </Box>
-          </IconButton>
-
+          </div>
 
           {!isSidebarOpen && (
             <>
-              <IconButton
-                sx={{
-                  backgroundColor: 'black',
+              <div
+                style={{
+                  width: '55%',
                   color: '#fff',
-                  marginTop: '50px',
-                  borderRadius: '50%',
-                  '&:hover': { backgroundColor: 'black' },
+                  margin: '60% 0% 0% 20%',
+                  display: 'inline-block',
+                  borderBottom: activeComponent === 'dashboard' ? '3px solid yellow' : 'none', // Underline when active
+                  paddingBottom: '5px', // Space between icon and underline
                 }}
                 onClick={() => setActiveComponent('dashboard')}
               >
-                <DashboardIcon sx={{ fontSize: 30 }} />
-              </IconButton>
+                <Tooltip title="Dashboard" placement="right">
+                  <DashboardIcon sx={{ fontSize: 30 }} />
+                </Tooltip>
+              </div>
+
+              {plugins.map((plugin, index) => (
+                <div
+                  key={index}
+                  style={{
+                    width: '45%',
+                    backgroundColor: 'black',
+                    color: '#fff',
+                    margin: '20% 0% 0% 20%',
+                    display: 'inline-block',
+                    borderBottom: activeComponent === plugin.instanceId ? '3px solid yellow' : 'none', // Underline when active
+                    paddingBottom: '5px', // Space between icon and underline
+                  }}
+                  onClick={() => setActiveComponent(plugin.instanceId)}
+                >
+                  <Tooltip title={plugin.instanceId} placement="right">
+                    <WysiwygSharpIcon />
+                  </Tooltip>
+                </div>
+              ))}
             </>
           )}
+
+
 
           {/* Sidebar Content */}
           {isSidebarOpen && (
@@ -184,45 +203,48 @@ export function Dashboard() {
                   Dashboard
                 </Box>
 
-                {plugins.map((plugin,index)=><Box
-                  key={index}
-                  sx={{
-                    display: 'flex',
-                    // width: '100%',
-                    marginBottom: '5px',
-                    alignItems: 'center',
-                    cursor: 'pointer',
-                    padding: '12px 10px', // Adjusted padding for better spacing
-                    fontSize: '16px',
-                    fontFamily: '"Roboto", sans-serif',
-                    fontWeight: '600',
-                    color: activeComponent === plugin.instanceId ? '#4CAF50' : '#FFFFFF', // Highlight color for active
-                    backgroundColor: activeComponent === plugin.instanceId ? '#1F2937' : 'transparent', // Darker background for active
-                    borderLeft: activeComponent === plugin.instanceId ? '4px solid #4CAF50' : 'none', // Green border for active
-                    boxShadow: activeComponent === plugin.instanceId
-                      ? '0 8px 12px rgba(0, 0, 0, 0.25)' // Stronger shadow for active
-                      : '0 4px 6px rgba(0, 0, 0, 0.1)', // Default shadow
-                    transition: 'transform 0.4s ease, background-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, border-left 0.4s ease', // Smooth transition
-                    '&:hover': {
-                      backgroundColor: '#374151', // Slightly lighter grey on hover
-                      color: '#E5E7EB', // Lighter grey for hover text
-                      boxShadow: '0 8px 12px rgba(0, 0, 0, 0.25)', // Stronger shadow
-                    },
-                    '&:active': {
-                      transform: 'scale(0.98)', // Subtle press effect
-                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', // Reduced shadow
-                      borderLeft: '4px solid #2196F3', // Blue border when active
-                    },
-                  }}
-                  onClick={() => setActiveComponent(plugin.instanceId)}
-                >
-                  {plugin.instanceId}
-                </Box>)}
+                {plugins.length>0 && [...plugins] // Create a shallow copy of the plugins array
+                  .sort((a, b) => a.instanceId.localeCompare(b.instanceId)) // Sorting by instanceId
+                  .map((plugin, index) => (
+                    <Box
+                      key={index}
+                      sx={{
+                        display: 'flex',
+                        marginBottom: '5px',
+                        alignItems: 'center',
+                        cursor: 'pointer',
+                        padding: '12px 10px',
+                        fontSize: '16px',
+                        fontFamily: '"Roboto", sans-serif',
+                        fontWeight: '600',
+                        color: activeComponent === plugin.instanceId ? '#4CAF50' : '#FFFFFF',
+                        backgroundColor: activeComponent === plugin.instanceId ? '#1F2937' : 'transparent',
+                        borderLeft: activeComponent === plugin.instanceId ? '4px solid #4CAF50' : 'none',
+                        boxShadow: activeComponent === plugin.instanceId
+                          ? '0 8px 12px rgba(0, 0, 0, 0.25)'
+                          : '0 4px 6px rgba(0, 0, 0, 0.1)',
+                        transition: 'transform 0.4s ease, background-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, border-left 0.4s ease',
+                        '&:hover': {
+                          backgroundColor: '#374151',
+                          color: '#E5E7EB',
+                          boxShadow: '0 8px 12px rgba(0, 0, 0, 0.25)',
+                        },
+                        '&:active': {
+                          transform: 'scale(0.98)',
+                          boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)',
+                          borderLeft: '4px solid #2196F3',
+                        },
+                      }}
+                      onClick={() => setActiveComponent(plugin.instanceId)}
+                    >
+                      {plugin.instanceId} 
+                    </Box>
+                  ))}
 
 
                 {/* Fixed Button */}
 
-                <Button
+                {/* <Button
                   variant="contained"
                   sx={{
                     width: 'calc(100% - 20px)', // Ensures padding or margin doesn't cut off the button
@@ -249,7 +271,7 @@ export function Dashboard() {
                   onClick={() => setActiveComponent('addPlugin')}
                 >
                   Add Plugin
-                </Button>
+                </Button> */}
               </Box>
             </Box>
 
@@ -259,17 +281,19 @@ export function Dashboard() {
         </Box>
 
         {/* Main Content Area */}
-        <Box sx={{ flex: 1, height:'94vh', overflowY: 'auto' }}>
+        <Box sx={{ flex: 1, height: '94vh', overflowY: 'auto' }}>
           {activeComponent === 'dashboard' && <GridComponent />}
           {activeComponent === 'addPlugin' && <UploadFile />}
-          {plugins.map((plugin,index) => (
-            <div key={plugin.instanceId} id= {`plugin-container-${index}`}
-                 style={{display:activeComponent===plugin.instanceId?'block':'none'}}>
-                  Loading
+          {/* {activeComponent === 'addPlugin' && <AddPluginPage />} */}
+          {plugins.map((plugin, index) => (
+            
+            <div key={plugin.instanceId} id={`plugin-container-${index}`}
+              style={{ display: activeComponent === plugin.instanceId ? 'block' : 'none' }}>
+              Loading
             </div>
           ))}
-          <PluginRenderer activeComponent={activeComponent} plugins={plugins}/>
-          
+          <PluginRenderer activeComponent={activeComponent} plugins={plugins} />
+
         </Box>
 
       </Box>

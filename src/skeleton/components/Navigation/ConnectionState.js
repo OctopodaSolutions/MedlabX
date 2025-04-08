@@ -58,7 +58,7 @@ export default function ConnectionStack() {
         <Badge aria-controls={open ? 'basic-menu' : undefined}
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
-          onClick={handleClick} sx={{cursor:'pointer'}} badgeContent={numLines.length || 0} color="primary">
+          onClick={handleClick} sx={{ cursor: 'pointer' }} badgeContent={numLines.length || '0'} color="primary">
           <RouterIcon sx={{ fontSize: 30, color: 'white' }} />
         </Badge>
         <Menu
@@ -70,10 +70,17 @@ export default function ConnectionStack() {
             'aria-labelledby': 'basic-button',
           }}
         >
-          {numLines.map((topic,index)=>(
-            <MenuItem key={index} sx={{color:(topic[1]=='active')?'green':'black'}} onClick={handleClose}>{topic[0]}</MenuItem>
-          ))}
+          {numLines.length === 0 ? (
+            <MenuItem disabled>No connections</MenuItem>
+          ) : (
+            numLines.map((topic, index) => (
+              <MenuItem key={index} sx={{ color: topic[1] === 'active' ? 'green' : 'black' }} onClick={handleClose}>
+                {topic[0]}
+              </MenuItem>
+            ))
+          )}
         </Menu>
+
         <Badge badgeContent={numConnected || 0} color="primary">
           <PeopleIcon sx={{ fontSize: 30, color: 'white' }} />
         </Badge>

@@ -33,7 +33,7 @@ import Badge from '@mui/material/Badge';
 import InfoIcon from '@mui/icons-material/Info';
 import ListItemText from '@mui/material/ListItemText';
 import CloseIcon from '@mui/icons-material/Close';
-import { removeNotification,removeAllNotification, addNotification  } from '../../store/notificationSlice';
+import { removeNotification, removeAllNotification, addNotification } from '../../store/notificationSlice';
 /**
  * ResponsiveAppBar component
  * 
@@ -56,11 +56,11 @@ function ResponsiveAppBar() {
   // const [updateNotAvailable, setUpdateNotAvailable] = useState(false);
   // const downloadProgress = useSelector((state) => state.DownloadProgress);
   const [open, setOpen] = useState(false);
-  const [memoryUsage, setMemoryUsage] = useState(0);
+  const [memoryUsage, setMemoryUsage] = useState("0"); // Initialize with zero
   const [nokiCSS, setNokiCSS] = useState(null);
   const [updateCheckDialog, setUpdateCheckDialog] = useState(false);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
-  const  notifications= useSelector((state) => state.notifications.notifications)
+  const notifications = useSelector((state) => state.notifications.notifications)
   const [anchorElNotification, setanchorElNotification] = useState(null);
 
 
@@ -184,17 +184,17 @@ function ResponsiveAppBar() {
   /**
   * Closes the Notification menu.
   */
-    const handleNotificationsClose = () => {
-      setanchorElNotification(null);
-  
-    };
-    /**
-     * 
-     * Handles the notification to remove
-     */
-    const handleRemoveNotification = (id) => {
-      dispatch(removeNotification(id))
-    }
+  const handleNotificationsClose = () => {
+    setanchorElNotification(null);
+
+  };
+  /**
+   * 
+   * Handles the notification to remove
+   */
+  const handleRemoveNotification = (id) => {
+    dispatch(removeNotification(id))
+  }
 
   const handleUpdateClick = () => {
     checkIfUpdateDownloaded().then((res) => {
@@ -248,15 +248,22 @@ function ResponsiveAppBar() {
   /**
    * Monitors memory usage and updates the state every second.
    */
+
+
   useEffect(() => {
+    // This ensures the memory is reset to 0 when the page reloads
+    setMemoryUsage("0");
+
     const intervalId = setInterval(() => {
       if (window.performance && window.performance.memory) {
-        setMemoryUsage(String(window.performance.memory.usedJSHeapSize / 1024 / 1024).substring(0, 5));
+        setMemoryUsage(
+          String(window.performance.memory.usedJSHeapSize / 1024 / 1024).substring(0, 5)
+        );
       }
     }, 1000); // Updates every second
 
-    return () => clearInterval(intervalId);
-  }, []);
+    return () => clearInterval(intervalId); // Cleanup on component unmount
+  }, []); // Empty dependency array ensures it only runs on mount
 
 
 
@@ -264,7 +271,7 @@ function ResponsiveAppBar() {
     <div>
       <div>
         <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'black', height: '6vh' }} style={{ minHeight: 0 }}>
-          <Box sx={{width: '33%'}}>
+          <Box sx={{ width: '33%' }}>
             <ConnectionStack />
           </Box>
 

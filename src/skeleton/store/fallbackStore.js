@@ -63,7 +63,7 @@ const apiMiddleware = (store) => (next) => (action) => {
 // Create store with dynamic reducer support
 export function createFallbackStore(workers) {
     console.log("Creating Fallback Store with dynamic reducer manager");
-    websocketClient = new WebSocketClient('wss://localhost:3033', onMessage, workers);
+    websocketClient = new WebSocketClient('wss://localhost:444', onMessage, workers);
     
     // Create store with the persisted reducer and middleware
     store = createStore(
