@@ -115,7 +115,6 @@ export default function AppRouter() {
 
   // For Running Plugins in Backend
   useEffect(() => {
-    if (!window.loadPlugin && isSignIn) {
       if (group.length == 0 && plugins.length == 0) {
         startPlugin().then((res) => {
           console.log(res);
@@ -124,8 +123,7 @@ export default function AppRouter() {
           console.log("Plugin Run failed", err);
         })
       }
-    }
-  }, [isSignIn])
+  }, [])
 
   // Function to load Script
   function loadScript(src, instanceId, pluginType) {
@@ -167,9 +165,7 @@ export default function AppRouter() {
   // For Re-rendering plugin Script in Frontend if script lost while refreshing
   useEffect(()=>{
     if ( plugins.length > 0 ) {
-      if ( !window.loadPlugin ) {
         loadMultiplePlugins();
-      }
     }
   },[])
 

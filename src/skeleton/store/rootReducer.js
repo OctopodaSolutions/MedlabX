@@ -12,6 +12,7 @@ import { realTimeReducer } from './realTimeSlice';
 import { mqttConnectionReducer } from './mqttConnectionSlice';
 import { aboutReducer } from './aboutSlice';
 import { pluginReducer } from './pluginSlice'
+import { dashboardReducer } from './dashboardSlice';
 
 const rootReducerList = {
     auth: authReducer,
@@ -28,7 +29,7 @@ const rootReducerList = {
     realTime: realTimeReducer,
     about: aboutReducer,
     plugin: pluginReducer,
-
+    dashboard: dashboardReducer,
 };
 
 const rootReducer = rootReducerList;

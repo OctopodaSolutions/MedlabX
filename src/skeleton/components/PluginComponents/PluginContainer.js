@@ -24,7 +24,7 @@ const PluginRenderer = ({ plugins }) => {
                 // window.pluginInstances[instanceId].initializePluginUI(store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient, Server_Addr, axiosInstance)
             } else {
                 if (remainingRetries > 0) {
-                    console.error(`loadPlugin not found for ${instanceId}. Retrying in ${delay / 1000} seconds...`);
+                    console.error(`initializePluginUI not found for ${instanceId}. Retrying in ${delay / 1000} seconds...`);
                     setTimeout(() => attemptLoad(remainingRetries - 1), delay);
                 } else {
                     console.error(`Failed to load plugin ${instanceId} after multiple attempts.`);
