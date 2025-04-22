@@ -12,13 +12,13 @@ class MySQLConnection {
   
     addDatabase(alias, config) {
       if (this.pools[alias]) {
-        throw new Error(`Database alias \"${alias}\" already exists.`);
+        logger.info(`Database alias \"${alias}\" already exists.`);
       }
       this.pools[alias] = mysql.createPool({
         host: config.MYSQL_HOST || 'localhost',
         user: config.MYSQL_ROOT_USERNAME || 'root',
         password: config.MYSQL_ROOT_PASSWORD || '',
-        database: config.MYSQL_SCHEMA_NAME || '',
+        database: alias || '',
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0,
@@ -79,15 +79,14 @@ class MySQLConnection {
         connection.release();
       }
     }
-  }
+}
   
 
-const db = new MySQLConnection();
+global.mySqlInstance = new MySQLConnection();
 
-db.addDatabase(process.env.MYSQL_SCHEMA_NAME, process.env);
-
-global.mySqlConnection = db.pools[process.env.MYSQL_SCHEMA_NAME];
+mySqlInstance.addDatabase(process.env.MYSQL_SCHEMA_NAME, process.env);
   
+const mySqlConnection = mySqlInstance.pools[process.env.MYSQL_SCHEMA_NAME];
   
 
 /*****************************  User Functions ********************************/

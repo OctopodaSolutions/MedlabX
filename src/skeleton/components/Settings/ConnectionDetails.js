@@ -1,6 +1,6 @@
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Paper, Box, Button, Typography} from '@mui/material';
+import { Paper, Box, Button, Typography } from '@mui/material';
 import { TextField } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useSelector } from 'react-redux';
@@ -93,13 +93,13 @@ export default function CommunicationSettings() {
     formData.append('file', file);
 
     update_template(formData)
-    .then((data) => {
+      .then((data) => {
         console.log('File upload result:', data);
         SuccessMessage('Template Changed');
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
         console.error('Upload failed:', error.message);
-    });
+      });
   };
 
   /**
@@ -211,15 +211,24 @@ export default function CommunicationSettings() {
   };
 
   return (
-    <Paper elevation={5} sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color1)', height: '84vh', overflowY: 'auto' }}>
+    <Paper elevation={10} sx={{
+      background: 'rgba(119, 119, 119, 0.4)',
+      backgroundColor: 'rgb(255,255,255,0.1)',
+      borderradius: '20px',
+      boxShadow: '10px 40px 30px rgba(61, 61, 61, 0.19)',
+      backdropfilter: 'blur(8.6px)',
+      WebkitBackdropFilter: 'blur(8.6px)',
+      overflow: 'hidden',
+      height: '82vh', overflowY: 'auto'
+    }}>
       <Box sx={{ margin: 'auto', marginRight: '20%', marginLeft: '20%' }}>
         <Divider sx={{ marginBottom: '1vh', padding: '2rem 0rem' }}>
           <Chip label="Network Settings" size="small" sx={{ backgroundColor: 'var(--body_background4)', color: 'var(--body_color)', fontSize: '1.25vh', padding: '1.2vh 1vh' }} />
         </Divider>
         <Grid container spacing={2} >
           <Grid xs={4} >
-            <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)' }}>
-            <TextField
+            <Item >
+              <TextField
                 disabled={!editMode}
                 required
                 id="outlined-required"
@@ -229,6 +238,7 @@ export default function CommunicationSettings() {
                   "& .MuiInputBase-input.Mui-disabled": {
                     WebkitTextFillColor: "var(--body_color)",
                   },
+
                 }}
                 value={httpAddr}
                 onChange={(event) => setHttpAddr(event.target.value)}
@@ -291,7 +301,7 @@ export default function CommunicationSettings() {
               />
             </Item>
           </Grid>
-          <Grid xs={4}>
+          {/* <Grid xs={4}>
             <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)' }}>
               <TextField
                 disabled={!editMode}
@@ -308,9 +318,9 @@ export default function CommunicationSettings() {
                 onChange={(event) => setNumLines(event.target.value)}
               />
             </Item>
-          </Grid>
+          </Grid> */}
         </Grid>
-        <Grid  sx={{mt:'2rem'}} container spacing={2}>
+        {/* <Grid sx={{ mt: '2rem' }} container spacing={2}>
           <Grid xs={4}>
             <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)' }}>
               <TextField
@@ -330,7 +340,7 @@ export default function CommunicationSettings() {
             </Item>
           </Grid>
           <Grid xs={4}>
-            <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)',fontSize:'1.25vh' }}>
+            <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)', fontSize: '1.25vh' }}>
               MCA Mode -
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography>Off</Typography>
@@ -342,11 +352,11 @@ export default function CommunicationSettings() {
               </Stack>
             </Item>
           </Grid>
-        </Grid>
+        </Grid> */}
       </Box>
       <Box sx={{ margin: 'auto', marginRight: '20%', marginLeft: '20%', }}>
         <Divider sx={{ marginBottom: '4%', marginTop: '4%' }}>
-          <Chip label="MQTT Settings" size="small" sx={{ backgroundColor: 'var(--body_background4)', color: 'var(--body_color)',fontSize:'1.25vh', padding:'1.2vh 1vh' }} />
+          <Chip label="MQTT Settings" size="small" sx={{ backgroundColor: 'var(--body_background4)', color: 'var(--body_color)', fontSize: '1.25vh', padding: '1.2vh 1vh' }} />
         </Divider>
         <Grid container spacing={2}>
           <Grid xs={4}>
@@ -441,8 +451,8 @@ export default function CommunicationSettings() {
               />
             </Item>
           </Grid>
-          <Grid xs={4}>
-            <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)',fontSize:'1.25vh' }}>
+          {/* <Grid xs={4}>
+            <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)', fontSize: '1.25vh' }}>
               Demo Mode -
               <Stack direction="row" spacing={1} alignItems="center">
                 <Typography>Off</Typography>
@@ -453,7 +463,7 @@ export default function CommunicationSettings() {
                 <Typography>On</Typography>
               </Stack>
             </Item>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
       {/* <Box sx={{ margin: 'auto', marginRight: '20%', marginLeft: '20%' }}>
@@ -494,10 +504,10 @@ export default function CommunicationSettings() {
           </Grid>
         </Grid>
       </Box> */}
-      <Box sx={{ margin: 'auto', marginRight: '20%', marginLeft: '20%' }}>
+      {/* <Box sx={{ margin: 'auto', marginRight: '20%', marginLeft: '20%' }}>
         <Divider sx={{ marginBottom: '4%', marginTop: '4%', }}>
           <Chip label="
-           Settings" size="small" sx={{ backgroundColor: 'var(--body_background4)', color: 'var(--body_color)',fontSize:'1.25vh', padding:'1.2vh 1vh' }}/>
+           Settings" size="small" sx={{ backgroundColor: 'var(--body_background4)', color: 'var(--body_color)', fontSize: '1.25vh', padding: '1.2vh 1vh' }} />
         </Divider>
         <Grid container spacing={2}>
           <Grid xs={4}>
@@ -519,53 +529,53 @@ export default function CommunicationSettings() {
             </Item>
           </Grid>
           <Grid xs={4}>
-            <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)',fontSize:'1.25vh' }}>
+            <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)', fontSize: '1.25vh' }}>
               <TextField
-                      variant="outlined"
-                      label="Report Template"
-                      value={getFileShortPath(templateFilePath)}
-                      disabled={!editMode}
-                      InputProps={{
-                        readOnly: true,
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <input
-                              accept="/" 
-                              style={{ display: 'none' }}
-                              id="raised-button-file"
-                              multiple
-                              type="file"
-                              onChange={handleFileChange}
-                            />
-                            <label htmlFor="raised-button-file">
-                              <IconButton
-                                color="primary"
-                                aria-label="upload picture"
-                                component="span"
-                                disabled={!editMode}
-                              >
-                                <AttachFileIcon disabled={!editMode}  />
-                              </IconButton>
-                            </label>
-                          </InputAdornment>
-                        ),
-                      }}
-                    />
-                    <IconButton
-                      variant="contained"
-                      color="primary"
-                      onClick={handleUpload}
-                      style={{ marginTop: '10px' }}
-                      disabled={!editMode}
-                    >
-                      <FileUploadIcon />
-                    </IconButton>
+                variant="outlined"
+                label="Report Template"
+                value={getFileShortPath(templateFilePath)}
+                disabled={!editMode}
+                InputProps={{
+                  readOnly: true,
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <input
+                        accept="/"
+                        style={{ display: 'none' }}
+                        id="raised-button-file"
+                        multiple
+                        type="file"
+                        onChange={handleFileChange}
+                      />
+                      <label htmlFor="raised-button-file">
+                        <IconButton
+                          color="primary"
+                          aria-label="upload picture"
+                          component="span"
+                          disabled={!editMode}
+                        >
+                          <AttachFileIcon disabled={!editMode} />
+                        </IconButton>
+                      </label>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <IconButton
+                variant="contained"
+                color="primary"
+                onClick={handleUpload}
+                style={{ marginTop: '10px' }}
+                disabled={!editMode}
+              >
+                <FileUploadIcon />
+              </IconButton>
 
             </Item>
           </Grid>
 
           <Grid xs={4}>
-            <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)',fontSize:'1.25vh' }}>
+            <Item sx={{ backgroundColor: 'var(--body_background1)', color: 'var(--body_color)', fontSize: '1.25vh' }}>
               Dark Mode -
               <Stack direction="row" spacing={1} alignItems="center" >
                 <Typography>Off</Typography>
@@ -575,16 +585,16 @@ export default function CommunicationSettings() {
             </Item>
           </Grid>
         </Grid>
-      </Box>
-      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem 0rem', marginTop:'2%'}}>
+      </Box> */}
+      {/* <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem 0rem', marginTop: '2%' }}>
         <Stack spacing={4} direction="row">
-          
-          <Button disabled={editMode} sx={{ display: editMode, border: '1px solid lightgrey' ,backgroundColor: 'var(--body_background1)', color: 'var(--body_color)',fontSize:'1.25vh'}} onClick={editSettings} endIcon={<EditIcon  />} variant="text">Edit</Button>
-          <Button disabled={!editMode} sx={{ display: !editMode, border: '1px solid #ccc',backgroundColor: 'var(--body_background1)', color: 'var(--body_color)',fontSize:'1.25vh' }} onClick={saveSettings} endIcon={<SaveIcon />} variant="text">Save</Button>
-          <Button sx={{ border: '1px solid #ccc' ,backgroundColor: 'var(--body_background1)', color: 'var(--body_color)',fontSize:'1.25vh'}} onClick={reloadSettings} endIcon={<CancelIcon />} variant="text">Cancel</Button>
-          <Button disabled={editMode} sx={{ display: editMode, border: '1px solid #ccc',backgroundColor: 'var(--body_background1)', color: 'var(--body_color)',fontSize:'1.25vh' }} onClick={uploadSettings} endIcon={<UploadIcon />} variant="text">Upload</Button>
+
+          <Button disabled={editMode} sx={{ display: editMode, border: '1px solid lightgrey', backgroundColor: 'var(--body_background1)', color: 'var(--body_color)', fontSize: '1.25vh' }} onClick={editSettings} endIcon={<EditIcon />} variant="text">Edit</Button>
+          <Button disabled={!editMode} sx={{ display: !editMode, border: '1px solid #ccc', backgroundColor: 'var(--body_background1)', color: 'var(--body_color)', fontSize: '1.25vh' }} onClick={saveSettings} endIcon={<SaveIcon />} variant="text">Save</Button>
+          <Button sx={{ border: '1px solid #ccc', backgroundColor: 'var(--body_background1)', color: 'var(--body_color)', fontSize: '1.25vh' }} onClick={reloadSettings} endIcon={<CancelIcon />} variant="text">Cancel</Button>
+          <Button disabled={editMode} sx={{ display: editMode, border: '1px solid #ccc', backgroundColor: 'var(--body_background1)', color: 'var(--body_color)', fontSize: '1.25vh' }} onClick={uploadSettings} endIcon={<UploadIcon />} variant="text">Upload</Button>
         </Stack>
-      </Box>
+      </Box> */}
     </Paper>
   );
 }

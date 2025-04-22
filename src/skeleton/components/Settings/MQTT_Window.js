@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Box, Button, IconButton, InputAdornment} from '@mui/material';
-import {TextField } from '@mui/material';
+import { Box, Button, IconButton, InputAdornment } from '@mui/material';
+import { TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useSelector } from 'react-redux';
 import { addMessageFromSoftware, resetMessages } from '../../store/messageSlice';
@@ -32,6 +32,9 @@ export default function MQTT_Window() {
     const [selectedMqttH, setSelectedMqttH] = useState("");
     const [selectedMqttS, setSelectedMqttS] = useState("");
     const maxMqttMsgs = useSelector((state) => state.connection_settings.NUM_MSGS);
+    console.log("...........MQTT................", mqtts);
+
+
 
     const dispatch = useDispatch();
 
@@ -180,23 +183,33 @@ export default function MQTT_Window() {
     };
 
     return (
-        <div style={{ display: 'flex', padding: '14px 10px', height: '80vh' }}>
+        <div style={{ display: 'flex', padding: '14px 10px', height: '78vh' }}>
             <Box
+                sx={{
+                    justifyItems: 'center', alignItems: 'center', background: 'rgba(119, 119, 119, 0.4)',
+                    backgroundColor: 'rgb(255,255,255,0.1)',
+                    borderradius: '20px',
+                    boxShadow: '10px 40px 30px rgba(61, 61, 61, 0.19)',
+                    backdropfilter: 'blur(8.6px)',
+                    WebkitBackdropFilter: 'blur(8.6px)',
+                }}
                 boxShadow={5}
                 borderRadius={3}
                 p={2}
-                style={{ height: '100%', flex: .2, marginRight: '10px', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--body_background1)', color: 'var(--body_color)' }}
-            >
-                {mqtts && (mqtts.length > 0) && mqtts.map((sysId) => (
-                    <button key={sysId[0]}
+                style={{ flex: .2, marginRight: '10px', display: 'flex', flexDirection: 'column', color: 'var(--body_color)' }}>
+                {mqtts && mqtts.length > 0 && mqtts.map((sysId, index) => (
+                    <button
+                        key={index}
                         className={`left-sysid-selection-button ${selectedSysID === sysId[0] ? 'selected' : ''}`}
-                        onClick={() => handleSysIdClick(sysId[0])}
+                        onClick={() => handleSysIdClick(sysId)}
                     >
                         {sysId[0]}
                     </button>
                 ))}
-                <Box className='subscription-down' sx={{ backgroundColor: "var(--body_background1)" }}>
-                    <Button className='Disconnect-Button' onClick={refreshBatch}>Reconnect</Button>
+
+
+                <Box className='subscription-down'>
+                    <Button className='Disconnect-Button' onClick={refreshBatch} >Reconnect</Button>
                 </Box>
             </Box>
             <Box
@@ -204,12 +217,16 @@ export default function MQTT_Window() {
                 borderRadius={3}
                 p={2}
                 style={{
-                    height: '100%',
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
                     position: 'relative',
-                    backgroundColor: 'var(--body_background1)'
+                    background: 'rgba(119, 119, 119, 0.4)',
+                    backgroundColor: 'rgb(255,255,255,0.1)',
+                    borderradius: '20px',
+                    boxShadow: '10px 40px 30px rgba(61, 61, 61, 0.19)',
+                    backdropfilter: 'blur(8.6px)',
+                    WebkitBackdropFilter: 'blur(8.6px)',
                 }}
             >
                 <div ref={messageContainerRef} className="message-container">
@@ -232,7 +249,7 @@ export default function MQTT_Window() {
                         })}
                 </div>
                 <TextField
-                    label="Type your message"
+                    enterKeyHint="Type your message"
                     variant="outlined"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}

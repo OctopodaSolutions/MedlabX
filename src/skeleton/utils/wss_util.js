@@ -41,7 +41,7 @@ export class WebSocketClient {
         WebSocketClient.instance = this;
 
         // Default message callback (empty if not set)
-        this.messageCallback = null;
+        this.messageCallbacks = [];
     }
 
     /**
@@ -57,11 +57,16 @@ export class WebSocketClient {
         };
 
         this.socket.onmessage = (event) => {
-            // Process the message here
-            if (this.messageCallback) {
-                this.messageCallback(event.data);
-            }
-            this.workerPool.postMessage(event.data);
+            this.workerPool.postMessage(event.data); // if still needed
+        
+            // Call all registered callbacks
+            this.messageCallbacks.forEach(cb => {
+                try {
+                    cb(event.data);
+                } catch (err) {
+                    console.error('WebSocket message callback error:', err);
+                }
+            });
         };
 
         this.socket.onclose = () => {
@@ -78,7 +83,9 @@ export class WebSocketClient {
      * @param {Function} callback - The callback function to handle incoming WebSocket messages.
     */
     setMessageCallback(callback) {
-        this.messageCallback = callback;
+        if (typeof callback === 'function') {
+            this.messageCallbacks.push(callback);
+        }
     }
 
     reconnect() {

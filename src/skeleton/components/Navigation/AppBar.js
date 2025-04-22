@@ -510,14 +510,14 @@ function ResponsiveAppBar() {
                   </Box>
                 </MenuItem>
                 <Divider />
-                <MenuItem>
+                <MenuItem onClick={handleRefresh}>
                   <RefreshIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }} onClick={handleRefresh}>Restart</Typography>
+                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }} >Restart</Typography>
                 </MenuItem>
                 <Divider />
-                <MenuItem>
+                <MenuItem onClick={handleClose}>
                   <ExitToAppIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }} onClick={handleClose}>Exit</Typography>
+                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }} >Exit</Typography>
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={openAbout}>
@@ -527,6 +527,7 @@ function ResponsiveAppBar() {
               </Menu>
             </Box>
           </Box>
+          
         </Toolbar>
 
         <Dialog open={logoutAlertCalled} onClose={handleLogoutDialogClose}>

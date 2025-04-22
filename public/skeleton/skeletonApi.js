@@ -642,7 +642,7 @@ server_app.post("/runPlugin", (req, res) => {
                     try {
                         const config = JSON.parse(data);
                         const mqttConfig = config.mqtt; // Assuming the structure has mqtt object
-                        console.log('mqtt feeds', mqttConfig);
+                        // console.log('mqtt feeds', mqttConfig);
 
                         // Import the backend.js dynamically (require it)
                         const backend = require(backendFilePath);
@@ -650,7 +650,7 @@ server_app.post("/runPlugin", (req, res) => {
                         // Call the start function and pass the mqttConfig
                         if (backend && typeof backend.customStart === 'function') {
                             console.log(`Starting plugin: ${pluginDir}`);
-                            backend.customStart(`/${config.route}`, mqttConfig);
+                            backend.customStart(`/${config.route}`, mqttConfig, config.schema);
                             group.push({ config: config, react: `/plugins/${pluginDir}/reactPlugin.js`, reactChunk: `/plugins/${pluginDir}/269reactPlugin.js` });
                         } else {
                             console.error(`No start function in backend.js for ${pluginDir}`);

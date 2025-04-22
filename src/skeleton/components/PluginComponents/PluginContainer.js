@@ -17,10 +17,21 @@ const PluginRenderer = ({ plugins }) => {
         }
     };
 
+    const wssClinet = (key) => {
+        // Combine the existing reducers with the new one
+        let pluginData = store.getState();
+        if (!pluginData[key]) {
+            return websocketClient;
+        } else {
+             return false;
+        }
+    };
+
     const loadPluginWithRetry = (pluginType, instanceId, index, retries = 3, delay = 3000) => {
         const attemptLoad = (remainingRetries) => {
             if (window.pluginInstances && window.pluginInstances[pluginType]) {
-                window.pluginInstances[pluginType].initializePluginUI( store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient, Server_Addr, axiosInstance);
+                let wssInstance = wssClinet(instanceId);
+                window.pluginInstances[pluginType].initializePluginUI( store, instanceId, `plugin-container-${index}`, injectReducer, wssInstance, Server_Addr, axiosInstance);
                 // window.pluginInstances[instanceId].initializePluginUI(store, instanceId, `plugin-container-${index}`, injectReducer, websocketClient, Server_Addr, axiosInstance)
             } else {
                 if (remainingRetries > 0) {

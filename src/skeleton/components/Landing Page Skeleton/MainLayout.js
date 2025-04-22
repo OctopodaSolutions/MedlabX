@@ -2,29 +2,15 @@ import ReactDOM from 'react-dom';
 import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import './MainLayout.css';
-import { styled } from '@mui/material/styles';
-import Switch from '@mui/material/Switch';
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
-import { Avatar, Button, ButtonGroup, Divider, FormControlLabel, IconButton, ListItemIcon, Menu, MenuItem, Tooltip, Typography, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, ListItemText, Collapse } from '@mui/material';
-import { Logout, PersonAdd, Settings, Delete as DeleteIcon } from '@mui/icons-material';
-import MenuIcon from '@mui/icons-material/Menu';
-import CloseIcon from '@mui/icons-material/Close';
+import { Tooltip, Chip } from '@mui/material';
 import WysiwygSharpIcon from '@mui/icons-material/WysiwygSharp';
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import GridComponent from '../PluginComponents/GridComponent'
-import AddPluginPage from '../PluginComponents/AddPluginPage'
 import PluginRenderer from '../PluginComponents/PluginContainer'
-// import TerminalSharpIcon from '@mui/icons-material/TerminalSharp';
-import LaptopMacSharpIcon from '@mui/icons-material/LaptopMacSharp';
 import ChevronLeftSharpIcon from '@mui/icons-material/ChevronLeftSharp';
 import ChevronRightSharpIcon from '@mui/icons-material/ChevronRightSharp';
-import { v4 as uuidv4 } from 'uuid';
 import UploadFile from '../PluginComponents/UploadFile';
 
 
@@ -40,8 +26,11 @@ export function Dashboard() {
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [activeComponent, setActiveComponent] = useState('dashboard');
-  const group = useSelector((state)=>state.plugin.group);
-  const plugins = useSelector((state)=>state.plugin.plugins);
+  const group = useSelector((state) => state.plugin.group);
+  const plugins = useSelector((state) => state.plugin.plugins);
+  console.log('................plugins.........', plugins);
+
+  const activePlugin = plugins.find(plugin => plugin.instanceId === activeComponent);
 
 
   const toggleSidebar = () => {
@@ -129,25 +118,27 @@ export function Dashboard() {
                 </Tooltip>
               </div>
 
-              {plugins.map((plugin, index) => (
-                <div
-                  key={index}
-                  style={{
-                    width: '45%',
-                    backgroundColor: 'black',
-                    color: '#fff',
-                    margin: '20% 0% 0% 20%',
-                    display: 'inline-block',
-                    borderBottom: activeComponent === plugin.instanceId ? '3px solid yellow' : 'none', // Underline when active
-                    paddingBottom: '5px', // Space between icon and underline
-                  }}
-                  onClick={() => setActiveComponent(plugin.instanceId)}
-                >
-                  <Tooltip title={plugin.instanceId} placement="right">
-                    <WysiwygSharpIcon />
-                  </Tooltip>
-                </div>
-              ))}
+              {plugins.length > 0 && [...plugins] // Create a shallow copy of the plugins array
+                .sort((a, b) => a.instanceId.localeCompare(b.instanceId)) // Sorting by instanceId
+                .map((plugin, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      width: '45%',
+                      backgroundColor: 'black',
+                      color: '#fff',
+                      margin: '20% 0% 0% 20%',
+                      display: 'inline-block',
+                      borderBottom: activeComponent === plugin.instanceId ? '3px solid yellow' : 'none', // Underline when active
+                      paddingBottom: '5px', // Space between icon and underline
+                    }}
+                    onClick={() => setActiveComponent(plugin.instanceId)}
+                  >
+                    <Tooltip title={plugin.instanceId} placement="right">
+                      <WysiwygSharpIcon />
+                    </Tooltip>
+                  </div>
+                ))}
             </>
           )}
 
@@ -203,7 +194,7 @@ export function Dashboard() {
                   Dashboard
                 </Box>
 
-                {plugins.length>0 && [...plugins] // Create a shallow copy of the plugins array
+                {plugins.length > 0 && [...plugins] // Create a shallow copy of the plugins array
                   .sort((a, b) => a.instanceId.localeCompare(b.instanceId)) // Sorting by instanceId
                   .map((plugin, index) => (
                     <Box
@@ -237,7 +228,7 @@ export function Dashboard() {
                       }}
                       onClick={() => setActiveComponent(plugin.instanceId)}
                     >
-                      {plugin.instanceId} 
+                      {plugin.instanceId}
                     </Box>
                   ))}
 
@@ -286,7 +277,7 @@ export function Dashboard() {
           {activeComponent === 'addPlugin' && <UploadFile />}
           {/* {activeComponent === 'addPlugin' && <AddPluginPage />} */}
           {plugins.map((plugin, index) => (
-            
+
             <div key={plugin.instanceId} id={`plugin-container-${index}`}
               style={{ display: activeComponent === plugin.instanceId ? 'block' : 'none' }}>
               Loading
@@ -295,6 +286,40 @@ export function Dashboard() {
           <PluginRenderer activeComponent={activeComponent} plugins={plugins} />
 
         </Box>
+
+        {activePlugin && (activePlugin.name || activePlugin.instanceId) !== 'Dashboard' && (
+          <Chip
+            label={activePlugin.name || activePlugin.instanceId}
+            sx={{
+              position: 'fixed',
+              bottom: '15px',
+              right: '20px',
+              zIndex: 2000,
+              px: 2.5,
+              py: 1.2,
+              fontSize: '0.8rem',
+              background: 'linear-gradient(135deg, #f57c00, #fbc02d)',
+              color: '#fff',
+              fontWeight: 600,
+              borderRadius: '10px',
+              boxShadow: '0 8px 20px rgba(0, 0, 0, 0.15)',
+              textTransform: 'capitalize',
+              letterSpacing: '0.6px',
+              transition: 'all 0.3s ease-in-out',
+              backdropFilter: 'blur(3px)',
+              '& .MuiChip-icon': {
+                color: '#fff',
+                marginLeft: '-4px',
+              },
+              '&:hover': {
+                transform: 'scale(1.05)',
+                boxShadow: '0 10px 24px rgba(0, 0, 0, 0.25)',
+              },
+            }}
+          />
+        )}
+
+
 
       </Box>
 

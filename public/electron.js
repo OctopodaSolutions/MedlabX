@@ -90,13 +90,33 @@ process.on('SIGTERM', shutdown);
  * Creates the main application window.
  */
 async function createWindow() {
-  const primaryDisplay = screen.getPrimaryDisplay();
-  const scaleFactor = primaryDisplay.scaleFactor;
-  logger.debug(`ScaleFactor ${scaleFactor}`);
-  logger.info(`Running Directory - ${__dirname}`);
-  mainWindow = new BrowserWindow({
-    width: process.env.DEFAULT_WINDOW_WIDTH * scaleFactor,
-    height: process.env.DEFAULT_WINDOW_HEIGHT * scaleFactor,
+  // Base resolution you're designing for
+ const BASE_WIDTH = 1920;
+ const BASE_HEIGHT = 1040;
+ 
+ // Get the current screen's usable size
+ const primaryDisplay = screen.getPrimaryDisplay();
+ const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
+ 
+ logger.debug(`Current Screen Size: ${screenWidth}x${screenHeight}`);
+ 
+ // Calculate scale factors based on the base resolution
+ const scaleX = screenWidth / BASE_WIDTH;
+ const scaleY = screenHeight / BASE_HEIGHT;
+ 
+ // Use the smaller scale to maintain aspect ratio
+ const scale = Math.min(scaleX, scaleY);
+ 
+ // Compute final dimensions
+ const windowWidth = Math.floor(BASE_WIDTH * scale);
+ const windowHeight = Math.floor(BASE_HEIGHT * scale);
+ 
+ logger.info(`Scaled Window Size: ${windowWidth}x${windowHeight}`);
+ 
+   logger.info(`Running Directory - ${__dirname}`);
+   mainWindow = new BrowserWindow({
+     width: windowWidth,
+     height: windowHeight,
     useContentSize: true,
     center: true,
     icon: path.join(__dirname, '/logo_X.ico'),
