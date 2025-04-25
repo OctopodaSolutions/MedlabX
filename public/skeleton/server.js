@@ -20,6 +20,8 @@ const { logger } = require('../logger.js');
 const { disconnect } = require('./database.js');
 const { showErrorDialog } = require('../dialogMessage.js');
 
+const { decryptCertFile } = require('./decrypt-util.js');
+
 class Server {
     constructor() {
         this.serverApp = express();
@@ -56,20 +58,23 @@ class Server {
      * Loads certificates based on the environment (packaged or not)
      */
     loadCertificates() {
-        if (app.isPackaged) {
-            const basePath = path.join(process.resourcesPath, 'app.asar.unpacked');
-            this.key = this.loadCertificate('server.key');
-            this.cert = this.loadCertificate('server.pem');
-            this.ca = this.loadCertificate('rootCA.pem');
-        } else {
-            this.key = fs.readFileSync(path.join(app.getAppPath(), 'certificates', 'server.key'));
-            this.cert = fs.readFileSync(path.join(app.getAppPath(), 'certificates', 'server.pem'));
-            this.ca = fs.readFileSync(path.join(app.getAppPath(), 'certificates', 'rootCA.pem'));
-        }
+        try{
+            if (app.isPackaged) {
+                this.key = this.loadCertificate('server.key.enc').toString('utf8');
+                this.cert = this.loadCertificate('server.pem.enc').toString('utf8');
+                this.ca = this.loadCertificate('rootCA.pem.enc').toString('utf8');
+            } else {
+                this.key = fs.readFileSync(path.join(app.getAppPath(), 'certificates', 'server.key'));
+                this.cert = fs.readFileSync(path.join(app.getAppPath(), 'certificates', 'server.pem'));
+                this.ca = fs.readFileSync(path.join(app.getAppPath(), 'certificates', 'rootCA.pem'));
+            }
 
-        if (!this.cert || !this.key) {
-            logger.error('Certificate or key file not found!');
-            app.exit();
+            if (!this.cert || !this.key) {
+                logger.error('Certificate or key file not found!');
+                app.exit();
+            }
+        } catch (err) {
+            console.log('certs are not fount at this location',err);
         }
     }
 
@@ -80,7 +85,7 @@ class Server {
      */
     loadCertificate(filename) {
         const filePath = path.join(this.getCertificatesPath(), filename);
-        return fs.readFileSync(filePath, 'utf8');
+        return decryptCertFile(filePath, 'Noki#2k01');
     }
 
     /**
@@ -88,7 +93,7 @@ class Server {
      * @returns {String}
      */
     getCertificatesPath() {
-        return path.join(process.resourcesPath, 'resources/certificates');
+        return path.join(app.getAppPath(), 'certificates-encrypted');
     }
 
     /**

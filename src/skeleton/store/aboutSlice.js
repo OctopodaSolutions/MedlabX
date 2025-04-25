@@ -15,9 +15,16 @@ const aboutSlice = createSlice({
         ...action.payload,
       };
     },
+    setLicense : (state, action) => {
+      // Update state with the provided payload
+      return {
+        ...state,
+        ...action.payload,
+      };
+    },
   },
 });
 
 // Export actions and reducer
-export const { setAbout } = aboutSlice.actions;
+export const { setAbout, setLicense } = aboutSlice.actions;
 export const aboutReducer = aboutSlice.reducer;

@@ -3,21 +3,34 @@ const crypto = require('crypto');
 const path = require('path');
 const { app } = require('electron');
 const si = require('systeminformation');
+const { name } = require('../../package.json');
 
-function getCertificatesPath() {
+function  loadPublicKey() {
+  return `-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1l0uycG3yuQAdEa1poIo
+lwXTsreFvks4nyrOc3kVI4Z75N9DsAJAwhk4g/TK4nLHC+4TYzYyzd1olQqRapWZ
+cFWhz7Tv5yTaCG6B/EwfsfgtxHH8Q+xDZwv/SwrDe3Ze/0rm+Aa++R1HM1TWqMWc
+OT7QAGOp5BJfwIZOfEP03N/4xyNyZz1TbfX3zxNinhcQP8i9bIQv11vFn+lTQ3gm
+pnJhNwiW25DKy3iq4N9iCjtjljk3+0V/5x4h8MeY9EQit06f4UkWxhesr/SThPoV
+pfZ7EpGN77RURUndSuh1Qq/ZrIs4I4Uw2OtHshufFM/Ay98PwB/HZ/LebWMaaI+u
+fQIDAQAB
+-----END PUBLIC KEY-----`
+}
+
+function getLicensePath() {
   if (app.isPackaged) {
-    return path.join(process.resourcesPath, 'resources/certificates');
+    return path.join(app.getPath('userData'), 'license');
   } else {
-    return path.join(app.getAppPath(), '/certificates');
+    return path.join(app.getAppPath(), '/license');
   }
 }
 
 function loadCertificate(filename) {
   try {
-    const filePath = path.join(getCertificatesPath(), filename);
+    const filePath = path.join(getLicensePath(), filename);
     return fs.readFileSync(filePath, 'utf8');
   } catch {
-    console.error(`Error reading ${filePath}:`, error.message);
+    console.error(`Error reading ${filePath}:`);
     throw error;
   }
 }
@@ -30,7 +43,7 @@ function verifyLicense() {
   return new Promise((resolve, reject) => {
     // console.log("start",getCertificatesPath());
     try {
-      const publicKey = loadCertificate('public_key.pem');
+      const publicKey = loadPublicKey();
       const licenseData = loadCertificate('license.txt').trim();
       const licenseSigBase64 = loadCertificate('license.sig.b64').trim();
       const licenseSig = Buffer.from(licenseSigBase64, 'base64');
@@ -55,7 +68,7 @@ function verifyLicense() {
       resolve(false);
     } catch { 
       console.error('Error during license verification:', error.message);
-      reject(error); 
+      reject(false);
     }
   });
 
@@ -102,7 +115,7 @@ async function verifyDeviceId() {
     return false;
   }
 
-  if (hardwareId === licenseData['Device Id']) {
+  if ((hardwareId === licenseData['Device Id']) && (name === licenseData['Product Name'])) {
     console.log('Device ID matches.');
     return true;
   } else {

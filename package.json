@@ -102,7 +102,14 @@
         "electron-pack": "build --em.main=build/electron.js",
         "build": "react-scripts build && electron-builder",
         "dist": "electron-builder -w -c.extraMetadata.main=build/electron.js",
-        "electron:package:win": "npx webpack --config webpack.config.js && electron-builder -w -c.extraMetadata.main=public/electron.js",
+        "build:webpack": "cross-env NODE_ENV=production webpack --config webpack.config.js",
+        "obfuscate:backend": "javascript-obfuscator public --output public-obf --config obfuscator-config.json",
+        "encrypt:certs": "cross-env CERT_SECRET=Noki#2k01 node encrypt-certificates.js",
+        "clean:certs": "rimraf certificates-encrypted",
+        "copy:public": "rimraf public-obf && cpx \"public/**/*\" public-obf --include-empty-dirs",
+        "clean:public-obf": "rimraf public-obf",
+        "electron:package:win:dev": "npm run build:webpack && npm run copy:public && npm run encrypt:certs && electron-builder -w -c.extraMetadata.isDevBuild=true -c.extraMetadata.main=public-obf/electron.js && npm run clean:certs && npm run clean:public-obf",
+        "electron:package:win": "npm run build:webpack && npm run obfuscate:backend && npm run encrypt:certs && electron-builder -w -c.extraMetadata.main=public-obf/electron.js",
         "electron:package:mac": "npx webpack --config webpack.config.js && electron-builder -m -c.extraMetadata.main=public/electron.js",
         "electron:package:linux": "npx webpack --config webpack.config.js && electron-builder -l -c.extraMetadata.main=public/electron.js",
         "release": "electron-builder -p always",
@@ -124,16 +131,8 @@
                 "to": "resources/.env"
             },
             {
-                "from": "./certificates",
-                "to": "resources/certificates"
-            },
-            {
                 "from": "./public/config.json",
                 "to": "resources/config.json"
-            },
-            {
-                "from": "./public/skeleton/Config Files/CssConfig.json",
-                "to": "resources/CssConfig.json"
             },
             {
                 "from": "./public/restore-files.ps1",
@@ -178,16 +177,15 @@
         },
         "files": [
             "package.json",
-            "public/electron.js",
             "build/**/*",
-            "public/**/*",
+            "public-obf/**/*",
+            "certificates-encrypted/**/*",
             "server.key",
             "server.pem",
             "rootCA.pem",
             "index.html",
             "node_modules/**/*",
             "!public/config.json",
-            "!public/skeleton/Config Files/CssConfig.json",
             "!.env",
             "!public/restore-files.ps1"
         ],
@@ -232,6 +230,7 @@
         "babel-jest": "^29.7.0",
         "babel-loader": "^9.2.1",
         "concurrently": "^8.2.2",
+        "cpx": "^1.5.0",
         "cross-env": "^7.0.3",
         "css-loader": "^7.1.2",
         "electron-builder": "^24.3.0",
@@ -244,6 +243,7 @@
         "react-devtools-electron": "^4.7.0",
         "react-router-dom": "^6.18.0",
         "redux-mock-store": "^1.5.4",
+        "rimraf": "^6.0.1",
         "sass": "^1.82.0",
         "sass-loader": "^16.0.4",
         "style-loader": "^4.0.0",
@@ -251,6 +251,7 @@
         "webpack": "^5.84.0",
         "webpack-cli": "^5.1.1",
         "webpack-dev-server": "^4.15.2",
+        "webpack-obfuscator": "^3.5.1",
         "worker-loader": "^3.0.8"
     }
 }

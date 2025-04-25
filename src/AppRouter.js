@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getAbout, getLicense, startPlugin } from './skeleton/functions/API Calls/database_calls';
 import { ErrorMessage } from './skeleton/components/UI Components/AlertMessage';
 import { getConnectedArduinos } from './skeleton/functions/Arduino Functions/getLinesFromArduino';
-import { setAbout } from './skeleton/store/aboutSlice';
+import { setAbout, setLicense } from './skeleton/store/aboutSlice';
 import { addNotification } from './skeleton/store/notificationSlice';
 import { addMqtt } from './skeleton/store/mqttConnectionSlice';
 import { ConnectionDetails } from './skeleton/functions/Program Functions/connection_functions';
@@ -22,6 +22,7 @@ import About from './skeleton/components/User Components/About';
 import CssBaseline from '@mui/material/CssBaseline';
 import { setGroup, setPlugins } from './skeleton/store/pluginSlice';
 import { Server_Addr } from './skeleton/utils/medlab_constants';
+import License from './skeleton/components/license/license';
 
 
 const CurrentPath = () => {
@@ -96,6 +97,9 @@ export default function AppRouter() {
     if (isSignIn) {
       getLicense().then((res) => {
         console.log(res.message)
+        if(res.val){
+          dispatch(setLicense({license:true}));
+        }
         if (res.display) {
           dispatch(addNotification({ message: res.message }))
         }
@@ -203,6 +207,11 @@ export default function AppRouter() {
               </ProtectedRoute>
             } />
 
+            <Route path='/license' element={
+              <ProtectedRoute>
+                <Layout children={<License />} />
+              </ProtectedRoute>
+            } />
 
           </Routes>
           <ToastContainer

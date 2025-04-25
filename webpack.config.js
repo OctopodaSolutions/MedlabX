@@ -2,21 +2,21 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
-// const rendererConfig = require('./webpack.renderer.config.js');
-const { merge } = require('webpack-merge');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-const baseConfig = {
-  mode: 'development',
+module.exports = {
+  mode: 'production',
   target: 'electron-renderer',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'build'),
-    filename: 'bundle.js',
+    filename: '[name].[contenthash].js',
+    clean: true, // Webpack 5 built-in cleaner
   },
   module: {
     rules: [
-      // Handling TypeScript files
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
@@ -27,7 +27,6 @@ const baseConfig = {
           },
         },
       },
-      // Babel for JS files
       {
         test: /\.js$/,
         exclude: /node_modules/,
@@ -38,62 +37,65 @@ const baseConfig = {
           },
         },
       },
-      // CSS handling
       {
         test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
-      // Image assets
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/i,
         type: 'asset/resource',
       },
-      // Handling MP4 videos
       {
         test: /\.mp4$/,
-        use: 'file-loader?name=videos/[name].[ext]',
+        type: 'asset/resource',
+        generator: {
+          filename: 'videos/[name][ext]',
+        },
       },
-      // Web workers
       {
         test: /\.worker\.js$/,
-        use: { loader: 'worker-loader' }, // You may want to check if you need to update this loader
+        use: { loader: 'worker-loader' }, // Update this if using Webpack 5 alternatives
       },
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.ts', '.tsx'], // Add TypeScript file extensions
-  },
-  devServer: {
-    static: {
-      directory: path.join(__dirname, 'dist'),
-    },
-    compress: true,
-    port: process.env.HTTP_SERVER || 3003,
-    hot: true,
-    open: true, // Automatically open the browser
-    historyApiFallback: true,
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: './public/index.html',
-      filename: 'index.html',
+      minify: {
+        collapseWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+      },
+    }),
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].css',
     }),
     new webpack.DefinePlugin({
       global: 'global',
+      __IS_PLUGIN_MODE__: JSON.stringify(false),
     }),
     new webpack.ProvidePlugin({
       global: 'global',
     }),
-    new Dotenv(),
+    new Dotenv({ systemvars: true }),
     new NodePolyfillPlugin(),
-    new webpack.DefinePlugin({
-      __IS_PLUGIN_MODE__: JSON.stringify(false)
-    })
   ],
-  devtool: 'eval-source-map',
-  cache: false,
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
+    splitChunks: {
+      chunks: 'all',
+    },
+    runtimeChunk: {
+      name: 'runtime',
+    },
+  },
+  devtool: false, // Disable source maps for production
+  performance: {
+    hints: 'warning',
+  },
 };
-
-// module.exports = merge(baseConfig, rendererConfig);
-module.exports = baseConfig;
-

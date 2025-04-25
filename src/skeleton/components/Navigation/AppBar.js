@@ -33,6 +33,7 @@ import Badge from '@mui/material/Badge';
 import InfoIcon from '@mui/icons-material/Info';
 import ListItemText from '@mui/material/ListItemText';
 import CloseIcon from '@mui/icons-material/Close';
+import KeyIcon from '@mui/icons-material/Key';
 import { removeNotification, removeAllNotification, addNotification } from '../../store/notificationSlice';
 /**
  * ResponsiveAppBar component
@@ -81,6 +82,11 @@ function ResponsiveAppBar() {
     logout(user, dispatch);
     eventBus.emit('navigate', '/signin');
   };
+
+  const handleLicenseClick = () => {
+    handleCloseUserMenu();
+    navigate('/license');
+  }
 
   /**
    * Sets the avatar name based on the user's name.
@@ -509,12 +515,15 @@ function ResponsiveAppBar() {
                     {updateDownloaded && <HelpOutlineIcon style={{ marginLeft: 1, verticalAlign: 'middle', color: 'green' }} />}
                   </Box>
                 </MenuItem>
+                <MenuItem onClick={handleLicenseClick} disabled={user.access_level < 3}>
+                  <KeyIcon style={{ marginRight: '8px' }} />
+                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>License</Typography>
+                </MenuItem>
                 <Divider />
                 <MenuItem onClick={handleRefresh}>
                   <RefreshIcon style={{ marginRight: '8px' }} />
                   <Typography variant="body2" sx={{ fontSize: '1.6vh' }} >Restart</Typography>
                 </MenuItem>
-                <Divider />
                 <MenuItem onClick={handleClose}>
                   <ExitToAppIcon style={{ marginRight: '8px' }} />
                   <Typography variant="body2" sx={{ fontSize: '1.6vh' }} >Exit</Typography>

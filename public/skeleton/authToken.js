@@ -1,7 +1,8 @@
 const redisClient = require("./redis");
 const { verifyDeviceId, isLicenseValid, verifyLicense } = require("./verify");
 const jwt = require('jsonwebtoken');
-
+const { app } = require('electron');
+const path = require('path');
 // verify the license
 let isValid = false;
 verifyLicense().then((res) => {
@@ -26,6 +27,8 @@ verifyDeviceId().then((isValid) => {
 })
 
 let isValidityLive = isLicenseValid()
+const packageJson = require(path.join(app.getAppPath(), 'package.json'));
+const isDev = packageJson.isDevBuild === true;
 /**
  * Authentication token verification
  * @param {Object} req 
@@ -34,7 +37,7 @@ let isValidityLive = isLicenseValid()
  * @returns Success or Failure
  */
 global.authenticateToken = (req, res, next) => {
-    if (isValid && isDeviceId && isValidityLive) {
+    if ((isDev)||(isValid && isDeviceId && isValidityLive)) {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
         if (!token) {

@@ -68,6 +68,7 @@ const backupDir = path.join(userDataPath, 'backup');
 let mainWindow = null;
 const { MqttManager } = require('./skeleton/mqtt_client');
 const redisClient = require('./skeleton/redis');
+const { initializeLicenseFile } = require('./licenseCreation');
 // const { customStart } = require('./custom');
 
 global.server = new Server();
@@ -90,53 +91,54 @@ process.on('SIGTERM', shutdown);
  * Creates the main application window.
  */
 async function createWindow() {
-  // Base resolution you're designing for
- const BASE_WIDTH = 1920;
- const BASE_HEIGHT = 1040;
- 
- // Get the current screen's usable size
- const primaryDisplay = screen.getPrimaryDisplay();
- const { width: screenWidth, height: screenHeight } = primaryDisplay.workAreaSize;
- 
- logger.debug(`Current Screen Size: ${screenWidth}x${screenHeight}`);
- 
- // Calculate scale factors based on the base resolution
- const scaleX = screenWidth / BASE_WIDTH;
- const scaleY = screenHeight / BASE_HEIGHT;
- 
- // Use the smaller scale to maintain aspect ratio
- const scale = Math.min(scaleX, scaleY);
- 
- // Compute final dimensions
- const windowWidth = Math.floor(BASE_WIDTH * scale);
- const windowHeight = Math.floor(BASE_HEIGHT * scale);
- 
- logger.info(`Scaled Window Size: ${windowWidth}x${windowHeight}`);
- 
-   logger.info(`Running Directory - ${__dirname}`);
-   mainWindow = new BrowserWindow({
-     width: windowWidth,
-     height: windowHeight,
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const screenWidth = primaryDisplay.workAreaSize.width;
+  const screenHeight = primaryDisplay.workAreaSize.height;
+  const DESIGN_WIDTH = 1920;
+  const DESIGN_HEIGHT = 1040;
+  const widthRatio = screenWidth / DESIGN_WIDTH;
+  const heightRatio = screenHeight / DESIGN_HEIGHT;
+  const zoomFactor = Math.min(widthRatio, heightRatio, 1); // Never upscale
+  const adjustedWidth = DESIGN_WIDTH;
+  const adjustedHeight = DESIGN_HEIGHT;
+  logger.info(`Screen Size: ${screenWidth}x${screenHeight}`);
+  logger.info(`Design Size: ${DESIGN_WIDTH}x${DESIGN_HEIGHT}`);
+  logger.info(`Zoom Factor: ${zoomFactor.toFixed(2)}`);
+  const mainWindow = new BrowserWindow({
+    width: adjustedWidth,
+    height: adjustedHeight,
     useContentSize: true,
     center: true,
+    resizable: false,
     icon: path.join(__dirname, '/logo_X.ico'),
     frame: false,
     autoHideMenuBar: true,
     darkTheme: true,
     titleBarStyle: 'hidden',
+    show: false,
     webPreferences: {
+      contextIsolation: true,
+      sandbox: true,
+      preload: path.join(__dirname, 'preload.js'),
       devTools: true,
       nodeIntegration: true,
       webSecurity: false,
       experimentalFeatures: true,
       enablePreferredSizeMode: true,
-      enableRemoteModule: true,
-      zoomFactor: 1,
-      contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      enableRemoteModule: true
     }
   });
-
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+  // Apply zoom after content load
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.setZoomFactor(zoomFactor);
+  });
+  // Re-apply zoom when refocusing the window (fix for switching bug)
+  mainWindow.on('focus', () => {
+    mainWindow.webContents.setZoomFactor(zoomFactor);
+  });
   mainWindow.on('close', () => {
     mainWindow.webContents.executeJavaScript('localStorage.clear();');
     dialog.showMessageBox({
@@ -154,21 +156,18 @@ async function createWindow() {
       }
     });
   });
-
   if (app.isPackaged) {
     console.log('Loading packaged HTML file:', htmlFilePath);
-    mainWindow.loadURL(htmlFilePath);
+    await mainWindow.loadURL(htmlFilePath);
   } else {
     console.log('Opening DevTools and loading:', process.env.DEVELOPMENT_UI_URL);
     mainWindow.webContents.openDevTools({ mode: 'detach' });
-    mainWindow.loadURL(process.env.DEVELOPMENT_UI_URL);
+    await mainWindow.loadURL(process.env.DEVELOPMENT_UI_URL);
   }
-
   mainWindow.on('resize', () => {
     let { width, height } = mainWindow.getContentSize();
-    logger.debug(`Width: ${width}, Height: ${height}`);
+    logger.debug(`Window Resized → Width: ${width}, Height: ${height}`);
   });
-
   mainWindow.webContents.session.webRequest.onBeforeSendHeaders(
     (details, callback) => {
       callback({ requestHeaders: { Origin: '*', ...details.requestHeaders } });
@@ -186,6 +185,7 @@ async function createWindow() {
 
 app.whenReady()
 .then(() => {
+  if(app.isPackaged) initializeLicenseFile();
   if (fs.existsSync(backupDir)) {
       logger.info('Restoring backup files...');
       return restoreFiles()

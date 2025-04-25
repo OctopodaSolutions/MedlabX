@@ -6,21 +6,7 @@ const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources'
 const demoMode = require(configPath)['DEMO_MODE'];
 const mqttURL = (require(configPath))['MQTT_SERVER_ADDR'];
 const mqttPort = (require(configPath))['MQTT_SERVER_PORT'];
-// const numMqtt = (require(configPath))['NUM_MQTT'];
-// const numMCA = (require(configPath))['NUM_MCA'];
-// const numAGM = (require(configPath))['NUM_AGM'];
-// const shortsaveInterval = (require(configPath))['ACTIVITY_SAVE_INTERVAL_SHORT']
-// const longsaveInterval = (require(configPath))['ACTIVITY_SAVE_INTERVAL_LONG']
-// const cron = require('node-cron');
-// const { updateXspecHistory, fetchCoversionFactors } = require('./database');
-// const { format } = require('date-fns');
-// const fs = require('fs');
-// const { v4: uuidv4 } = require('uuid');
 
-// const EventEmitter = require('events');
-// class MQTTEmitter extends EventEmitter {}
-
-// const mqttEmitter = new MQTTEmitter();
 
 /**
  * Creating a Deque class and creating methods to perform on deque

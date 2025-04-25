@@ -191,7 +191,7 @@ server_app.delete('/user_details', authenticateToken, (request, response) => {
 /**
  * Fetch config file
  */
-server_app.get('/config', (req, res) => {
+server_app.get('/config.json', (req, res) => {
     try {
         logger.info(`Getting Config File ${configPath}`);
         res.sendFile(configPath);
@@ -474,7 +474,7 @@ server_app.post('/generateReport', authenticateToken, async (request, response) 
 });
 
 
-server_app.post('/uploadReportTemplate', (req, res) => {
+server_app.post('/uploadReportTemplate', authenticateToken, (req, res) => {
     console.log('Upload endpoint hit');
 
     if (!req.files || Object.keys(req.files).length === 0) {
@@ -500,6 +500,7 @@ server_app.post('/uploadReportTemplate', (req, res) => {
 
 /********** App Specific API's  **********/
 
+// about details
 server_app.get('/about', (req, res) => {
     try {
         logger.info(`About requested}`);
@@ -512,6 +513,7 @@ server_app.get('/about', (req, res) => {
     }
 });
 
+// license details
 server_app.get('/license', (req, res) => {
     const { isValid, isDeviceId, isValidityLive } = getLicenseInfo();
     if (isValid && isDeviceId && isValidityLive.val) {
@@ -520,6 +522,94 @@ server_app.get('/license', (req, res) => {
         res.send({ val: false, display: true, message: 'License is not valid' })
     }
 });
+
+// get the license file to frontend
+server_app.get('/getLicenseFile',(req, res) => {
+    try{
+        let filePath = path.join(app.getAppPath(), 'license/license.txt');
+        if(app.isPackaged){
+            filePath = path.join(app.getPath('userData'), 'license/license.txt');
+        }
+        res.download(filePath, 'license.txt', (err) => {
+        if (err) {
+            res.status(500).send('Error downloading file.');
+        }
+        });
+    }catch(err){
+        res.status(500).send('Error downloading file due to file path.');
+    }
+})
+
+server_app.post('/uploadLicense',(req,res) =>{
+    
+    try {
+        let licenseDir = path.join(app.getAppPath(), 'license');
+        if(app.isPackaged){
+            licenseDir = path.join(app.getPath('userData'), 'license');
+        }
+        const tempDir = path.join(licenseDir, 'temp');
+        const tempZipPath = path.join(tempDir, 'license-upload.zip');
+      if (!fs.existsSync(tempDir)) {
+        fs.mkdirSync(tempDir, { recursive: true });
+      }
+  
+      const writeStream = fs.createWriteStream(tempZipPath);
+      req.pipe(writeStream);
+  
+      writeStream.on('finish', async () => {
+        try {
+          const allowedFiles = ['license.txt', 'license.sig.b64'];
+  
+          const zipEntries = [];
+          const directory = await unzipper.Open.file(tempZipPath);
+          directory.files.forEach((file) => {
+            if (!file.path.endsWith('/')) { // Ignore folders
+              zipEntries.push(file.path);
+            }
+          });
+  
+          const invalidEntries = zipEntries.filter(
+            (entry) => !allowedFiles.includes(entry)
+          );
+  
+          if (invalidEntries.length > 0) {
+            fs.unlinkSync(tempZipPath); // Clean up
+            return res.status(400).json({
+              message: 'Invalid zip file. Only license.txt and license.sig.b64 are allowed.',
+              invalidEntries,
+            });
+          }
+  
+          if (!fs.existsSync(licenseDir)) {
+            fs.mkdirSync(licenseDir, { recursive: true });
+          }
+  
+          // Extract to license directory
+          fs.createReadStream(tempZipPath)
+            .pipe(unzipper.Extract({ path: licenseDir }))
+            .on('close', () => {
+              fs.unlinkSync(tempZipPath); // Clean up
+              res.json({ message: 'License uploaded and extracted successfully' });
+            })
+            .on('error', (err) => {
+              console.error('Unzip error:', err);
+              res.status(500).send('Failed to extract license zip');
+            });
+        } catch (validationError) {
+          console.error('Validation error:', validationError);
+          res.status(500).send('Failed to validate zip content');
+        }
+      });
+  
+      writeStream.on('error', (err) => {
+        console.error('Stream error:', err);
+        res.status(500).send('File upload failed');
+      });
+    } catch (err) {
+      console.error('Unexpected error:', err);
+      res.status(500).send('Server error');
+    }
+})
 
 /*********** Plugin upload API's ***********/
 
@@ -596,7 +686,7 @@ server_app.post("/runPlugin", (req, res) => {
 
     fs.readdir(pluginsDirectory, (err, pluginDirs) => {
         if (err) {
-            console.error('Unable to read Plugin directory:', err);
+            console.error('Unable to read Plugin directory:');
             return res.status(500).json({ error: 'Unable to read Plugin directory' });
         }
 

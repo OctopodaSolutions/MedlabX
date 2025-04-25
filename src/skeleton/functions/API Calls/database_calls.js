@@ -264,7 +264,7 @@ export function update_template(formData) {
 export function get_config() {
     console.log("Server Address", Server_Addr);
     return new Promise((resolve, reject) => {
-        const fetchURL = `${Server_Addr}/config`;
+        const fetchURL = `${Server_Addr}/config.json`;
         axiosInstance.get(fetchURL)
             .then(res => {
                 resolve(res.data);
@@ -437,5 +437,30 @@ export function startPlugin(){
         }).catch((err)=>{
             reject(err);
         })
+    })
+}
+
+/************* License API CALLS *************/
+
+export function downloadLicense(){
+    return new Promise((resolve,reject)=>{
+        let fetchURL=Server_Addr+'/getLicenseFile';
+        axiosInstance.get(fetchURL,{ responseType: 'blob', }).then((res)=>{
+            resolve(res.data);
+        }).catch((err)=>{reject(err)});
+    })
+}
+
+export function uploadLicenseZip(file){
+    return new Promise((resolve,reject)=>{
+        let fetchURL=Server_Addr+'/uploadLicense';
+        axiosInstance.post(fetchURL,file, {
+            headers: {
+              "Content-Type": "application/octet-stream", // Raw binary upload
+              "File-Name": file.name, // Optional: send file name as header
+            },
+        }).then((res)=>{
+            resolve(res.data);
+        }).catch((err)=>{reject(err)});
     })
 }
