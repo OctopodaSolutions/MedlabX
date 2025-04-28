@@ -2,9 +2,14 @@ import { Button, Paper, Typography } from '@mui/material';
 import axios from 'axios';
 import React from 'react'
 import { downloadLicense, uploadLicenseZip } from '../../functions/API Calls/database_calls';
+import { useSelector } from 'react-redux';
 
 const License = () => {
+  const licenseAcquired = useSelector((state)=>state[key].about.license);
+
   const handleDownload = async () => {
+    if(licenseAcquired) return;
+    
     try {
       downloadLicense().then((response)=>{
         const url = window.URL.createObjectURL(new Blob([response]));
@@ -24,6 +29,8 @@ const License = () => {
   };
 
   const handleUpload = async (e) => {
+    if(licenseAcquired) return;
+
     const file = e.target.files?.[0];
     if (!file) return;
 

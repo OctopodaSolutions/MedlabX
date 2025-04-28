@@ -37,7 +37,7 @@ const isDev = packageJson.isDevBuild === true;
  * @returns Success or Failure
  */
 global.authenticateToken = (req, res, next) => {
-    if ((isDev)||(isValid && isDeviceId && isValidityLive)) {
+    if ((!app.isPackaged)|| (isDev)||(isValid && isDeviceId && isValidityLive)) {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
         if (!token) {
