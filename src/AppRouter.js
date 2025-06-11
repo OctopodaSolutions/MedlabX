@@ -22,7 +22,7 @@ import About from './skeleton/components/User Components/About';
 import CssBaseline from '@mui/material/CssBaseline';
 import { setGroup, setPlugins } from './skeleton/store/pluginSlice';
 import { Server_Addr } from './skeleton/utils/medlab_constants';
-import License from './skeleton/components/license/license';
+import License from './skeleton/components/license/License';
 
 
 const CurrentPath = () => {
