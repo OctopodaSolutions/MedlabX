@@ -276,7 +276,17 @@ function ResponsiveAppBar() {
   return (
     <div>
       <div>
-        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', backgroundColor: 'black', height: '6vh' }} style={{ minHeight: 0 }}>
+        <Toolbar 
+          sx={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            height: '6vh',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+          }} 
+          style={{ minHeight: 0 }}
+        >
           <Box sx={{ width: '33%' }}>
             <ConnectionStack />
           </Box>
@@ -287,11 +297,20 @@ function ResponsiveAppBar() {
             component="a"
             onClick={navigateHome}
             sx={{
-              fontFamily: 'monospace',
-              letterSpacing: '.3rem',
-              color: 'white',
+              fontFamily: '"Inter", "Roboto", sans-serif',
+              letterSpacing: '.2rem',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
               textDecoration: 'none',
               cursor: 'pointer',
+              fontWeight: 700,
+              transition: 'all 0.3s ease',
+              '&:hover': {
+                transform: 'scale(1.05)',
+                filter: 'brightness(1.2)',
+              },
             }}
           >
             MEDLABX{isDemoMode && '(DEMO)'}

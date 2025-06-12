@@ -46,15 +46,15 @@ export function Dashboard() {
         {/* Sidebar */}
         <Box
           sx={{
-            width: isSidebarOpen ? '250px' : '60px',
-            background: 'black',
+            width: isSidebarOpen ? '280px' : '70px',
+            background: 'linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
             color: '#fff',
-            // padding: isSidebarOpen ? '20px' : '10px',
-            transition: 'width 0.3s ease',
+            transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             display: 'flex',
             flexDirection: 'column',
             position: 'relative',
-
+            boxShadow: '4px 0 20px rgba(0, 0, 0, 0.1)',
+            borderRight: '1px solid rgba(255, 255, 255, 0.1)',
           }}
         >
           {/* Toggle Button */}
@@ -62,13 +62,24 @@ export function Dashboard() {
             onClick={toggleSidebar}
             style={{
               position: 'absolute',
-              padding: '5px',
-              top: '10px',
-              right: '-30px',
-              backgroundColor: 'black',
+              padding: '8px',
+              top: '15px',
+              right: '-35px',
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
               color: '#fff',
-              borderRadius: '0 40% 40% 0',
+              borderRadius: '0 50% 50% 0',
               zIndex: 1000,
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.05)';
+              e.currentTarget.style.boxShadow = '0 6px 20px rgba(0, 0, 0, 0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = '0 4px 15px rgba(0, 0, 0, 0.2)';
             }}
           >
             <Box
@@ -162,30 +173,44 @@ export function Dashboard() {
                 <Box
                   sx={{
                     display: 'flex',
-                    // width: '100%',
-                    marginBottom: '5px',
+                    marginBottom: '8px',
                     alignItems: 'center',
                     cursor: 'pointer',
-                    padding: '12px 10px', // Adjusted padding for better spacing
+                    padding: '16px 20px',
                     fontSize: '16px',
-                    fontFamily: '"Roboto", sans-serif',
+                    fontFamily: '"Inter", "Roboto", sans-serif',
                     fontWeight: '600',
-                    color: activeComponent === 'dashboard' ? '#4CAF50' : '#FFFFFF', // Highlight color for active
-                    backgroundColor: activeComponent === 'dashboard' ? '#1F2937' : 'transparent', // Darker background for active
-                    borderLeft: activeComponent === 'dashboard' ? '4px solid #4CAF50' : 'none', // Green border for active
+                    color: activeComponent === 'dashboard' ? '#ffffff' : 'rgba(255, 255, 255, 0.8)',
+                    background: activeComponent === 'dashboard' 
+                      ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%)' 
+                      : 'transparent',
+                    borderRadius: '15px',
+                    borderLeft: activeComponent === 'dashboard' ? '4px solid #667eea' : 'none',
                     boxShadow: activeComponent === 'dashboard'
-                      ? '0 8px 12px rgba(0, 0, 0, 0.25)' // Stronger shadow for active
-                      : '0 4px 6px rgba(0, 0, 0, 0.1)', // Default shadow
-                    transition: 'transform 0.4s ease, background-color 0.4s ease, color 0.4s ease, box-shadow 0.4s ease, border-left 0.4s ease', // Smooth transition
+                      ? '0 8px 25px rgba(102, 126, 234, 0.2)'
+                      : 'none',
+                    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                    position: 'relative',
+                    overflow: 'hidden',
                     '&:hover': {
-                      backgroundColor: '#374151', // Slightly lighter grey on hover
-                      color: '#E5E7EB', // Lighter grey for hover text
-                      boxShadow: '0 8px 12px rgba(0, 0, 0, 0.25)', // Stronger shadow
+                      background: activeComponent === 'dashboard' 
+                        ? 'linear-gradient(135deg, rgba(102, 126, 234, 0.4) 0%, rgba(118, 75, 162, 0.4) 100%)'
+                        : 'rgba(255, 255, 255, 0.1)',
+                      transform: 'translateX(8px)',
+                      boxShadow: '0 8px 25px rgba(102, 126, 234, 0.15)',
                     },
-                    '&:active': {
-                      transform: 'scale(0.98)', // Subtle press effect
-                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.2)', // Reduced shadow
-                      borderLeft: '4px solid #2196F3', // Blue border when active
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: '-100%',
+                      width: '100%',
+                      height: '100%',
+                      background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent)',
+                      transition: 'left 0.5s',
+                    },
+                    '&:hover::before': {
+                      left: '100%',
                     },
                   }}
                   onClick={() => setActiveComponent('dashboard')}
@@ -272,7 +297,14 @@ export function Dashboard() {
         </Box>
 
         {/* Main Content Area */}
-        <Box sx={{ flex: 1, height: '94vh', overflowY: 'auto' }}>
+        <Box 
+          sx={{ 
+            flex: 1, 
+            height: '94vh', 
+            overflowY: 'auto',
+            position: 'relative',
+          }}
+        >
           {activeComponent === 'dashboard' && <GridComponent />}
           {activeComponent === 'addPlugin' && <UploadFile />}
           {/* {activeComponent === 'addPlugin' && <AddPluginPage />} */}

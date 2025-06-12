@@ -14,12 +14,11 @@ const GridComponent = () => {
   const boxPlugins = useSelector((state) => state.dashboard.boxPlugins);
   const pluginNames = useSelector((state) => state.dashboard.pluginNames); // Store plugin names
 
-
-
   // State to track selected box and dialog open/close
   const [open, setOpen] = useState(false);
   const [selectedBox, setSelectedBox] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(false);
+  const [hoveredBox, setHoveredBox] = useState(null);
 
   // Helper function to load a plugin component
   const loadPluginComponent = (component, store) => {
@@ -114,42 +113,78 @@ const GridComponent = () => {
         sx={{
           flexGrow: 1,
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(500px, 1fr))",
-          gap: "20px",
-          padding: "20px",
+          gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
+          gap: "24px",
+          padding: "32px",
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          minHeight: '100vh',
+          position: 'relative',
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%)',
+            pointerEvents: 'none',
+          }
         }}
       >
         {Array.from({ length: 6 }).map((_, index) => (
           <Box
             key={index}
+            onMouseEnter={() => setHoveredBox(index)}
+            onMouseLeave={() => setHoveredBox(null)}
             sx={{
               height: '450px',
-              background: 'linear-gradient(145deg, #d1d1d1, #f9f9f9, #b5b5b5)', // Metallic gradient
-              boxShadow: '4px 4px 10px rgba(0, 0, 0, 0.1)',
+              background: boxPlugins[index] 
+                ? 'rgba(255, 255, 255, 0.25)' 
+                : 'rgba(255, 255, 255, 0.15)',
+              backdropFilter: 'blur(20px)',
+              border: `1px solid ${hoveredBox === index ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.2)'}`,
+              boxShadow: hoveredBox === index 
+                ? '0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1)' 
+                : '0 8px 32px rgba(0, 0, 0, 0.1)',
               textAlign: 'center',
-              borderRadius: '12px',
+              borderRadius: '20px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               flexDirection: 'column',
-              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              '&:hover': {
-                transform: 'translateY(-5px)',
-                boxShadow: '4px 8px 16px rgba(0, 0, 0, 0.2)',
+              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: hoveredBox === index ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
+              cursor: 'pointer',
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: '-100%',
+                width: '100%',
+                height: '100%',
+                background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
+                transition: 'left 0.5s',
+              },
+              '&:hover::before': {
+                left: '100%',
               },
             }}
             onClick={() => handleBoxClick(index)}
           >
             {boxPlugins[index] ? (
               <Paper
-              elevation={3}
+              elevation={0}
               style={{
                 width: '100%',
                 height: '100%',
                 padding: '0',
-                borderRadius: '12px',
+                borderRadius: '20px',
                 overflow: 'hidden',
-                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)'
+                background: 'rgba(255, 255, 255, 0.9)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
               }}
             >
               {/* Header */}
@@ -158,14 +193,24 @@ const GridComponent = () => {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  padding: '0.75rem 1rem',
-                  background: 'linear-gradient(to right, #eceff1, #f5f5f5)',
-                  borderBottom: '1px solid #ddd',
+                  padding: '1rem 1.5rem',
+                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
                   cursor: 'default',
+                  backdropFilter: 'blur(10px)',
                 }}
                 onClick={(e) => e.stopPropagation()}
               >
-                <h2 style={{ margin: 0, fontSize: '1.1rem', fontWeight: 600, color: '#333' }}>
+                <h2 style={{ 
+                  margin: 0, 
+                  fontSize: '1.2rem', 
+                  fontWeight: 700, 
+                  color: '#2d3748',
+                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}>
                   {pluginNames[index]}
                 </h2>
             
@@ -173,11 +218,21 @@ const GridComponent = () => {
                   onClick={handleRefreshClick}
                   style={{
                     cursor: 'pointer',
-                    color: '#607d8b',
-                    transition: 'transform 0.2s',
+                    color: '#667eea',
+                    fontSize: '1.5rem',
+                    transition: 'all 0.3s ease',
+                    padding: '8px',
+                    borderRadius: '50%',
+                    background: 'rgba(255, 255, 255, 0.2)',
                   }}
-                  onMouseEnter={(e) => (e.currentTarget.style.transform = 'rotate(90deg)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.transform = 'rotate(0deg)')}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'rotate(180deg) scale(1.1)';
+                    e.currentTarget.style.background = 'rgba(102, 126, 234, 0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'rotate(0deg) scale(1)';
+                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                  }}
                 />
               </div>
             
@@ -186,9 +241,9 @@ const GridComponent = () => {
                 id={`pluginComponent-container-${index}`}
                 style={{
                   width: '100%',
-                  height: 'calc(100% - 56px)', // account for header height
-                  backgroundColor: '#fff',
-                  padding: '1rem',
+                  height: 'calc(100% - 72px)', // account for header height
+                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
+                  padding: '1.5rem',
                   boxSizing: 'border-box',
                 }}
               ></div>
@@ -198,18 +253,44 @@ const GridComponent = () => {
               <>
                 <IconButton
                   sx={{
-                    backgroundColor: 'linear-gradient(145deg, #c0c0c0, #e0e0e0)',
+                    width: '80px',
+                    height: '80px',
+                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%)',
                     color: '#fff',
+                    border: '2px dashed rgba(255, 255, 255, 0.4)',
+                    borderRadius: '50%',
+                    transition: 'all 0.3s ease',
                     '&:hover': {
-                      background: 'linear-gradient(145deg, #a0a0a0, #c0c0c0)',
+                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%)',
+                      transform: 'scale(1.1)',
+                      borderColor: 'rgba(255, 255, 255, 0.6)',
                     },
-                    marginBottom: '10px',
+                    marginBottom: '20px',
                   }}
                 >
-                  <AddCircleOutlineIcon sx={{ fontSize: 40 }} />
+                  <AddCircleOutlineIcon sx={{ fontSize: 48, color: 'rgba(255, 255, 255, 0.8)' }} />
                 </IconButton>
-                <Typography variant="h6" sx={{ color: '#4a4a4a' }}>
-                  Box {index + 1}
+                <Typography 
+                  variant="h5" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.9)',
+                    fontWeight: 600,
+                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                    marginBottom: '8px',
+                  }}
+                >
+                  Plugin Box {index + 1}
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ 
+                    color: 'rgba(255, 255, 255, 0.7)',
+                    fontSize: '0.9rem',
+                    textAlign: 'center',
+                    maxWidth: '200px',
+                  }}
+                >
+                  Click to add a plugin to this container
                 </Typography>
               </>
             )}
@@ -223,8 +304,33 @@ const GridComponent = () => {
       
 
       {/* Dialog for selecting a plugin */}
-      <Dialog open={open} onClose={() => setOpen(false)}>
-        <DialogTitle>Select a Plugin</DialogTitle>
+      <Dialog 
+        open={open} 
+        onClose={() => setOpen(false)}
+        PaperProps={{
+          sx: {
+            borderRadius: '20px',
+            background: 'rgba(255, 255, 255, 0.95)',
+            backdropFilter: 'blur(20px)',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+            minWidth: '400px',
+          }
+        }}
+      >
+        <DialogTitle 
+          sx={{ 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            fontSize: '1.5rem',
+            fontWeight: 700,
+            textAlign: 'center',
+            pb: 2,
+          }}
+        >
+          Select a Plugin
+        </DialogTitle>
         <DialogContent>
           {/* Show plugin list only if no plugin is selected */}
           {!boxPlugins[selectedBox] ? (
