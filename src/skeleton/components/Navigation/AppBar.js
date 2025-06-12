@@ -1,3 +1,4 @@
+
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -25,7 +26,6 @@ import BrowserUpdatedIcon from '@mui/icons-material/BrowserUpdated';
 import { logout } from '../../functions/User Access Functions/logout_service';
 import { eventBus } from '../../functions/User Access Functions/event_bus';
 import RealTimeSwitch from './RealTimeSwitch';
-// import NokiCSS from '../UI Components/NokiCSSClass/NokiCSS';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { SuccessMessage } from '../UI Components/AlertMessage';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -35,49 +35,27 @@ import ListItemText from '@mui/material/ListItemText';
 import CloseIcon from '@mui/icons-material/Close';
 import KeyIcon from '@mui/icons-material/Key';
 import { removeNotification, removeAllNotification, addNotification } from '../../store/notificationSlice';
-/**
- * ResponsiveAppBar component
- * 
- * This component renders the app bar with user avatar, menu, and various action buttons.
- * It handles user interactions like logout, navigation, and update checks.
- */
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
+import ScienceIcon from '@mui/icons-material/Science';
 
 function ResponsiveAppBar() {
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
-  // console.log("User from State",user);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const [logoutAlertCalled, setLogoutAlertCalled] = useState(false);
-  const [avatarName, setAvatarName] = useState('Noki Xtract10');
+  const [avatarName, setAvatarName] = useState('Medical Professional');
   const [showIcon, setShowIcon] = useState(true);
   const dispatch = useDispatch();
   const accessLevel = useSelector((state) => state.user.access_level);
 
   const isDemoMode = useSelector((state) => state.connection_settings.DEMO_MODE);
-  // const [updateNotAvailable, setUpdateNotAvailable] = useState(false);
-  // const downloadProgress = useSelector((state) => state.DownloadProgress);
   const [open, setOpen] = useState(false);
-  const [memoryUsage, setMemoryUsage] = useState("0"); // Initialize with zero
-  const [nokiCSS, setNokiCSS] = useState(null);
+  const [memoryUsage, setMemoryUsage] = useState("0");
   const [updateCheckDialog, setUpdateCheckDialog] = useState(false);
   const [updateDownloaded, setUpdateDownloaded] = useState(false);
   const notifications = useSelector((state) => state.notifications.notifications)
   const [anchorElNotification, setanchorElNotification] = useState(null);
 
-
-  // useEffect(() => {
-  //   const initNokiCSS = async () => {
-  //     const cssInstance = new NokiCSS();
-  //     await cssInstance.initialize();
-  //     setNokiCSS(cssInstance);
-  //   };
-
-  //   initNokiCSS();
-  // }, []);
-
-  /**
-   * Handles the logout process and navigation to signin page.
-   */
   const handleLogout = () => {
     logout(user, dispatch);
     eventBus.emit('navigate', '/signin');
@@ -88,78 +66,46 @@ function ResponsiveAppBar() {
     navigate('/license');
   }
 
-  /**
-   * Sets the avatar name based on the user's name.
-   */
   useEffect(() => {
-    setAvatarName(user.name);
+    setAvatarName(user.name || 'Medical Professional');
   }, [user]);
 
-  /**
-   * Closes the logout confirmation dialog.
-   */
   const handleLogoutDialogClose = () => {
     setLogoutAlertCalled(false);
     handleCloseUserMenu();
   };
 
-  /**
-   * Navigates to the settings page.
-   */
   const openSetting = () => {
     handleCloseUserMenu();
     navigate('/settings');
   };
 
-  /**
-   * Closes the user menu.
-   */
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
 
-  /**
-   * Opens the logout confirmation dialog.
-   */
   function hanldeLogout() {
     setLogoutAlertCalled(true);
   }
 
-  /**
-   * Opens the user menu.
-   * 
-   * @param {Object} event - The event object.
-   */
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  /**
-   * Navigates to the admin page.
-   */
   const openAdmin = () => {
     handleCloseUserMenu();
     navigate('/admin');
   };
 
-  /**
- * Navigates to the about page.
- */
   const openAbout = () => {
     handleCloseUserMenu();
     navigate('/about')
   }
 
-  /**
-   * Navigates to the dashboard page.
-   */
   const navigateHome = () => {
     navigate('/dashboard');
   };
 
-  /**
-   * Sends a reset action.
-   */
   const handleRefresh = () => {
     sendAction('Reset')
       .then((res) => {
@@ -170,9 +116,6 @@ function ResponsiveAppBar() {
       });
   };
 
-  /**
-   * Sends a close action.
-   */
   const handleClose = () => {
     sendAction('Close')
       .then((res) => {
@@ -187,17 +130,10 @@ function ResponsiveAppBar() {
     setanchorElNotification(event.currentTarget);
   };
 
-  /**
-  * Closes the Notification menu.
-  */
   const handleNotificationsClose = () => {
     setanchorElNotification(null);
-
   };
-  /**
-   * 
-   * Handles the notification to remove
-   */
+
   const handleRemoveNotification = (id) => {
     dispatch(removeNotification(id))
   }
@@ -248,16 +184,7 @@ function ResponsiveAppBar() {
     });
   }, []);
 
-
-
-
-  /**
-   * Monitors memory usage and updates the state every second.
-   */
-
-
   useEffect(() => {
-    // This ensures the memory is reset to 0 when the page reloads
     setMemoryUsage("0");
 
     const intervalId = setInterval(() => {
@@ -266,12 +193,10 @@ function ResponsiveAppBar() {
           String(window.performance.memory.usedJSHeapSize / 1024 / 1024).substring(0, 5)
         );
       }
-    }, 1000); // Updates every second
+    }, 1000);
 
-    return () => clearInterval(intervalId); // Cleanup on component unmount
-  }, []); // Empty dependency array ensures it only runs on mount
-
-
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div>
@@ -280,69 +205,106 @@ function ResponsiveAppBar() {
           sx={{ 
             display: 'flex', 
             justifyContent: 'space-between', 
-            background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
+            background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
             height: '6vh',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
-            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+            borderBottom: '2px solid #475569',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
           }} 
           style={{ minHeight: 0 }}
         >
-          <Box sx={{ width: '33%' }}>
+          <Box sx={{ width: '33%', display: 'flex', alignItems: 'center' }}>
             <ConnectionStack />
           </Box>
 
-          <Typography
-            variant="h4"
-            noWrap
-            component="a"
-            onClick={navigateHome}
-            sx={{
-              fontFamily: '"Inter", "Roboto", sans-serif',
-              letterSpacing: '.2rem',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              textDecoration: 'none',
-              cursor: 'pointer',
-              fontWeight: 700,
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                transform: 'scale(1.05)',
-                filter: 'brightness(1.2)',
-              },
-            }}
-          >
-            MEDLABX{isDemoMode && '(DEMO)'}
-          </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <ScienceIcon sx={{ fontSize: 32, color: '#3b82f6' }} />
+            <Typography
+              variant="h4"
+              noWrap
+              component="a"
+              onClick={navigateHome}
+              sx={{
+                fontFamily: '"Inter", "Roboto", sans-serif',
+                letterSpacing: '.15rem',
+                color: '#e2e8f0',
+                textDecoration: 'none',
+                cursor: 'pointer',
+                fontWeight: 700,
+                fontSize: '1.5rem',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  color: '#3b82f6',
+                  transform: 'scale(1.02)',
+                },
+              }}
+            >
+              MEDLABX
+              {isDemoMode && (
+                <Typography 
+                  component="span" 
+                  sx={{ 
+                    fontSize: '0.75rem', 
+                    color: '#f59e0b',
+                    fontWeight: 600,
+                    marginLeft: '8px',
+                    background: 'rgba(245, 158, 11, 0.1)',
+                    padding: '2px 6px',
+                    borderRadius: '4px',
+                    border: '1px solid rgba(245, 158, 11, 0.3)',
+                  }}
+                >
+                  DEMO
+                </Typography>
+              )}
+            </Typography>
+          </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '2vw', width: '33%' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: '1vw', fontSize: '20px', color: 'var(--body_color3)' }}>
-              {memoryUsage}
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '20px', width: '33%' }}>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '16px', 
+              background: 'rgba(255, 255, 255, 0.1)',
+              padding: '8px 16px',
+              borderRadius: '8px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+            }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <MonitorHeartIcon sx={{ fontSize: 18, color: '#10b981' }} />
+                <Typography sx={{ 
+                  fontSize: '0.875rem', 
+                  color: '#e2e8f0',
+                  fontWeight: 600,
+                  fontFamily: '"Inter", "Roboto", sans-serif',
+                }}>
+                  {memoryUsage} MB
+                </Typography>
+              </Box>
               <RealTimeSwitch />
             </Box>
 
             <Box sx={{ position: 'relative', display: 'inline-block' }}>
               <IconButton
                 aria-label="show notifications"
-                style={{
-                  backgroundColor: 'transparent',
-                  cursor: 'pointer',
-                  padding: 0,
-                }}
                 onClick={showNotifications}
+                sx={{
+                  background: 'rgba(255, 255, 255, 0.1)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  '&:hover': {
+                    background: 'rgba(59, 130, 246, 0.2)',
+                  },
+                }}
               >
                 <Badge
                   badgeContent={notifications ? notifications.length : 0}
-                  color="primary"
+                  color="error"
                   sx={{
-                    "&.MuiBadge-root": {
-                      backgroundColor: "black",
-                      borderRadius: '50%',
+                    '& .MuiBadge-badge': {
+                      background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
                     },
                   }}
                 >
-                  <NotificationsIcon sx={{ fontSize: 30, color: 'white' }} />
+                  <NotificationsIcon sx={{ fontSize: 22, color: '#e2e8f0' }} />
                 </Badge>
               </IconButton>
 
@@ -361,11 +323,12 @@ function ResponsiveAppBar() {
                 PaperProps={{
                   sx: {
                     maxHeight: '400px',
-                    width: '300px',
-                    marginTop: '12px',
-                    borderRadius: '10px',
-                    padding: 0,
-                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                    width: '320px',
+                    marginTop: '8px',
+                    borderRadius: '12px',
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
                   },
                 }}
               >
@@ -376,88 +339,103 @@ function ResponsiveAppBar() {
                       onClick={(e) => e.stopPropagation()}
                       sx={{
                         display: 'flex',
-                        gap: '1rem',
-                        // width: '310px', 
+                        gap: '12px',
                         justifyContent: 'space-between',
                         alignItems: 'flex-start',
-                        padding: '4px 10px ',
-                        borderBottom: '1px solid #f0f0f0',
+                        padding: '12px 16px',
+                        borderBottom: '1px solid #f1f5f9',
                         '&:last-child': {
                           borderBottom: 0,
                         },
                         '&:hover': {
-                          backgroundColor: '#fafafa',
+                          backgroundColor: '#f8fafc',
                         },
                       }}
                     >
                       <ListItemText
                         primary={notification.message}
                         primaryTypographyProps={{
-                          fontSize: '14px',
+                          fontSize: '0.875rem',
                           fontWeight: '500',
-                          color: '#333',
+                          color: '#374151',
+                          fontFamily: '"Inter", "Roboto", sans-serif',
                         }}
                         sx={{
                           flex: 1,
                           whiteSpace: 'normal',
                           wordBreak: 'break-word',
-                          marginBottom: '8px',
                         }}
                       />
                       <IconButton
                         onClick={() => handleRemoveNotification(notification.id)}
                         sx={{
                           padding: '4px',
-                          color: '#999',
+                          color: '#6b7280',
+                          '&:hover': {
+                            color: '#dc2626',
+                            background: 'rgba(220, 38, 38, 0.1)',
+                          },
                         }}
                       >
                         <CloseIcon fontSize="small" />
                       </IconButton>
                     </MenuItem>
-
                   ))
                 ) : (
                   <MenuItem
                     onClick={handleNotificationsClose}
                     sx={{
-                      padding: '16px',
+                      padding: '20px',
                       justifyContent: 'center',
-                      color: '#999',
-
+                      color: '#6b7280',
                     }}
                   >
-                    No notifications
+                    <Typography sx={{ fontFamily: '"Inter", "Roboto", sans-serif' }}>
+                      No notifications
+                    </Typography>
                   </MenuItem>
                 )}
 
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '2px 8px',
-                    borderTop: '1px solid #f0f0f0',
-                  }}
-                >
-                  <Typography variant="body2" sx={{ fontWeight: '500', color: '#666' }}>
-                    Clear All
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => dispatch(removeAllNotification())}
+                {notifications.length > 0 && (
+                  <Box
                     sx={{
-                      fontSize: '12px',
-                      textTransform: 'none',
-                      backgroundColor: '#fa7066',
-                      '&:hover': {
-                        backgroundColor: '#d32f2f',
-                      },
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '12px 16px',
+                      borderTop: '1px solid #f1f5f9',
+                      background: '#f8fafc',
                     }}
                   >
-                    Clear
-                  </Button>
-                </Box>
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        fontWeight: '600', 
+                        color: '#374151',
+                        fontFamily: '"Inter", "Roboto", sans-serif',
+                      }}
+                    >
+                      Clear All
+                    </Typography>
+                    <Button
+                      onClick={() => dispatch(removeAllNotification())}
+                      sx={{
+                        fontSize: '0.75rem',
+                        textTransform: 'none',
+                        background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                        color: '#fff',
+                        fontWeight: 600,
+                        borderRadius: '6px',
+                        padding: '4px 12px',
+                        '&:hover': {
+                          background: 'linear-gradient(135deg, #b91c1c 0%, #991b1b 100%)',
+                        },
+                      }}
+                    >
+                      Clear
+                    </Button>
+                  </Box>
+                )}
               </Menu>
             </Box>
 
@@ -466,19 +444,33 @@ function ResponsiveAppBar() {
                 display: 'flex',
                 justifyContent: 'flex-end',
                 alignItems: 'center',
-                marginTop: '0px',
-                paddingRight: '10px',
-                backgroundColor: 'transparent',
-                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                background: 'rgba(255, 255, 255, 0.1)',
                 borderRadius: '8px',
-                width: 'fit-content',
-                zIndex: 999,
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                padding: '4px',
               }}
             >
               {showIcon && (
-                <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ padding: '0', backgroundColor: 'transparent' }}>
-                    <Avatar alt={avatarName} sx={{ width: 35, height: 35 }} />
+                <Tooltip title="User Menu">
+                  <IconButton 
+                    onClick={handleOpenUserMenu} 
+                    sx={{ 
+                      padding: '4px',
+                      '&:hover': {
+                        background: 'rgba(59, 130, 246, 0.2)',
+                      },
+                    }}
+                  >
+                    <Avatar 
+                      alt={avatarName} 
+                      sx={{ 
+                        width: 32, 
+                        height: 32,
+                        background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                      }} 
+                    />
                   </IconButton>
                 </Tooltip>
               )}
@@ -498,114 +490,173 @@ function ResponsiveAppBar() {
                 onClose={handleCloseUserMenu}
                 PaperProps={{
                   sx: {
-                    marginTop: '55px',
-                    borderRadius: '8px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                    backdropFilter: 'blur(10px)',
-                    boxShadow: '0px 8px 16px rgba(0, 0, 0, 0.1)',
-                    minWidth: '200px',
+                    marginTop: '48px',
+                    borderRadius: '12px',
+                    background: '#ffffff',
+                    border: '1px solid #e2e8f0',
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                    minWidth: '220px',
                   },
                 }}
               >
-                <MenuItem sx={{ minWidth: '200px' }}>
-                  <PermIdentityIcon style={{ color: 'red', marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>{avatarName}</Typography>
+                <MenuItem sx={{ minWidth: '220px', padding: '12px 16px' }}>
+                  <PermIdentityIcon sx={{ color: '#3b82f6', marginRight: '12px', fontSize: 20 }} />
+                  <Typography 
+                    variant="body2" 
+                    sx={{ 
+                      fontSize: '0.875rem',
+                      fontWeight: 600,
+                      color: '#374151',
+                      fontFamily: '"Inter", "Roboto", sans-serif',
+                    }}
+                  >
+                    {avatarName}
+                  </Typography>
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={openAdmin} disabled={user.access_level < 2}>
-                  <PermIdentityIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>Users</Typography>
+                  <PermIdentityIcon sx={{ marginRight: '12px', fontSize: 20, color: '#6b7280' }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.875rem', fontFamily: '"Inter", "Roboto", sans-serif' }}>Users</Typography>
                 </MenuItem>
                 <MenuItem onClick={openSetting} disabled={user.access_level < 3}>
-                  <SettingsIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>Settings</Typography>
+                  <SettingsIcon sx={{ marginRight: '12px', fontSize: 20, color: '#6b7280' }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.875rem', fontFamily: '"Inter", "Roboto", sans-serif' }}>Settings</Typography>
                 </MenuItem>
                 <MenuItem onClick={hanldeLogout}>
-                  <LogoutIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>Logout</Typography>
+                  <LogoutIcon sx={{ marginRight: '12px', fontSize: 20, color: '#6b7280' }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.875rem', fontFamily: '"Inter", "Roboto", sans-serif' }}>Logout</Typography>
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={handleUpdateClick} disabled={user.access_level < 3}>
                   <Box display="flex" alignItems="center">
-                    <BrowserUpdatedIcon style={{ marginRight: '8px' }} />
-                    <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>
+                    <BrowserUpdatedIcon sx={{ marginRight: '12px', fontSize: 20, color: '#6b7280' }} />
+                    <Typography variant="body2" sx={{ fontSize: '0.875rem', fontFamily: '"Inter", "Roboto", sans-serif' }}>
                       Update
                     </Typography>
-                    {updateDownloaded && <HelpOutlineIcon style={{ marginLeft: 1, verticalAlign: 'middle', color: 'green' }} />}
+                    {updateDownloaded && <HelpOutlineIcon sx={{ marginLeft: 1, fontSize: 16, color: '#10b981' }} />}
                   </Box>
                 </MenuItem>
                 <MenuItem onClick={handleLicenseClick} disabled={user.access_level < 3}>
-                  <KeyIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>License</Typography>
+                  <KeyIcon sx={{ marginRight: '12px', fontSize: 20, color: '#6b7280' }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.875rem', fontFamily: '"Inter", "Roboto", sans-serif' }}>License</Typography>
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={handleRefresh}>
-                  <RefreshIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }} >Restart</Typography>
+                  <RefreshIcon sx={{ marginRight: '12px', fontSize: 20, color: '#6b7280' }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.875rem', fontFamily: '"Inter", "Roboto", sans-serif' }}>Restart</Typography>
                 </MenuItem>
                 <MenuItem onClick={handleClose}>
-                  <ExitToAppIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }} >Exit</Typography>
+                  <ExitToAppIcon sx={{ marginRight: '12px', fontSize: 20, color: '#6b7280' }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.875rem', fontFamily: '"Inter", "Roboto", sans-serif' }}>Exit</Typography>
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={openAbout}>
-                  <InfoIcon style={{ marginRight: '8px' }} />
-                  <Typography variant="body2" sx={{ fontSize: '1.6vh' }}>About</Typography>
+                  <InfoIcon sx={{ marginRight: '12px', fontSize: 20, color: '#6b7280' }} />
+                  <Typography variant="body2" sx={{ fontSize: '0.875rem', fontFamily: '"Inter", "Roboto", sans-serif' }}>About</Typography>
                 </MenuItem>
               </Menu>
             </Box>
           </Box>
-          
         </Toolbar>
 
-        <Dialog open={logoutAlertCalled} onClose={handleLogoutDialogClose}>
-          <DialogTitle>Confirm Logout</DialogTitle>
+        <Dialog 
+          open={logoutAlertCalled} 
+          onClose={handleLogoutDialogClose}
+          PaperProps={{
+            sx: {
+              borderRadius: '12px',
+              border: '1px solid #e2e8f0',
+            }
+          }}
+        >
+          <DialogTitle sx={{ fontFamily: '"Inter", "Roboto", sans-serif', fontWeight: 600 }}>
+            Confirm Logout
+          </DialogTitle>
           <DialogContent>
-            <DialogContentText>
-              Are you sure you want to logout?
+            <DialogContentText sx={{ fontFamily: '"Inter", "Roboto", sans-serif' }}>
+              Are you sure you want to logout from the medical laboratory system?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleLogoutDialogClose} color="primary">
+            <Button 
+              onClick={handleLogoutDialogClose} 
+              sx={{ 
+                textTransform: 'none',
+                fontFamily: '"Inter", "Roboto", sans-serif',
+                fontWeight: 600,
+              }}
+            >
               Cancel
             </Button>
-            <Button onClick={handleLogout} color="primary" autoFocus>
+            <Button 
+              onClick={handleLogout} 
+              sx={{ 
+                textTransform: 'none',
+                background: 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)',
+                color: '#fff',
+                fontFamily: '"Inter", "Roboto", sans-serif',
+                fontWeight: 600,
+                '&:hover': {
+                  background: 'linear-gradient(135deg, #b91c1c 0%, #991b1b 100%)',
+                },
+              }}
+              autoFocus
+            >
               Logout
             </Button>
           </DialogActions>
         </Dialog>
       </div>
 
-
-
       {updateDownloaded && (
         <Dialog open={updateCheckDialog} onClose={() => setUpdateCheckDialog(false)}>
-          <DialogTitle>Update Info</DialogTitle>
+          <DialogTitle sx={{ fontFamily: '"Inter", "Roboto", sans-serif', fontWeight: 600 }}>
+            System Update Available
+          </DialogTitle>
           <DialogContent>
-            <div>
-              Update is available, Do you want to quit and install?
-            </div>
+            <Typography sx={{ fontFamily: '"Inter", "Roboto", sans-serif' }}>
+              A system update is available. Would you like to quit and install now?
+            </Typography>
           </DialogContent>
           <DialogActions>
-            <Button variant='outlined' onClick={() => handleInstallNow()} >Yes</Button>
-            <Button variant='outlined' onClick={() => handleInstallLater()} >No</Button>
+            <Button 
+              variant='outlined' 
+              onClick={() => handleInstallNow()}
+              sx={{ 
+                textTransform: 'none',
+                fontFamily: '"Inter", "Roboto", sans-serif',
+                fontWeight: 600,
+              }}
+            >
+              Install Now
+            </Button>
+            <Button 
+              variant='outlined' 
+              onClick={() => handleInstallLater()}
+              sx={{ 
+                textTransform: 'none',
+                fontFamily: '"Inter", "Roboto", sans-serif',
+                fontWeight: 600,
+              }}
+            >
+              Later
+            </Button>
           </DialogActions>
         </Dialog>
       )}
 
-
       {!updateDownloaded && (
         <Dialog open={updateCheckDialog} onClose={() => setUpdateCheckDialog(false)}>
-          <DialogTitle>Update Info</DialogTitle>
+          <DialogTitle sx={{ fontFamily: '"Inter", "Roboto", sans-serif', fontWeight: 600 }}>
+            System Update Status
+          </DialogTitle>
           <DialogContent>
-            <div>
-              No updates are available at the moment!!
-            </div>
+            <Typography sx={{ fontFamily: '"Inter", "Roboto", sans-serif' }}>
+              No system updates are available at this time. Your laboratory software is up to date.
+            </Typography>
           </DialogContent>
         </Dialog>
       )}
-
-
     </div>
   );
 }

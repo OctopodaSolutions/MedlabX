@@ -1,10 +1,13 @@
+
 import React, { useState, useEffect, useRef } from "react";
-import { Box, IconButton, Typography, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemButton, Paper, Button } from "@mui/material";
+import { Box, IconButton, Typography, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemButton, Paper, Button, Card, CardContent } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { store } from "../../store/fallbackStore";
 import { setBoxPlugins, setPluginNames } from "../../store/dashboardSlice";
 import CachedIcon from '@mui/icons-material/Cached';
+import ScienceIcon from '@mui/icons-material/Science';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
 
 const GridComponent = () => {
 
@@ -12,9 +15,8 @@ const GridComponent = () => {
 
   const plugins = useSelector((state) => state.plugin.plugins);
   const boxPlugins = useSelector((state) => state.dashboard.boxPlugins);
-  const pluginNames = useSelector((state) => state.dashboard.pluginNames); // Store plugin names
+  const pluginNames = useSelector((state) => state.dashboard.pluginNames);
 
-  // State to track selected box and dialog open/close
   const [open, setOpen] = useState(false);
   const [selectedBox, setSelectedBox] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(false);
@@ -34,15 +36,13 @@ const GridComponent = () => {
     }
   };
 
-  // Onload, load the selected plugin components
+  // Load plugin components on mount and refresh
   useEffect(() => {
     const timeout = setTimeout(() => {
       console.log('Components available', plugins);
-
       boxPlugins.forEach((component) => component && loadPluginComponent(component, store));
-    }, 500); // Delay execution by 1000ms (1 second)
+    }, 500);
 
-    // Clean up timeout if the component is unmounted
     return () => clearTimeout(timeout);
   }, [refreshTrigger]);
 
@@ -53,15 +53,13 @@ const GridComponent = () => {
     const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
     const loadComponentsWithDelay = async () => {
-      await delay(500); // Wait for 1 second
+      await delay(500);
       console.log('Components available', plugins);
-
       boxPlugins.forEach((component) => loadPluginComponent(component, store));
     };
 
     loadComponentsWithDelay();
   }, [boxPlugins, refreshTrigger]);
-
 
   // Open dialog when a box is clicked
   const handleBoxClick = (index) => {
@@ -77,7 +75,7 @@ const GridComponent = () => {
     dispatch(setBoxPlugins(updatedPlugins));
 
     const updatedPluginNames = [...pluginNames];
-    updatedPluginNames[selectedBox] = plugin.instanceId; // Save the plugin name or instanceId
+    updatedPluginNames[selectedBox] = plugin.instanceId;
     dispatch(setPluginNames(updatedPluginNames));
 
     setOpen(false);
@@ -86,275 +84,371 @@ const GridComponent = () => {
   // Handle clearing the selected box's plugin
   const handleClearBox = () => {
     const updatedPlugins = [...boxPlugins];
-    updatedPlugins[selectedBox] = null; // Set the selected box's plugin to null
+    updatedPlugins[selectedBox] = null;
     dispatch(setBoxPlugins(updatedPlugins));
 
     const updatedPluginNames = [...pluginNames];
-    updatedPluginNames[selectedBox] = ""; // Clear the plugin name
+    updatedPluginNames[selectedBox] = "";
     dispatch(setPluginNames(updatedPluginNames));
 
-    setOpen(false); // Close the dialog
+    setOpen(false);
   };
 
-  // Refresh
+  // Refresh functionality
   const handleRefreshClick = () => {
     setRefreshTrigger(!refreshTrigger);
-    console.log('""""""""""""""""""""""""""""""', refreshTrigger);
-
+    console.log('Refreshing plugins', refreshTrigger);
   };
 
-  console.log('..............box plugin', boxPlugins);
-
-
+  console.log('Box plugins state:', boxPlugins);
 
   return (
     <>
+      {/* Header Section */}
+      <Box
+        sx={{
+          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+          borderBottom: '2px solid #cbd5e1',
+          padding: '24px 32px',
+          marginBottom: '0',
+        }}
+      >
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Box
+              sx={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '12px',
+                background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(30, 64, 175, 0.3)',
+              }}
+            >
+              <AnalyticsIcon sx={{ fontSize: 28, color: '#ffffff' }} />
+            </Box>
+            <Box>
+              <Typography
+                variant="h4"
+                sx={{
+                  fontWeight: 700,
+                  color: '#1e293b',
+                  fontFamily: '"Inter", "Roboto", sans-serif',
+                  letterSpacing: '-0.02em',
+                  mb: 1,
+                }}
+              >
+                Laboratory Dashboard
+              </Typography>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: '#64748b',
+                  fontWeight: 500,
+                  fontSize: '1rem',
+                }}
+              >
+                Advanced Scientific Analysis & Data Management
+              </Typography>
+            </Box>
+          </Box>
+          
+          <Card
+            elevation={0}
+            sx={{
+              background: 'rgba(255, 255, 255, 0.8)',
+              border: '1px solid #e2e8f0',
+              borderRadius: '12px',
+              padding: '12px 20px',
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{
+                color: '#475569',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+              }}
+            >
+              {boxPlugins.filter(plugin => plugin !== null).length} / 6 Modules Active
+            </Typography>
+          </Card>
+        </Box>
+      </Box>
+
+      {/* Main Grid Container */}
       <Box
         sx={{
           flexGrow: 1,
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",
-          gap: "24px",
+          gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))",
+          gap: "32px",
           padding: "32px",
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          minHeight: '100vh',
+          background: '#f1f5f9',
+          minHeight: 'calc(100vh - 140px)',
           position: 'relative',
-          '&::before': {
-            content: '""',
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'radial-gradient(circle at 20% 20%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(255,255,255,0.05) 0%, transparent 50%)',
-            pointerEvents: 'none',
-          }
         }}
       >
         {Array.from({ length: 6 }).map((_, index) => (
-          <Box
+          <Card
             key={index}
+            elevation={0}
             onMouseEnter={() => setHoveredBox(index)}
             onMouseLeave={() => setHoveredBox(null)}
             sx={{
-              height: '450px',
+              height: '480px',
               background: boxPlugins[index] 
-                ? 'rgba(255, 255, 255, 0.25)' 
-                : 'rgba(255, 255, 255, 0.15)',
-              backdropFilter: 'blur(20px)',
-              border: `1px solid ${hoveredBox === index ? 'rgba(255, 255, 255, 0.3)' : 'rgba(255, 255, 255, 0.2)'}`,
+                ? 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)' 
+                : 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)',
+              border: `2px solid ${hoveredBox === index ? '#3b82f6' : boxPlugins[index] ? '#e2e8f0' : '#cbd5e1'}`,
+              borderRadius: '16px',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              transform: hoveredBox === index ? 'translateY(-4px)' : 'translateY(0)',
               boxShadow: hoveredBox === index 
-                ? '0 20px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.1)' 
-                : '0 8px 32px rgba(0, 0, 0, 0.1)',
-              textAlign: 'center',
-              borderRadius: '20px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              flexDirection: 'column',
-              transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-              transform: hoveredBox === index ? 'translateY(-8px) scale(1.02)' : 'translateY(0) scale(1)',
+                ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' 
+                : boxPlugins[index]
+                ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
               cursor: 'pointer',
               position: 'relative',
               overflow: 'hidden',
-              '&::before': {
-                content: '""',
-                position: 'absolute',
-                top: 0,
-                left: '-100%',
-                width: '100%',
-                height: '100%',
-                background: 'linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)',
-                transition: 'left 0.5s',
-              },
-              '&:hover::before': {
-                left: '100%',
-              },
             }}
             onClick={() => handleBoxClick(index)}
           >
             {boxPlugins[index] ? (
-              <Paper
-              elevation={0}
-              style={{
-                width: '100%',
-                height: '100%',
-                padding: '0',
-                borderRadius: '20px',
-                overflow: 'hidden',
-                background: 'rgba(255, 255, 255, 0.9)',
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255, 255, 255, 0.2)',
-              }}
-            >
-              {/* Header */}
-              <div
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  padding: '1rem 1.5rem',
-                  background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.2)',
-                  cursor: 'default',
-                  backdropFilter: 'blur(10px)',
-                }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <h2 style={{ 
-                  margin: 0, 
-                  fontSize: '1.2rem', 
-                  fontWeight: 700, 
-                  color: '#2d3748',
-                  background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}>
-                  {pluginNames[index]}
-                </h2>
-            
-                <CachedIcon
-                  onClick={handleRefreshClick}
-                  style={{
-                    cursor: 'pointer',
-                    color: '#667eea',
-                    fontSize: '1.5rem',
-                    transition: 'all 0.3s ease',
-                    padding: '8px',
-                    borderRadius: '50%',
-                    background: 'rgba(255, 255, 255, 0.2)',
+              <>
+                {/* Plugin Header */}
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    padding: '20px 24px',
+                    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                    borderBottom: '1px solid #e2e8f0',
+                    cursor: 'default',
                   }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.transform = 'rotate(180deg) scale(1.1)';
-                    e.currentTarget.style.background = 'rgba(102, 126, 234, 0.2)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.transform = 'rotate(0deg) scale(1)';
-                    e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)';
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Typography
+                    variant="h6"
+                    sx={{
+                      fontWeight: 700,
+                      color: '#1e293b',
+                      fontSize: '1.125rem',
+                      fontFamily: '"Inter", "Roboto", sans-serif',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                    }}
+                  >
+                    <ScienceIcon sx={{ fontSize: 22, color: '#3b82f6' }} />
+                    {pluginNames[index]}
+                  </Typography>
+
+                  <Box
+                    onClick={handleRefreshClick}
+                    sx={{
+                      cursor: 'pointer',
+                      padding: '8px',
+                      borderRadius: '8px',
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        background: 'rgba(59, 130, 246, 0.15)',
+                        transform: 'rotate(180deg)',
+                      },
+                    }}
+                  >
+                    <CachedIcon sx={{ fontSize: 20, color: '#3b82f6' }} />
+                  </Box>
+                </Box>
+
+                {/* Plugin Content Container */}
+                <Box
+                  id={`pluginComponent-container-${index}`}
+                  sx={{
+                    width: '100%',
+                    height: 'calc(100% - 81px)',
+                    backgroundColor: '#ffffff',
+                    padding: '24px',
+                    boxSizing: 'border-box',
+                    overflow: 'hidden',
                   }}
                 />
-              </div>
-            
-              {/* Plugin Component Container */}
-              <div
-                id={`pluginComponent-container-${index}`}
-                style={{
-                  width: '100%',
-                  height: 'calc(100% - 72px)', // account for header height
-                  backgroundColor: 'rgba(255, 255, 255, 0.5)',
-                  padding: '1.5rem',
-                  boxSizing: 'border-box',
-                }}
-              ></div>
-            </Paper>
-            
-            ) : (
-              <>
-                <IconButton
-                  sx={{
-                    width: '80px',
-                    height: '80px',
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%)',
-                    color: '#fff',
-                    border: '2px dashed rgba(255, 255, 255, 0.4)',
-                    borderRadius: '50%',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%)',
-                      transform: 'scale(1.1)',
-                      borderColor: 'rgba(255, 255, 255, 0.6)',
-                    },
-                    marginBottom: '20px',
-                  }}
-                >
-                  <AddCircleOutlineIcon sx={{ fontSize: 48, color: 'rgba(255, 255, 255, 0.8)' }} />
-                </IconButton>
-                <Typography 
-                  variant="h5" 
-                  sx={{ 
-                    color: 'rgba(255, 255, 255, 0.9)',
-                    fontWeight: 600,
-                    textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    marginBottom: '8px',
-                  }}
-                >
-                  Plugin Box {index + 1}
-                </Typography>
-                <Typography 
-                  variant="body2" 
-                  sx={{ 
-                    color: 'rgba(255, 255, 255, 0.7)',
-                    fontSize: '0.9rem',
-                    textAlign: 'center',
-                    maxWidth: '200px',
-                  }}
-                >
-                  Click to add a plugin to this container
-                </Typography>
               </>
+            ) : (
+              <CardContent
+                sx={{
+                  height: '100%',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  textAlign: 'center',
+                  padding: '48px 24px',
+                }}
+              >
+                <Box
+                  sx={{
+                    width: '72px',
+                    height: '72px',
+                    borderRadius: '16px',
+                    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%)',
+                    border: '2px dashed #cbd5e1',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: '24px',
+                    transition: 'all 0.3s ease',
+                  }}
+                >
+                  <AddCircleOutlineIcon sx={{ fontSize: 36, color: '#64748b' }} />
+                </Box>
+
+                <Typography
+                  variant="h6"
+                  sx={{
+                    color: '#374151',
+                    fontWeight: 600,
+                    marginBottom: '8px',
+                    fontFamily: '"Inter", "Roboto", sans-serif',
+                  }}
+                >
+                  Module Slot {index + 1}
+                </Typography>
+
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color: '#6b7280',
+                    fontSize: '0.875rem',
+                    lineHeight: 1.5,
+                    maxWidth: '280px',
+                  }}
+                >
+                  Click to configure and add a laboratory analysis module to this workspace
+                </Typography>
+
+                <Box
+                  sx={{
+                    width: '100%',
+                    height: '2px',
+                    background: 'linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%)',
+                    marginTop: '24px',
+                  }}
+                />
+              </CardContent>
             )}
-          </Box>
+          </Card>
         ))}
       </Box>
-      <div id="mca-chart">
-        {/* Other JSX */}
-      </div>
 
-      
-
-      {/* Dialog for selecting a plugin */}
+      {/* Plugin Selection Dialog */}
       <Dialog 
         open={open} 
         onClose={() => setOpen(false)}
         PaperProps={{
           sx: {
-            borderRadius: '20px',
-            background: 'rgba(255, 255, 255, 0.95)',
-            backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-            minWidth: '400px',
+            borderRadius: '16px',
+            background: '#ffffff',
+            border: '1px solid #e2e8f0',
+            minWidth: '480px',
+            maxWidth: '600px',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
           }
         }}
       >
         <DialogTitle 
           sx={{ 
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
             fontSize: '1.5rem',
             fontWeight: 700,
             textAlign: 'center',
-            pb: 2,
+            color: '#1e293b',
+            fontFamily: '"Inter", "Roboto", sans-serif',
+            padding: '24px 24px 16px',
+            borderBottom: '1px solid #e2e8f0',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '12px',
           }}
         >
-          Select a Plugin
+          <ScienceIcon sx={{ fontSize: 28, color: '#3b82f6' }} />
+          Configure Laboratory Module
         </DialogTitle>
-        <DialogContent>
-          {/* Show plugin list only if no plugin is selected */}
+        <DialogContent sx={{ padding: '24px' }}>
           {!boxPlugins[selectedBox] ? (
-            <List>
-              {plugins.length > 0 && [...plugins] // Create a shallow copy of the plugins array
-                .sort((a, b) => a.instanceId.localeCompare(b.instanceId)) // Sorting by instanceId
+            <List sx={{ padding: 0 }}>
+              {plugins.length > 0 && [...plugins]
+                .sort((a, b) => a.instanceId.localeCompare(b.instanceId))
                 .map((plugin, idx) => (
-                  <ListItem key={idx} disablePadding>
-                    <ListItemButton onClick={() => handlePluginSelect(plugin)}>
-                      {plugin.instanceId}
+                  <ListItem key={idx} disablePadding sx={{ marginBottom: '8px' }}>
+                    <ListItemButton 
+                      onClick={() => handlePluginSelect(plugin)}
+                      sx={{
+                        borderRadius: '12px',
+                        border: '1px solid #e2e8f0',
+                        padding: '16px 20px',
+                        background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
+                        transition: 'all 0.2s ease',
+                        '&:hover': {
+                          background: 'linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%)',
+                          borderColor: '#3b82f6',
+                          transform: 'translateY(-2px)',
+                          boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)',
+                        },
+                      }}
+                    >
+                      <Typography
+                        sx={{
+                          fontWeight: 600,
+                          color: '#374151',
+                          fontSize: '1rem',
+                          fontFamily: '"Inter", "Roboto", sans-serif',
+                        }}
+                      >
+                        {plugin.instanceId}
+                      </Typography>
                     </ListItemButton>
                   </ListItem>
                 ))}
             </List>
           ) : (
-            // Show the "Clear" button if a plugin is active in the selected box
-            <Button
-              onClick={handleClearBox}
-              variant="outlined"
-              color="error"
-              sx={{ marginTop: 2 }}
-            >
-              Clear
-            </Button>
+            <Box sx={{ textAlign: 'center', padding: '24px 0' }}>
+              <Typography
+                variant="body1"
+                sx={{
+                  color: '#64748b',
+                  marginBottom: '24px',
+                  fontSize: '1rem',
+                }}
+              >
+                This module slot is currently configured. Would you like to clear it?
+              </Typography>
+              <Button
+                onClick={handleClearBox}
+                variant="outlined"
+                sx={{
+                  borderRadius: '8px',
+                  borderColor: '#dc2626',
+                  color: '#dc2626',
+                  fontWeight: 600,
+                  padding: '12px 24px',
+                  textTransform: 'none',
+                  '&:hover': {
+                    background: '#dc2626',
+                    color: '#ffffff',
+                    borderColor: '#dc2626',
+                  },
+                }}
+              >
+                Clear Module Configuration
+              </Button>
+            </Box>
           )}
         </DialogContent>
       </Dialog>
