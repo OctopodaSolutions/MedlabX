@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { Box, IconButton, Typography, Dialog, DialogTitle, DialogContent, List, ListItem, ListItemButton, Paper, Button, Card, CardContent } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +7,7 @@ import { setBoxPlugins, setPluginNames } from "../../store/dashboardSlice";
 import CachedIcon from '@mui/icons-material/Cached';
 import ScienceIcon from '@mui/icons-material/Science';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
+import './PluginLoading.css';
 
 const GridComponent = () => {
 
@@ -21,18 +21,28 @@ const GridComponent = () => {
   const [selectedBox, setSelectedBox] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(false);
   const [hoveredBox, setHoveredBox] = useState(null);
+  const [loadingPlugins, setLoadingPlugins] = useState({});
 
   // Helper function to load a plugin component
   const loadPluginComponent = (component, store) => {
     try {
+      // Set loading state
+      setLoadingPlugins(prev => ({ ...prev, [component.boxId]: true }));
+
       const pluginRoot = document.getElementById(`pluginComponent-container-${component.boxId}`);
       if (pluginRoot) {
         window.pluginComponents[component.pluginType](pluginRoot, { pluginId: component.instanceId }, store);
+        // Clear loading state after a delay to allow plugin to initialize
+        setTimeout(() => {
+          setLoadingPlugins(prev => ({ ...prev, [component.boxId]: false }));
+        }, 2000);
       } else {
         console.log(`Plugin container not found for boxId: ${component.boxId}`);
+        setLoadingPlugins(prev => ({ ...prev, [component.boxId]: false }));
       }
     } catch (err) {
       console.log('Error loading plugin component:', err);
+      setLoadingPlugins(prev => ({ ...prev, [component.boxId]: false }));
     }
   };
 
@@ -154,7 +164,7 @@ const GridComponent = () => {
               </Typography>
             </Box>
           </Box>
-          
+
           <Card
             elevation={0}
             sx={{
@@ -277,8 +287,15 @@ const GridComponent = () => {
                     padding: '24px',
                     boxSizing: 'border-box',
                     overflow: 'hidden',
+                    position: 'relative', // Add position relative
                   }}
-                />
+                >
+                    {loadingPlugins[index] && (
+                      <div className="plugin-loading">
+                        <div className="spinner"></div>
+                      </div>
+                    )}
+                </Box>
               </>
             ) : (
               <CardContent
