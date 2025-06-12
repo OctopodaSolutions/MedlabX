@@ -109,9 +109,9 @@ const AnimatedTextField = styled(TextField)(({ theme }) => ({
  * @example
  * <Copyright style={{ marginTop: '20px' }} />
  */
-function Copyright(props) {
+const Copyright = React.forwardRef((props, ref) => {
   return (
-    <Typography variant="body2" color="lightgrey" align="center" {...props}>
+    <Typography variant="body2" color="lightgrey" align="center" ref={ref} {...props}>
       {"Copyright © "}
       <Link style={{ color: "yellow" }} href="https://nokitechnologies.com/">
         Noki Technologies Pvt Ltd.
@@ -120,7 +120,7 @@ function Copyright(props) {
       {"."}
     </Typography>
   );
-}
+});
 
 // function CloseCopyright(props) {
 //   return (
