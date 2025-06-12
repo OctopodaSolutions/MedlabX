@@ -205,9 +205,9 @@ function ResponsiveAppBar() {
           sx={{ 
             display: 'flex', 
             justifyContent: 'space-between', 
-            background: 'linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%)',
+            background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
             height: '6vh',
-            borderBottom: '1px solid #2d2d2d',
+            borderBottom: '2px solid #475569',
             boxShadow: '0 4px 20px rgba(0, 0, 0, 0.15)',
           }} 
           style={{ minHeight: 0 }}
