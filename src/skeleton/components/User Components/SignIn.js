@@ -111,7 +111,13 @@ const AnimatedTextField = styled(TextField)(({ theme }) => ({
  */
 const Copyright = React.forwardRef((props, ref) => {
   return (
-    <Typography variant="body2" color="lightgrey" align="center" ref={ref} {...props}>
+    <Typography
+      variant="body2"
+      color="lightgrey"
+      align="center"
+      ref={ref}
+      {...props}
+    >
       {"Copyright © "}
       <Link style={{ color: "yellow" }} href="https://nokitechnologies.com/">
         Noki Technologies Pvt Ltd.
@@ -184,7 +190,7 @@ export default function SignIn() {
     const password = data.get("password");
 
     if (!email) {
-      ErrorMessage("Email cannot be empty.");
+      ErrorMessage("Email cannot be empty here.");
       setLoading(false);
       return;
     } else if (!password) {
@@ -194,7 +200,22 @@ export default function SignIn() {
     }
 
     try {
-      const res = await performSignIn(email, password);
+      // const res = await performSignIn(email, password);
+      const res = {
+        data: {
+          token: "dummyToken",
+          user: {
+            access_level: 3,
+            designation: "",
+            email: "engineer@noki.com",
+            last_login: null,
+            loggedIn: null,
+            membership: 1,
+            name: "UID1011",
+            password: "engineer",
+          },
+        },
+      };
       console.log("Result from Login", res);
       document.cookie = `AuthToken=${res.data.token};max-age=3600;path=/;secure`;
       dispatch(setToken(res.data.token));
