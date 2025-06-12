@@ -107,8 +107,8 @@ const GridComponent = () => {
       {/* Header Section */}
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-          borderBottom: '2px solid #cbd5e1',
+          background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+          borderBottom: '1px solid #404040',
           padding: '24px 32px',
           marginBottom: '0',
         }}
@@ -120,11 +120,11 @@ const GridComponent = () => {
                 width: '48px',
                 height: '48px',
                 borderRadius: '12px',
-                background: 'linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)',
+                background: 'linear-gradient(135deg, #4a5568 0%, #718096 100%)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(30, 64, 175, 0.3)',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
               }}
             >
               <AnalyticsIcon sx={{ fontSize: 28, color: '#ffffff' }} />
@@ -134,7 +134,7 @@ const GridComponent = () => {
                 variant="h4"
                 sx={{
                   fontWeight: 700,
-                  color: '#1e293b',
+                  color: '#f7fafc',
                   fontFamily: '"Inter", "Roboto", sans-serif',
                   letterSpacing: '-0.02em',
                   mb: 1,
@@ -145,7 +145,7 @@ const GridComponent = () => {
               <Typography
                 variant="body1"
                 sx={{
-                  color: '#64748b',
+                  color: '#a0aec0',
                   fontWeight: 500,
                   fontSize: '1rem',
                 }}
@@ -158,8 +158,8 @@ const GridComponent = () => {
           <Card
             elevation={0}
             sx={{
-              background: 'rgba(255, 255, 255, 0.8)',
-              border: '1px solid #e2e8f0',
+              background: 'rgba(45, 45, 45, 0.8)',
+              border: '1px solid #404040',
               borderRadius: '12px',
               padding: '12px 20px',
             }}
@@ -167,7 +167,7 @@ const GridComponent = () => {
             <Typography
               variant="body2"
               sx={{
-                color: '#475569',
+                color: '#a0aec0',
                 fontWeight: 600,
                 fontSize: '0.875rem',
               }}
@@ -186,7 +186,7 @@ const GridComponent = () => {
           gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))",
           gap: "32px",
           padding: "32px",
-          background: '#f1f5f9',
+          background: '#1a1a1a',
           minHeight: 'calc(100vh - 140px)',
           position: 'relative',
         }}
@@ -200,17 +200,17 @@ const GridComponent = () => {
             sx={{
               height: '480px',
               background: boxPlugins[index] 
-                ? 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)' 
-                : 'linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%)',
-              border: `2px solid ${hoveredBox === index ? '#3b82f6' : boxPlugins[index] ? '#e2e8f0' : '#cbd5e1'}`,
+                ? 'linear-gradient(135deg, #2d2d2d 0%, #363636 100%)' 
+                : 'linear-gradient(135deg, #2d2d2d 0%, #333333 100%)',
+              border: `1px solid ${hoveredBox === index ? '#718096' : boxPlugins[index] ? '#404040' : '#333333'}`,
               borderRadius: '16px',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               transform: hoveredBox === index ? 'translateY(-4px)' : 'translateY(0)',
               boxShadow: hoveredBox === index 
-                ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)' 
+                ? '0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2)' 
                 : boxPlugins[index]
-                ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
-                : '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+                ? '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.15)'
+                : '0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.1)',
               cursor: 'pointer',
               position: 'relative',
               overflow: 'hidden',
@@ -226,8 +226,8 @@ const GridComponent = () => {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     padding: '20px 24px',
-                    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-                    borderBottom: '1px solid #e2e8f0',
+                    background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
+                    borderBottom: '1px solid #404040',
                     cursor: 'default',
                   }}
                   onClick={(e) => e.stopPropagation()}
@@ -236,7 +236,7 @@ const GridComponent = () => {
                     variant="h6"
                     sx={{
                       fontWeight: 700,
-                      color: '#1e293b',
+                      color: '#f7fafc',
                       fontSize: '1.125rem',
                       fontFamily: '"Inter", "Roboto", sans-serif',
                       display: 'flex',
@@ -244,7 +244,7 @@ const GridComponent = () => {
                       gap: '12px',
                     }}
                   >
-                    <ScienceIcon sx={{ fontSize: 22, color: '#3b82f6' }} />
+                    <ScienceIcon sx={{ fontSize: 22, color: '#718096' }} />
                     {pluginNames[index]}
                   </Typography>
 
@@ -254,16 +254,16 @@ const GridComponent = () => {
                       cursor: 'pointer',
                       padding: '8px',
                       borderRadius: '8px',
-                      background: 'rgba(59, 130, 246, 0.1)',
-                      border: '1px solid rgba(59, 130, 246, 0.2)',
+                      background: 'rgba(113, 128, 150, 0.15)',
+                      border: '1px solid rgba(113, 128, 150, 0.3)',
                       transition: 'all 0.2s ease',
                       '&:hover': {
-                        background: 'rgba(59, 130, 246, 0.15)',
+                        background: 'rgba(113, 128, 150, 0.25)',
                         transform: 'rotate(180deg)',
                       },
                     }}
                   >
-                    <CachedIcon sx={{ fontSize: 20, color: '#3b82f6' }} />
+                    <CachedIcon sx={{ fontSize: 20, color: '#718096' }} />
                   </Box>
                 </Box>
 
@@ -273,7 +273,7 @@ const GridComponent = () => {
                   sx={{
                     width: '100%',
                     height: 'calc(100% - 81px)',
-                    backgroundColor: '#ffffff',
+                    backgroundColor: '#2d2d2d',
                     padding: '24px',
                     boxSizing: 'border-box',
                     overflow: 'hidden',
@@ -297,8 +297,8 @@ const GridComponent = () => {
                     width: '72px',
                     height: '72px',
                     borderRadius: '16px',
-                    background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%)',
-                    border: '2px dashed #cbd5e1',
+                    background: 'linear-gradient(135deg, rgba(113, 128, 150, 0.1) 0%, rgba(160, 174, 192, 0.1) 100%)',
+                    border: '2px dashed #4a5568',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -306,13 +306,13 @@ const GridComponent = () => {
                     transition: 'all 0.3s ease',
                   }}
                 >
-                  <AddCircleOutlineIcon sx={{ fontSize: 36, color: '#64748b' }} />
+                  <AddCircleOutlineIcon sx={{ fontSize: 36, color: '#a0aec0' }} />
                 </Box>
 
                 <Typography
                   variant="h6"
                   sx={{
-                    color: '#374151',
+                    color: '#f7fafc',
                     fontWeight: 600,
                     marginBottom: '8px',
                     fontFamily: '"Inter", "Roboto", sans-serif',
@@ -324,7 +324,7 @@ const GridComponent = () => {
                 <Typography
                   variant="body2"
                   sx={{
-                    color: '#6b7280',
+                    color: '#a0aec0',
                     fontSize: '0.875rem',
                     lineHeight: 1.5,
                     maxWidth: '280px',
@@ -337,7 +337,7 @@ const GridComponent = () => {
                   sx={{
                     width: '100%',
                     height: '2px',
-                    background: 'linear-gradient(90deg, transparent 0%, #e2e8f0 50%, transparent 100%)',
+                    background: 'linear-gradient(90deg, transparent 0%, #404040 50%, transparent 100%)',
                     marginTop: '24px',
                   }}
                 />
@@ -354,11 +354,11 @@ const GridComponent = () => {
         PaperProps={{
           sx: {
             borderRadius: '16px',
-            background: '#ffffff',
-            border: '1px solid #e2e8f0',
+            background: '#2d2d2d',
+            border: '1px solid #404040',
             minWidth: '480px',
             maxWidth: '600px',
-            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)',
           }
         }}
       >
@@ -367,17 +367,17 @@ const GridComponent = () => {
             fontSize: '1.5rem',
             fontWeight: 700,
             textAlign: 'center',
-            color: '#1e293b',
+            color: '#f7fafc',
             fontFamily: '"Inter", "Roboto", sans-serif',
             padding: '24px 24px 16px',
-            borderBottom: '1px solid #e2e8f0',
+            borderBottom: '1px solid #404040',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             gap: '12px',
           }}
         >
-          <ScienceIcon sx={{ fontSize: 28, color: '#3b82f6' }} />
+          <ScienceIcon sx={{ fontSize: 28, color: '#718096' }} />
           Configure Laboratory Module
         </DialogTitle>
         <DialogContent sx={{ padding: '24px' }}>
@@ -391,22 +391,22 @@ const GridComponent = () => {
                       onClick={() => handlePluginSelect(plugin)}
                       sx={{
                         borderRadius: '12px',
-                        border: '1px solid #e2e8f0',
+                        border: '1px solid #404040',
                         padding: '16px 20px',
-                        background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
+                        background: 'linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%)',
                         transition: 'all 0.2s ease',
                         '&:hover': {
-                          background: 'linear-gradient(135deg, #e2e8f0 0%, #f1f5f9 100%)',
-                          borderColor: '#3b82f6',
+                          background: 'linear-gradient(135deg, #333333 0%, #404040 100%)',
+                          borderColor: '#718096',
                           transform: 'translateY(-2px)',
-                          boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)',
+                          boxShadow: '0 4px 12px rgba(113, 128, 150, 0.3)',
                         },
                       }}
                     >
                       <Typography
                         sx={{
                           fontWeight: 600,
-                          color: '#374151',
+                          color: '#f7fafc',
                           fontSize: '1rem',
                           fontFamily: '"Inter", "Roboto", sans-serif',
                         }}
@@ -422,7 +422,7 @@ const GridComponent = () => {
               <Typography
                 variant="body1"
                 sx={{
-                  color: '#64748b',
+                  color: '#a0aec0',
                   marginBottom: '24px',
                   fontSize: '1rem',
                 }}

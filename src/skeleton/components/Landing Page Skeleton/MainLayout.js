@@ -35,13 +35,13 @@ export function Dashboard() {
   return (
     <div>
       <Box
-        sx={{ display: 'flex', height: '94vh', backgroundColor: '#f1f5f9' }}
+        sx={{ display: 'flex', height: '94vh', backgroundColor: '#1a1a1a' }}
       >
         {/* Professional Sidebar */}
         <Box
           sx={{
             width: isSidebarOpen ? '320px' : '80px',
-            background: 'linear-gradient(180deg, #1e293b 0%, #334155 50%, #475569 100%)',
+            background: 'linear-gradient(180deg, #0f0f0f 0%, #1a1a1a 50%, #2d2d2d 100%)',
             color: '#fff',
             transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
             display: 'flex',
@@ -59,13 +59,13 @@ export function Dashboard() {
               padding: '12px',
               top: '20px',
               right: '-40px',
-              background: 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
+              background: 'linear-gradient(135deg, #4a5568 0%, #718096 100%)',
               color: '#fff',
               borderRadius: '0 12px 12px 0',
               zIndex: 1000,
               cursor: 'pointer',
               transition: 'all 0.3s ease',
-              boxShadow: '0 8px 20px rgba(59, 130, 246, 0.3)',
+              boxShadow: '0 8px 20px rgba(0, 0, 0, 0.4)',
               border: '1px solid rgba(255, 255, 255, 0.1)',
               '&:hover': {
                 transform: 'scale(1.05)',
@@ -285,7 +285,7 @@ export function Dashboard() {
             height: '94vh', 
             overflowY: 'auto',
             position: 'relative',
-            background: '#f1f5f9',
+            background: '#1a1a1a',
           }}
         >
           {activeComponent === 'dashboard' && <GridComponent />}
