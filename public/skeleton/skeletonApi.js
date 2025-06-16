@@ -397,7 +397,7 @@ server_app.get('/checkIfUpdateDownloaded', (request, response) => {
 /**
  * Restart the app
  */
-server_app.post('/app_actions', authenticateToken, (request, response) => {
+server_app.post('/app_actions', (request, response) => {
     logger.debug(`App Actions called with ${request.body.cmd.type}`);
     if (request.body.cmd.type == 'Reset') {
         logger.debug(`Reset Action Called`);

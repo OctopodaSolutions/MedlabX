@@ -1,0 +1,12 @@
+{
+  "mqtt": [
+    {
+      "feed": "xsurvey/data",
+      "returnFeed": "xsurvey/control",
+      "id": "agm"
+    }
+  ],
+  "schema": "xsurvey",
+  "route": "XSurvey001",
+  "pluginType": "XSurveyPlugin001"
+}

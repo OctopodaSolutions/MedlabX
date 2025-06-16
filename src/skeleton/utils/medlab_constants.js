@@ -17,6 +17,14 @@ export async function fetchConfig() {
     return config;
   } catch (error) {
     console.error('Error fetching config:', error);
+    try {
+      console.log("Running fetchConfig from preload");
+
+      // This calls the preload-exposed function
+      config = window.configAPI.getConfig();
+    } catch (error) {
+      console.log('Error reading config from preload:', error);
+    }
     throw error; // Re-throw error for handling in caller
   }
 }

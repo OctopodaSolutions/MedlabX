@@ -159,28 +159,58 @@ class Server {
     start() {
         return new Promise((resolve, reject) => {
             try {
-                logger.info("Starting HTTP Servers");
-                this.httpServer = http.createServer(this.serverApp).listen(this.HTTP_PORT, '0.0.0.0', () => {
-                    logger.info(`HTTP Server running on port ${this.HTTP_PORT}`);
-                });
-
-                this.httpsServer = https.createServer({ key: this.key, cert: this.cert, ca: this.ca }, this.serverApp)
-                    .listen(this.HTTPS_PORT, '0.0.0.0', () => {
-                        logger.info(`HTTPS Server running on port ${this.HTTPS_PORT}`);
-                    });
-
-                this.httpsServer.on('listening', () => {
-                    this.startOtherComponents(this.httpsServer)
-                        .then(() => resolve({ httpServer: this.httpServer, httpsServer: this.httpsServer }))
-                        .catch((err) => {
-                            logger.error("Error initializing components", err);
-                            reject(err);
-                        });
-                });
-            } catch (err) {
-                logger.error(`Error setting up HTTPS Server: ${err}`);
-                showErrorDialog("Error connecting HTTPS Server", 1);
+            logger.info("Starting HTTP Servers");
+            
+            // Create HTTP server
+            this.httpServer = http.createServer(this.serverApp);
+            this.httpServer.on('error', (err) => {
+                if (err.code === 'EADDRINUSE') {
+                logger.error(`HTTP Server Error: Port ${this.HTTP_PORT} is already in use.`);
+                showErrorDialog(`HTTP Server failed: Port ${this.HTTP_PORT} is already in use.`, 1);
+                } else {
+                logger.error(`HTTP Server Error: ${err.message}`);
+                }
                 reject(err);
+            });
+        
+            this.httpServer.listen(this.HTTP_PORT, '0.0.0.0', () => {
+                logger.info(`HTTP Server running on port ${this.HTTP_PORT}`);
+            });
+        
+            // Create HTTPS server
+            this.httpsServer = https.createServer(
+                { key: this.key, cert: this.cert, ca: this.ca },
+                this.serverApp
+            );
+        
+            this.httpsServer.on('error', (err) => {
+                if (err.code === 'EADDRINUSE') {
+                logger.error(`HTTPS Server Error: Port ${this.HTTPS_PORT} is already in use.`);
+                showErrorDialog(`HTTPS Server failed: Port ${this.HTTPS_PORT} is already in use.`, 1);
+                } else {
+                logger.error(`HTTPS Server Error: ${err.message}`);
+                }
+                reject(err);
+            });
+        
+            this.httpsServer.listen(this.HTTPS_PORT, '0.0.0.0', () => {
+                logger.info(`HTTPS Server running on port ${this.HTTPS_PORT}`);
+            });
+        
+            // Start WebSocket + other components only after HTTPS is listening
+            this.httpsServer.on('listening', () => {
+                this.startOtherComponents(this.httpsServer)
+                .then(() => resolve({ httpServer: this.httpServer, httpsServer: this.httpsServer }))
+                .catch((err) => {
+                    logger.error("Error initializing components", err);
+                    reject(err);
+                });
+            });
+        
+            } catch (err) {
+            logger.error(`Unexpected error during server startup: ${err.message}`);
+            showErrorDialog("Error starting servers", 1);
+            reject(err);
             }
         });
     }

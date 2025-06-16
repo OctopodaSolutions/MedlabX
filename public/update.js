@@ -8,54 +8,101 @@ const https = require('https');
 const { exec } = require('child_process');
 
 function checkIfUpdateAvailable() {
-    return new Promise((resolve, reject) => {
-        autoUpdater.setFeedURL({
-            provider: 'github',
-            owner: 'OctopodaSolutions',
-            repo: 'GSpec',
-            token: process.env.GH_TOKEN,
-            updaterCacheDirName: 'XCSM'
-        });
+    return new Promise((resolve) => {
+        try {
+            const currentVersion = app.getVersion();
+            autoUpdater.setFeedURL({
+                provider: 'github',
+                owner: 'OctopodaSolutions',
+                repo: 'XTLC_SWD',
+                token: process.env.GH_TOKEN,
+                updaterCacheDirName: 'XTLC'
+            });
+            
+            autoUpdater.once('update-available', async () => {
+                logger.info("Update available, verifying...");
+                try {
+                    const response = await axios.get(
+                        `https://api.github.com/repos/OctopodaSolutions/XTLC_SWD/releases/latest`,
+                        {
+                            headers: {
+                                Authorization: `token ${process.env.GH_TOKEN}`,
+                                'User-Agent': 'Electron-App'
+                            }
+                        }
+                    );
 
+                    const release = response.data;
+                    if (!release || !release.tag_name) {
+                        logger.warn("Invalid release structure from GitHub.");
+                        return resolve({ updateAvailable: false });
+                    }
 
-        const handleUpdateAvailable = (info) => {
-            logger.info("Update Available", info);
+                    const latestVersion = release.tag_name.replace(/^v/, '');
+                    if (compareVersions(latestVersion, currentVersion) <= 0) {
+                        logger.info(`Current version (${currentVersion}) is already up to date.`);
+                        return resolve({ updateAvailable: false });
+                    }
 
-            const releaseUrl = `https://api.github.com/repos/OctopodaSolutions/GSpec/releases/latest`;
-            axios.get(releaseUrl, { headers: { Authorization: `token ${process.env.GH_TOKEN}` } })
-                .then((response) => {
-                    logger.info("Release info fetched successfully");
-                    const updateInfo = {
-                        releaseData: response.data,
-                        updateStream: 'Update Available'
-                    };
-                    resolve(updateInfo);
-                })
-                .catch((err) => {
-                    logger.error(`Error fetching release info: ${err.message}`);
-                    reject(err);
-                });
-        };
+                    logger.info(`Update ready: ${latestVersion} > ${currentVersion}`);
+                    return resolve({
+                        releaseData: release,
+                        updateAvailable: true
+                    });
 
-        const handleUpdateNotAvailable = () => {
-            logger.info("No update available");
+                } catch (err) {
+                    const status = err?.response?.status;
+                    if (status === 404) {
+                        logger.warn("No release found on GitHub (404).");
+                    } else if (status === 401 || status === 403) {
+                        logger.error("GitHub token is invalid or expired.");
+                    } else if (err.code) {
+                        logger.error(`Network error: ${err.code}`);
+                    } else {
+                        logger.error(`Unexpected GitHub error: ${err.message}`);
+                    }
+
+                    return resolve({ updateAvailable: false });
+                }
+            });
+
+            autoUpdater.once('update-not-available', () => {
+                logger.info("No updates available.");
+                resolve({ updateAvailable: false });
+            });
+
+            autoUpdater.once('error', (err) => {
+                const msg = err?.message || '';
+                if (msg.includes('404')) {
+                    logger.warn("Electron autoUpdater: no release available.");
+                } else if (msg.includes('401') || msg.includes('403')) {
+                    logger.error("Electron autoUpdater: unauthorized GitHub token.");
+                } else {
+                    logger.error(`Electron autoUpdater error: ${msg.split('\n')[0]}`);
+                }
+
+                resolve({ updateAvailable: false });
+            });
+
+            autoUpdater.checkForUpdates().then((res)=>{console.log("Check for updates response:", res);}).catch((err)=>{console.error("Error checking for updates: Error: Unable to find latest version on GitHub, please ensure a production release exists: HttpError: 404");});
+        } catch (e) {
+            logger.error(`Fatal error during update check: ${e.message}`);
             resolve({ updateAvailable: false });
-        };
-
-        autoUpdater.once('update-available', handleUpdateAvailable);
-        autoUpdater.once('update-not-available', handleUpdateNotAvailable);
-
-        autoUpdater.once('error', (err) => {
-           
-            logger.error(`Update check error: ${err.message}`);
-            reject(err);
-        });
-
-      
-        autoUpdater.checkForUpdates();
+        }
     });
 }
 
+function compareVersions(a, b) {
+    const pa = a.split('.').map(Number);
+    const pb = b.split('.').map(Number);
+    for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+        const na = pa[i] || 0;
+        const nb = pb[i] || 0;
+        if (na > nb) return 1;
+        if (na < nb) return -1;
+    }
+    return 0;
+}
 
 
 

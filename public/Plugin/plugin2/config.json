@@ -1,0 +1,12 @@
+{
+  "mqtt": [
+    {
+      "feed": "xagm2/data",
+      "returnFeed": "xagm2/control",
+      "id": "agm"
+    }
+  ],
+  "schema": "xagm",
+  "route": "XAGM002",
+  "pluginType": "xagmPlugin002"
+}

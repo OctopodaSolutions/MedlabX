@@ -1,9 +1,11 @@
 // preload.js
 
 // Import the ipcRenderer module from Electron and assign it to window.ipcRenderer for renderer process communication
-window.ipcRenderer = require('electron').ipcRenderer;
+// window.ipcRenderer = require('electron').ipcRenderer;
 
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, app } = require('electron');
+const path = require('path');
+const fs = require('fs');
 
 /**
  * Exposes an API to the renderer process for secure communication with the main process.
@@ -20,4 +22,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
 contextBridge.exposeInMainWorld('electron', {
     getConfig: () => ipcRenderer.invoke('get-config'),
+});
+
+
+contextBridge.exposeInMainWorld('configAPI', {
+  getConfig: () => {
+    const configPath = app?.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : path.join(__dirname, 'config.json');
+    const rawData = fs.readFileSync(configPath, 'utf-8');
+    return JSON.parse(rawData);
+  },
 });

@@ -4,7 +4,7 @@
     "private": false,
     "homepage": ".",
     "main": "public/electron.js",
-    "author": "Varun Kashyap",
+    "author": "Noki Technologies",
     "description": "MedlabX by Noki Technologies",
     "license": "GPL-3.0",
     "jest": {
@@ -42,12 +42,10 @@
         "express-fileupload": "^1.5.1",
         "express-session": "^1.17.3",
         "fs-extra": "^11.2.0",
-        "html-webpack-plugin": "^5.6.3",
         "ioredis": "^5.3.2",
         "jsonwebtoken": "^9.0.2",
         "jspdf": "^2.5.1",
         "jspdf-autotable": "^3.8.1",
-        "mini-css-extract-plugin": "^2.9.2",
         "mitt": "^3.0.1",
         "moment": "^2.30.1",
         "mqtt": "^4.3.7",
@@ -78,7 +76,6 @@
         "socket.io": "^4.6.1",
         "styled-components": "^5.3.9",
         "systeminformation": "^5.23.4",
-        "terser-webpack-plugin": "^5.3.14",
         "ts-loader": "^9.5.1",
         "typescript": "^4.9.4",
         "unzipper": "^0.12.3",
@@ -107,13 +104,13 @@
         "build": "react-scripts build && electron-builder",
         "dist": "electron-builder -w -c.extraMetadata.main=build/electron.js",
         "build:webpack": "cross-env NODE_ENV=production webpack --config webpack.config.js",
-        "obfuscate:backend": "javascript-obfuscator public --output public-obf --config obfuscator-config.json",
+        "copy:public": "rimraf public-obf && cpx \"public/**/*\" public-obf --include-empty-dirs",
+        "obfuscate:backend": "javascript-obfuscator public-obf --output public-obf --config obfuscator-config.json",
         "encrypt:certs": "cross-env CERT_SECRET=Noki#2k01 node encrypt-certificates.js",
         "clean:certs": "rimraf certificates-encrypted",
-        "copy:public": "rimraf public-obf && cpx \"public/**/*\" public-obf --include-empty-dirs",
         "clean:public-obf": "rimraf public-obf",
         "electron:package:win:dev": "npm run build:webpack && npm run copy:public && npm run encrypt:certs && electron-builder -w -c.extraMetadata.isDevBuild=true -c.extraMetadata.main=public-obf/electron.js && npm run clean:certs && npm run clean:public-obf",
-        "electron:package:win": "npm run build:webpack && npm run obfuscate:backend && npm run encrypt:certs && electron-builder -w -c.extraMetadata.main=public-obf/electron.js",
+        "electron:package:win": "npm run build:webpack && npm run copy:public && npm run obfuscate:backend && npm run encrypt:certs && electron-builder -w -c.extraMetadata.main=public-obf/electron.js",
         "electron:package:mac": "npx webpack --config webpack.config.js && electron-builder -m -c.extraMetadata.main=public/electron.js",
         "electron:package:linux": "npx webpack --config webpack.config.js && electron-builder -l -c.extraMetadata.main=public/electron.js",
         "release": "electron-builder -p always",
@@ -141,6 +138,10 @@
             {
                 "from": "./public/restore-files.ps1",
                 "to": "resources/restore-files.ps1"
+            },
+            {
+                "from": "./public/scripts/functionalities.exe",
+                "to": "resources/scripts/functionalities.exe"
             }
         ],
         "mac": {

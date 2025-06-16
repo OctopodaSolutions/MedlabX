@@ -73,12 +73,40 @@ const { initializeLicenseFile } = require('./licenseCreation');
 
 global.server = new Server();
 
+//to run python exeAdd commentMore actions
+// build the python file using `pyinstaller your_script.py --noconsole --onefile` to hide the console window
+// and create a single executable file. Make sure to place the generated .exe file in the same directory as this script.
+// const pythonPath = app.isPackaged 
+// ? path.join(process.resourcesPath, 'resources', 'scripts', 'functionalities.exe') 
+// : path.join(__dirname, "scripts", "functionalities.exe"); 
+// const pythonProcess = spawn(pythonPath, {
+//   detached: true,
+//   stdio: "ignore",
+//   windowsHide: true,
+// });
+
+//to run python file
+// let python = 'python3'
+
+// if (os.platform() === "win32") {
+//   python = 'python'
+// }
+
+// let pythonPath = path.join(__dirname, "scripts", "functionalities.py")
+// const pythonProcess = spawn(python, [pythonPath], {
+//   detached: true,
+//   stdio: "ignore",
+// });
+
+// pythonProcess.unref();
+
 /**
  * Handles the SIGUSR2 signal for performing cleanup tasks.
  */
 const shutdown = async () => {
   logger.info("Shutting down servers...");
-  await server.stop();
+  await global.server.stop();
+  // pythonProcess.kill();
   app.quit();
 };
 
@@ -118,7 +146,7 @@ async function createWindow() {
     show: false,
     webPreferences: {
       contextIsolation: true,
-      sandbox: true,
+      sandbox: false,
       preload: path.join(__dirname, 'preload.js'),
       devTools: true,
       nodeIntegration: true,
@@ -147,11 +175,12 @@ async function createWindow() {
       cancelId: 1,
       defaultId: 0,
       title: 'Warning',
-      detail: 'Hey, wait! There\'s something you should know...'
+      detail: 'Exiting now will stop all running processes'
     }).then(({ response }) => {
       logger.debug(`response: ${response}`);
       if (response) {
         mainWindow.destroy();
+        // pythonProcess.kill();
         app.quit();
       }
     });
@@ -257,9 +286,9 @@ app.whenReady()
   .finally(()=>{
     createWindow();
     // customStart();
-    // checkIfUpdateAvailable().catch((err)=>{
-    //   logger.info("Update not Downloaded");
-    // });
+    checkIfUpdateAvailable().catch((err)=>{
+      logger.info("Update not Downloaded");
+    });
   });
 
 app.on('before-quit', async (event) => {
@@ -286,11 +315,12 @@ app.on('close', e => {
     cancelId: 1,
     defaultId: 0,
     title: 'Warning',
-    detail: 'Hey, wait! There\'s something you should know...'
+    detail: 'Exiting now will stop all running processes'
   }).then(({ response, checkboxChecked }) => {
     logger.debug(`response: ${response}`)
     if (response) {
       mainWindow.destroy();
+      // pythonProcess.kill();
       app.quit();
     }
   })
@@ -306,6 +336,7 @@ app.on('activate', () => {
 app.on('window-all-closed', (event) => {
   logger.info("-----------------------------------------------Window ALL Called---------------------------------------------------------");
   logger.info("App window-all-closed Called");
+  // pythonProcess.kill();
   server.stop();
   if (process.platform !== 'darwin') {
     app.quit();
@@ -331,7 +362,7 @@ ipcMain.on('requestAppQuit', (event, arg) => {
 process.on('uncaughtException', (error) => {
   if (error.code === 'EADDRINUSE') {
     logger.error(`Stopping Servers. Address Busy.`);
-    showErrorDialog("Server Unavailable. Try Restarting System", 1);
+    // showErrorDialog("Server Unavailable. Try Restarting System", 1);
     // sendMessage({ type: 'error', msg: "Servers Running. Try Restart" });
   } else if (error.code === 'EADDRNOTAVAIL') {
     logger.error(`IP Address not available.`);
