@@ -63,7 +63,7 @@ const apiMiddleware = (store) => (next) => (action) => {
 // Create store with dynamic reducer support
 export function createFallbackStore(workers) {
     console.log("Creating Fallback Store with dynamic reducer manager");
-    let config = {"HTTPS_SERVER_PORT": 444,"WEBSOCKET_SERVER_ADDR":"wss://localhost"}
+    let config = {"HTTPS_SERVER_PORT": 443,"WEBSOCKET_SERVER_ADDR":"wss://development.nokitechnologies.com/"}
     try {
         console.log("Running fetchConfig from preload");
 
@@ -71,9 +71,9 @@ export function createFallbackStore(workers) {
         config = window.configAPI.getConfig();
     } catch (error) {
         console.log('Error reading config from preload:', error);
-        config = {"HTTPS_SERVER_PORT": 444, "WEBSOCKET_SERVER_ADDR":"wss://localhost"}
+        config = {"HTTPS_SERVER_PORT": 443, "WEBSOCKET_SERVER_ADDR":"wss://development.nokitechnologies.com/"}
     }
-    websocketClient = new WebSocketClient(`${config.WEBSOCKET_SERVER_ADDR}:${config.HTTPS_SERVER_PORT}`, onMessage, workers);
+    websocketClient = new WebSocketClient(config.WEBSOCKET_SERVER_ADDR, onMessage, workers);
     
     // Create store with the persisted reducer and middleware
     store = createStore(

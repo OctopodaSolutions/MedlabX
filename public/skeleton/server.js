@@ -64,8 +64,8 @@ class Server {
                 this.cert = this.loadCertificate('server.pem.enc').toString('utf8');
                 this.ca = this.loadCertificate('rootCA.pem.enc').toString('utf8');
             } else {
-                this.key = fs.readFileSync(path.join(app.getAppPath(), 'certificates', 'server.key'));
-                this.cert = fs.readFileSync(path.join(app.getAppPath(), 'certificates', 'server.pem'));
+                this.key = fs.readFileSync('/etc/myapp/certs/privkey.pem');
+                this.cert = fs.readFileSync('/etc/myapp/certs/fullchain.pem');
                 this.ca = fs.readFileSync(path.join(app.getAppPath(), 'certificates', 'rootCA.pem'));
             }
 

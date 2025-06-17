@@ -32,9 +32,9 @@ export async function fetchConfig() {
 async function getServerAddr() {
   try {
     const data = await fetchConfig();
-    return `${data.HTTP_SERVER_ADDR}:${data.HTTP_SERVER_PORT}`;
+    return `${data.HTTP_SERVER_ADDR}`;
   } catch (error) {
-    return 'http://localhost:3003';
+    return 'http://development.nokitechnologies.com';
   }
 }
 

@@ -1,10 +1,10 @@
 {
-  "HTTPS_SERVER_PORT": "444",
+  "HTTPS_SERVER_PORT": "3004",
   "HTTP_SERVER_PORT": "3003",
-  "HTTP_SERVER_ADDR": "http://localhost",
+  "HTTP_SERVER_ADDR": "http://development.nokitechnologies.com",
   "MQTT_SERVER_ADDR": "development.nokitechnologies.com",
   "MQTT_SERVER_PORT": "1883",
-  "WEBSOCKET_SERVER_ADDR": "wss://localhost",
+  "WEBSOCKET_SERVER_ADDR": "wss://development.nokitechnologies.com",
   "WEBSOCKET_SERVER_PORT": "8080",
   "DEMO_MODE": false,
   "DEBUG_LEVEL": "info",
