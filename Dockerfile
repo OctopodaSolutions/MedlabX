@@ -2,7 +2,7 @@
 FROM node:20
 
 # Set working directory
-WORKDIR /app
+WORKDIR /
 
 # Copy only the files needed for dependency install first (caching layer)
 COPY package*.json ./

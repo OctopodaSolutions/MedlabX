@@ -1,8 +1,10 @@
 version: '3.8'
 
 services:
-  webapp:
-    build: .
+  medlabx:
+    build: 
+      context: .
+      dockerfile: Dockerfile  # Ensure it's exactly this name and in this path
     ports:
       - "5000:5000"
     restart: always
