@@ -50,23 +50,23 @@ const shimmer = keyframes`
 
 const AnimatedAvatar = styled(Avatar)(({ theme }) => ({
   animation: `${float} 3s ease-in-out infinite`,
-  background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
-  boxShadow: "0 3px 15px 2px rgba(255, 105, 135, .3)",
+  background: "linear-gradient(135deg, #1e3a5c 60%, #274472 100%)", // deep blue
+  boxShadow: "0 3px 15px 2px rgba(30, 80, 180, 0.15)",
 }));
 
 const AnimatedButton = styled(Button)(({ theme }) => ({
-  background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+  background: "linear-gradient(90deg, #2563eb 0%, #1e3a5c 100%)", // blue gradient
   border: 0,
   borderRadius: 25,
-  boxShadow: "0 3px 15px 2px rgba(255, 105, 135, .3)",
+  boxShadow: "0 3px 15px 2px rgba(30, 80, 180, 0.15)",
   color: "white",
   height: 48,
   padding: "0 30px",
   transition: "all 0.3s ease-in-out",
   "&:hover": {
-    background: "linear-gradient(45deg, #FF8E53 30%, #FE6B8B 90%)",
+    background: "linear-gradient(90deg, #1e3a5c 0%, #2563eb 100%)",
     transform: "translateY(-2px)",
-    boxShadow: "0 6px 20px 4px rgba(255, 105, 135, .4)",
+    boxShadow: "0 6px 20px 4px rgba(30, 80, 180, 0.18)",
   },
   "&:active": {
     animation: `${pulse} 0.3s ease-in-out`,
@@ -74,27 +74,37 @@ const AnimatedButton = styled(Button)(({ theme }) => ({
 }));
 
 const ShimmerButton = styled(Button)(({ theme }) => ({
-  background: "linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%)",
+  background: "linear-gradient(90deg, #2b3a55 25%, #1e293b 50%, #2b3a55 75%)",
   backgroundSize: "200px 100%",
   animation: `${shimmer} 2s infinite`,
   border: 0,
   borderRadius: 25,
   height: 48,
   padding: "0 30px",
+  color: "#eaf6ff",
 }));
 
 const AnimatedTextField = styled(TextField)(({ theme }) => ({
   "& .MuiOutlinedInput-root": {
-    borderRadius: 15,
-    transition: "all 0.3s ease-in-out",
+    borderRadius: 10,
+    background: "rgba(30, 40, 60, 0.7)",
+    color: "#eaf6ff",
+    "& input": {
+      color: "#eaf6ff",
+    },
     "&:hover": {
-      transform: "translateY(-2px)",
-      boxShadow: "0 4px 20px rgba(255, 255, 255, 0.1)",
+      boxShadow: "0 2px 8px rgba(80, 180, 255, 0.08)",
     },
     "&.Mui-focused": {
-      transform: "translateY(-2px)",
-      boxShadow: "0 4px 20px rgba(255, 105, 135, 0.3)",
+      boxShadow: "0 0 8px 1px #2563eb44",
+      borderColor: "#2563eb",
     },
+  },
+  "& .MuiInputLabel-root": {
+    color: "#b0c9e8",
+  },
+  "& .MuiInputLabel-root.Mui-focused": {
+    color: "#2563eb",
   },
 }));
 
@@ -256,13 +266,11 @@ export default function SignIn() {
                   component="h1"
                   variant="h5"
                   sx={{
-                    background:
-                      "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
+                    color: "#eaf6ff",
                     fontWeight: "bold",
                     textAlign: "center",
                     mb: 2,
+                    letterSpacing: 1,
                   }}
                 >
                   Welcome to MEDLABX
@@ -307,8 +315,8 @@ export default function SignIn() {
                         <Email
                           sx={{
                             color: emailFocused
-                              ? "#FE6B8B"
-                              : "rgba(255,255,255,0.7)",
+                              ? "#2563eb"
+                              : "#b0c9e8",
                             mr: 1,
                             transition: "color 0.3s ease",
                           }}
@@ -333,7 +341,7 @@ export default function SignIn() {
                           borderColor: "rgba(255,255,255,0.7)",
                         },
                         "&.Mui-focused fieldset": {
-                          borderColor: "#FE6B8B",
+                          borderColor: "#2563eb",
                         },
                       },
                     }}
@@ -367,8 +375,8 @@ export default function SignIn() {
                         <Lock
                           sx={{
                             color: passwordFocused
-                              ? "#FE6B8B"
-                              : "rgba(255,255,255,0.7)",
+                              ? "#2563eb"
+                              : "#b0c9e8",
                             mr: 1,
                             transition: "color 0.3s ease",
                           }}
@@ -402,7 +410,7 @@ export default function SignIn() {
                           borderColor: "rgba(255,255,255,0.7)",
                         },
                         "&.Mui-focused fieldset": {
-                          borderColor: "#FE6B8B",
+                          borderColor: "#2563eb",
                         },
                       },
                     }}
@@ -440,17 +448,17 @@ export default function SignIn() {
                       <Link
                         to="/resetPassword"
                         style={{
-                          color: "white",
+                          color: "#b0c9e8",
                           textDecoration: "none",
                           transition: "all 0.3s ease",
                           borderBottom: "1px solid transparent",
                         }}
                         onMouseEnter={(e) => {
-                          e.target.style.color = "#FE6B8B";
-                          e.target.style.borderBottom = "1px solid #FE6B8B";
+                          e.target.style.color = "#2563eb";
+                          e.target.style.borderBottom = "1px solid #2563eb";
                         }}
                         onMouseLeave={(e) => {
-                          e.target.style.color = "white";
+                          e.target.style.color = "#b0c9e8";
                           e.target.style.borderBottom = "1px solid transparent";
                         }}
                       >
@@ -653,7 +661,7 @@ export function SignUp() {
       <Container component="main" maxWidth="xs" className="formSignUp">
         <Box
           sx={{
-            marginTop: 5,
+            marginTop: 2.5,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -661,9 +669,11 @@ export function SignUp() {
             marginRight: 0,
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <Zoom in={formVisible} timeout={1000}>
+              <AnimatedAvatar sx={{ m: 1, width: 56, height: 56 }}>
+                <LockOutlinedIcon />
+              </AnimatedAvatar>
+          </Zoom>
           <Typography component="h1" variant="h5">
             Sign Up
           </Typography>
@@ -932,7 +942,7 @@ export function SignUp() {
             </Grid>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4, fontSize: "1.55vh" }} />
+        <Copyright sx={{ mt: 4, mb: 2, fontSize: "1.55vh" }} />
       </Container>
     </div>
   );
@@ -959,6 +969,15 @@ export function ForgotPassword() {
   const [password, setPassword] = useState("");
   const [confirm_password, setConfirmPassword] = useState("");
   const navigate = useNavigate();
+  const [formVisible, setFormVisible] = useState(false);
+
+    // Animate form on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setFormVisible(true);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   /**
    * Handles form submission for password reset.
@@ -1024,9 +1043,11 @@ export function ForgotPassword() {
             width: 1,
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-            <LockOutlinedIcon />
-          </Avatar>
+          <Zoom in={formVisible} timeout={1000}>
+              <AnimatedAvatar sx={{ m: 1, width: 56, height: 56 }}>
+                <LockOutlinedIcon />
+              </AnimatedAvatar>
+          </Zoom>
           <Typography component="h1" variant="h5">
             Reset Password
           </Typography>

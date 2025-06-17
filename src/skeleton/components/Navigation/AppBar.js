@@ -726,8 +726,7 @@ function ResponsiveAppBar() {
             <DialogContentText
               sx={{ fontFamily: '"Inter", "Roboto", sans-serif' }}
             >
-              Are you sure you want to logout from the medical laboratory
-              system?
+              Are you sure you want to logout from the MedlabX?
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -823,7 +822,7 @@ function ResponsiveAppBar() {
           </DialogTitle>
           <DialogContent>
             <Typography sx={{ fontFamily: '"Inter", "Roboto", sans-serif' }}>
-              No system updates are available at this time. Your laboratory
+              No system updates are available at this time. Your MedlabX
               software is up to date.
             </Typography>
           </DialogContent>

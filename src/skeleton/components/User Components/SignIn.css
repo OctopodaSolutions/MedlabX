@@ -1,3 +1,5 @@
+/* Professional Medical/Nuclear Science Theme */
+
 .container {
   background-size: cover;
   background-position: center;
@@ -20,61 +22,40 @@
   width: 100%;
   height: 100%;
   object-fit: cover; 
-  filter: brightness(0.7) blur(1px);
+  filter: brightness(0.5) blur(1px); /* keep video dark for contrast */
   transition: filter 0.3s ease;
 }
 
-.container:hover #video {
-  filter: brightness(0.8) blur(0.5px);
-}
-
-.formSignIn {
-  width: 60%;
-  max-height: 100vh; 
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgb(255, 255, 255); 
-  position: absolute;
-  top: 5rem;
-  right: 5rem;
-  padding: 30px;
-  border-radius: 20px; 
-  overflow-y: auto;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  transition: all 0.3s ease;
-}
-
-.formSignIn:hover {
-  background: rgba(0, 0, 0, 0.4);
-  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
-  transform: translateY(-5px);
-}
-
+.formSignIn,
 .formSignUp {
   width: 60%;
   max-height: 100vh; 
-  background: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(15px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgb(255, 255, 255); 
+  background: rgba(20, 30, 40, 0.7); /* deep blue-grey, semi-transparent */
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(200, 220, 255, 0.08);
+  color: #eaf6ff; 
   position: absolute;
-  top: 2rem;
+  top: 5rem;
   right: 5rem;
-  padding: 30px;
-  border-radius: 20px; 
+  padding: 32px 28px;
+  border-radius: 18px; 
   overflow-y: auto;
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  box-shadow: 0 8px 32px 0 rgba(20, 40, 80, 0.25);
   transition: all 0.3s ease;
 }
 
-.formSignUp:hover {
-  background: rgba(0, 0, 0, 0.4);
-  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
-  transform: translateY(-5px);
+.formSignUp {
+  top: 2rem;
 }
 
-/* Animated background particles */
+.formSignIn:hover,
+.formSignUp:hover {
+  /* background: rgba(20, 30, 40, 0.85); */
+  box-shadow: 0 12px 40px 0 rgba(20, 40, 80, 0.35);
+  transform: translateY(-3px);
+}
+
+/* Subtle animated background particles in blue tones */
 .container::before {
   content: '';
   position: absolute;
@@ -82,44 +63,59 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 20% 20%, rgba(255, 107, 139, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 80% 80%, rgba(255, 142, 83, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 40% 40%, rgba(255, 107, 139, 0.05) 0%, transparent 50%);
+  background: radial-gradient(circle at 20% 20%, rgba(80, 180, 255, 0.08) 0%, transparent 60%),
+              radial-gradient(circle at 80% 80%, rgba(120, 220, 255, 0.06) 0%, transparent 60%),
+              radial-gradient(circle at 40% 40%, rgba(80, 180, 255, 0.04) 0%, transparent 60%);
   animation: particles 20s ease-in-out infinite;
   z-index: -1;
 }
 
 @keyframes particles {
-  0%, 100% { opacity: 0.3; }
-  50% { opacity: 0.8; }
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.5; }
 }
 
 /* Glowing effect for focused inputs */
 .MuiOutlinedInput-root.Mui-focused {
-  box-shadow: 0 0 20px rgba(255, 107, 139, 0.3) !important;
+  box-shadow: 0 0 10px rgba(80, 180, 255, 0.25) !important;
+  border-color: #50b4ff !important;
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
   .formSignIn, .formSignUp {
-    width: 90%;
+    width: 94%;
     top: 2rem;
-    right: 5%;
-    left: 5%;
+    right: 3%;
+    left: 3%;
     position: fixed;
+    padding: 20px 10px;
   }
 }
 
-
-
+/* Custom TextField styles for MUI */
 .custom-text-field .MuiInputLabel-root {
-color: yellow;
-font-size: 1.5vh;
+  color: #b0c9e8;
+  font-size: 1.1rem;
 }
 
 .custom-text-field .MuiInputBase-input,
 .custom-text-field .MuiInputBase-input::placeholder {
-background-color: red!important;
-font-size: 1.5vh;
+  background-color: rgba(30, 40, 60, 0.7) !important;
+  color: #eaf6ff !important;
+  font-size: 1rem;
+  border-radius: 6px;
 }
 
+/* Remove red/yellow highlights */
+.custom-text-field .MuiInputLabel-root.Mui-focused {
+  color: #50b4ff !important;
+}
+
+.custom-text-field .MuiOutlinedInput-notchedOutline {
+  border-color: #b0c9e8;
+}
+
+.custom-text-field .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #50b4ff;
+}

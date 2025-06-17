@@ -92,7 +92,7 @@ export function Dashboard() {
                 }}
                 onClick={() => setActiveComponent("dashboard")}
               >
-                <Tooltip title="Laboratory Dashboard" placement="right">
+                <Tooltip title="Dashboard" placement="right">
                   <Box
                     sx={{
                       padding: "16px",
@@ -247,7 +247,7 @@ export function Dashboard() {
                     sx={{ fontSize: 24, marginRight: "16px", color: "#3b82f6" }}
                   />
                   <Typography sx={{ fontWeight: 600, fontSize: "1rem" }}>
-                    Laboratory Dashboard
+                    Dashboard
                   </Typography>
                 </Box>
 

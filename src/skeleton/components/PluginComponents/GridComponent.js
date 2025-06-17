@@ -19,6 +19,7 @@ import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import { store } from "../../store/fallbackStore";
 import { setBoxPlugins, setPluginNames } from "../../store/dashboardSlice";
 import CachedIcon from "@mui/icons-material/Cached";
+import ClearIcon from '@mui/icons-material/Clear';
 import ScienceIcon from "@mui/icons-material/Science";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 
@@ -166,17 +167,7 @@ const GridComponent = () => {
                   mb: 1,
                 }}
               >
-                Laboratory Dashboard
-              </Typography>
-              <Typography
-                variant="body1"
-                sx={{
-                  color: "#a0aec0",
-                  fontWeight: 500,
-                  fontSize: "1rem",
-                }}
-              >
-                Advanced Scientific Analysis & Data Management
+                Dashboard
               </Typography>
             </Box>
           </Box>
@@ -278,23 +269,45 @@ const GridComponent = () => {
                     {pluginNames[index]}
                   </Typography>
 
-                  <Box
-                    onClick={handleRefreshClick}
-                    sx={{
-                      cursor: "pointer",
-                      padding: "8px",
-                      borderRadius: "8px",
-                      background: "rgba(113, 128, 150, 0.15)",
-                      border: "1px solid rgba(113, 128, 150, 0.3)",
-                      transition: "all 0.2s ease",
-                      "&:hover": {
-                        background: "rgba(113, 128, 150, 0.25)",
-                        transform: "rotate(180deg)",
-                      },
-                    }}
-                  >
-                    <CachedIcon sx={{ fontSize: 20, color: "#718096" }} />
+                  <Box sx={{ display:'flex', gap:1}}>
+
+                    <Box
+                      onClick={handleRefreshClick}
+                      sx={{
+                        cursor: "pointer",
+                        padding: "8px",
+                        borderRadius: "8px",
+                        background: "rgba(113, 128, 150, 0.15)",
+                        border: "1px solid rgba(113, 128, 150, 0.3)",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          background: "rgba(113, 128, 150, 0.25)",
+                          transform: "rotate(180deg)",
+                        },
+                      }}
+                    >
+                      <CachedIcon sx={{ fontSize: 20, color: "#718096" }} />
+                    </Box>
+
+                    <Box
+                      onClick={() => handleBoxClick(index)}
+                      sx={{
+                        cursor: "pointer",
+                        padding: "8px",
+                        borderRadius: "8px",
+                        background: "rgba(113, 128, 150, 0.15)",
+                        border: "1px solid rgba(113, 128, 150, 0.3)",
+                        transition: "all 0.2s ease",
+                        "&:hover": {
+                          background: "rgba(113, 128, 150, 0.25)",
+                          transform: "rotate(180deg)",
+                        },
+                      }}
+                    >
+                      <ClearIcon sx={{ fontSize: 20, color: "#718096" }} />
+                    </Box>
                   </Box>
+
                 </Box>
 
                 {/* Plugin Content Container */}
@@ -308,6 +321,7 @@ const GridComponent = () => {
                     boxSizing: "border-box",
                     overflow: "hidden",
                   }}
+                  onClick={(e) => e.stopPropagation()}
                 />
               </>
             ) : (
@@ -363,7 +377,7 @@ const GridComponent = () => {
                     maxWidth: "280px",
                   }}
                 >
-                  Click to configure and add a laboratory analysis module to
+                  Click to configure and add a analysis module to
                   this workspace
                 </Typography>
 
@@ -413,7 +427,7 @@ const GridComponent = () => {
           }}
         >
           <ScienceIcon sx={{ fontSize: 28, color: "#718096" }} />
-          Configure Laboratory Module
+          Configure Module
         </DialogTitle>
         <DialogContent sx={{ padding: "24px" }}>
           {!boxPlugins[selectedBox] ? (
