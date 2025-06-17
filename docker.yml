@@ -1,0 +1,26 @@
+# Use Node.js as base image
+FROM node:20
+
+# Set working directory
+WORKDIR /app
+
+# Copy only the files needed for dependency install first (caching layer)
+COPY package*.json ./
+
+# Install backend dependencies
+RUN npm install
+
+# Copy the rest of the project
+COPY . .
+
+# Build frontend (if it exists in /client or similar)
+RUN cd client && npm install && npm run build
+
+# Copy frontend build to backend static folder (adjust if needed)
+RUN cp -r client/build ./public
+
+# Expose your backend port (adjust as needed)
+EXPOSE 5000
+
+# Start your backend server
+CMD ["npm", "start"]
