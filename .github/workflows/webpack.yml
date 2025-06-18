@@ -179,3 +179,37 @@ jobs:
         asset_path: ./dist/dmg/XSpec-Installer.dmg
         asset_name: XSpec-Setup-${{ github.ref_name }}.dmg
         asset_content_type: application/x-apple-diskimage
+
+  build_linux:
+      runs-on: ubuntu-latest
+      needs: build_windows
+
+      steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build Electron app for Linux (.deb)
+        run: npm run electron:package:linux
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+      - name: List dist directory
+        run: ls -al ./dist
+
+      - name: Upload Linux Release Asset (.deb)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          upload_url: ${{ needs.build_windows.outputs.upload_url }}
+          asset_path: ./dist/medlabx_${{ github.ref_name }}_amd64.deb
+          asset_name: MedlabX-Setup-${{ github.ref_name }}.deb
+          asset_content_type: application/vnd.debian.binary-package
