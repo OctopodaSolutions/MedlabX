@@ -4,7 +4,10 @@
     "private": false,
     "homepage": ".",
     "main": "public/electron.js",
-    "author": "Noki Technologies",
+    "author": {
+        "name": "Noki Technologies Pvt Ltd",
+        "email": "info@nokitechnologies.com"
+    },
     "description": "MedlabX by Noki Technologies",
     "license": "GPL-3.0",
     "jest": {
