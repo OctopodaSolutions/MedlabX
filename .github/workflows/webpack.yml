@@ -18,10 +18,13 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Check GitHub Token Permissions  # Debugging step
-      run: gh auth status
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    # - name: Check GitHub Token Permissions  # Debugging step
+    #   run: gh auth status
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+
+    - name: Check if GITHUB_TOKEN is set
+      run: echo "GITHUB_TOKEN is ${{ secrets.GH_TOKEN }}"
 
     - name: Install dependencies
       run: npm install
