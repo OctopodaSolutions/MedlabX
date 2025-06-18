@@ -21,10 +21,10 @@ jobs:
     # - name: Check GitHub Token Permissions  # Debugging step
     #   run: gh auth status
     #   env:
-    #     GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
 
     - name: Check if GITHUB_TOKEN is set
-      run: echo "GITHUB_TOKEN is ${{ secrets.GH_TOKEN }}"
+      run: echo "GITHUB_TOKEN is ${{ secrets.GITHUB_TOKEN  }}"
 
     - name: Install dependencies
       run: npm install
@@ -32,7 +32,7 @@ jobs:
     - name: Build Electron app
       run: npm run electron:package:win
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
 
     - name: List dist directory
       run: Get-ChildItem -Path ./dist
@@ -41,7 +41,7 @@ jobs:
       id: create_release
       uses: actions/create-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
       with:
         tag_name: ${{ github.ref }}
         release_name: Release ${{ github.ref }}
@@ -51,7 +51,7 @@ jobs:
     - name: Upload Release Asset (Setup EXE)
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./dist/MedlabX-Setup-${{ github.ref_name }}.exe
@@ -61,7 +61,7 @@ jobs:
     - name: Upload Release Asset (Latest YAML)
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./dist/latest.yml
@@ -71,7 +71,7 @@ jobs:
     - name: Upload Release Asset (Blockmap)
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./dist/MedlabX-Setup-${{ github.ref_name }}.exe.blockmap
@@ -151,7 +151,7 @@ jobs:
     - name: Build Electron app for macOS
       run: npm run electron:package:mac
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
 
     - name: Verify .app Bundle Exists
       run: |
@@ -176,7 +176,7 @@ jobs:
     - name: Upload macOS Release Asset
       uses: actions/upload-release-asset@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
       with:
         upload_url: ${{ needs.build_windows.outputs.upload_url }}
         asset_path: ./dist/dmg/XSpec-Installer.dmg
@@ -202,7 +202,7 @@ jobs:
       - name: Build Electron app for Linux (.deb)
         run: npm run electron:package:linux
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
 
       - name: List dist directory
         run: ls -al ./dist
@@ -210,7 +210,7 @@ jobs:
       - name: Upload Linux Release Asset (.deb)
         uses: actions/upload-release-asset@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN  }}
         with:
           upload_url: ${{ needs.build_windows.outputs.upload_url }}
           asset_path: ./dist/medlabx_${{ github.ref_name }}_amd64.deb
