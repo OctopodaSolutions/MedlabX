@@ -17,14 +17,14 @@ const path = require('path');
  * Determines the path to the .env file based on whether the app is packaged.
  * @type {string}
  */
-const envPath = app.isPackaged ? path.join(process.resourcesPath, 'resources', '.env') : './.env';
+const envPath = app?.isPackaged ? path.join(process.resourcesPath, 'resources', '.env') : './.env';
 require('dotenv').config({ path: envPath });
 
 /**
  * Determines the path to the config file based on whether the app is packaged.
  * @type {string}
  */
-const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : path.join(__dirname, 'config.json');
+const configPath = app?.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : path.join(__dirname, 'config.json');
 
 /**
  * Path to the HTML file to be loaded in the BrowserWindow.
@@ -44,7 +44,7 @@ mySqlConnection.getConnection((err, connection) => {
 });
 
 // console.log('htmlfilepath', htmlFilePath);
-console.log('App isPackaged:', app.isPackaged);
+console.log('App isPackaged:', app?.isPackaged);
 console.log('Env path:', envPath);
 console.log(`App Path: ${app.getAppPath()}`);
 console.log(`Directory Path: ${__dirname}`);
@@ -76,7 +76,7 @@ global.server = new Server();
 //to run python exeAdd commentMore actions
 // build the python file using `pyinstaller your_script.py --noconsole --onefile` to hide the console window
 // and create a single executable file. Make sure to place the generated .exe file in the same directory as this script.
-// const pythonPath = app.isPackaged 
+// const pythonPath = app?.isPackaged 
 // ? path.join(process.resourcesPath, 'resources', 'scripts', 'functionalities.exe') 
 // : path.join(__dirname, "scripts", "functionalities.exe"); 
 // const pythonProcess = spawn(pythonPath, {
@@ -185,7 +185,7 @@ async function createWindow() {
       }
     });
   });
-  if (app.isPackaged) {
+  if (app?.isPackaged) {
     console.log('Loading packaged HTML file:', htmlFilePath);
     await mainWindow.loadURL(htmlFilePath);
   } else {
@@ -214,7 +214,7 @@ async function createWindow() {
 
 app.whenReady()
 .then(() => {
-  if(app.isPackaged) initializeLicenseFile();
+  if(app?.isPackaged) initializeLicenseFile();
   if (fs.existsSync(backupDir)) {
       logger.info('Restoring backup files...');
       return restoreFiles()

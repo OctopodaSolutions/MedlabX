@@ -14,8 +14,8 @@ const { checkIfUpdateDownloaded, quitandInstallFromLocal, checkIfUpdateAvailable
 const { readLicenseFile } = require('./verify.js');
 const { authenticateToken, getLicenseInfo } = require('./authToken.js');
 const { getDataFromBuffer } = require('./mqtt_client.js');
-const cssConfig = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'CssConfig.json') : path.join(app.getAppPath(), 'public/skeleton/Config Files/CssConfig.json');
-const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : path.join(app.getAppPath(), 'public/config.json');
+const cssConfig = app?.isPackaged ? path.join(process.resourcesPath, 'resources', 'CssConfig.json') : path.join(app.getAppPath(), 'public/skeleton/Config Files/CssConfig.json');
+const configPath = app?.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : path.join(app.getAppPath(), 'public/config.json');
 
 let userSessions = 0;
 
@@ -43,7 +43,7 @@ server_app.post('/login', (request, response) => {
                         redisClient.client.set(`user_session:${user.name}`, token, 'EX', 30 * 24 * 60 * 60 * 1000);
                         response.cookie('AuthToken', token, {
                             httpOnly: true,
-                            secure: app.isPackaged,
+                            secure: app?.isPackaged,
                             sameSite: 'strict',
                             maxAge: 1000 * 60 * 60
                         });
@@ -527,7 +527,7 @@ server_app.get('/license', (req, res) => {
 server_app.get('/getLicenseFile',(req, res) => {
     try{
         let filePath = path.join(app.getAppPath(), 'license/license.txt');
-        if(app.isPackaged){
+        if(app?.isPackaged){
             filePath = path.join(app.getPath('userData'), 'license/license.txt');
         }
         res.download(filePath, 'license.txt', (err) => {
@@ -544,7 +544,7 @@ server_app.post('/uploadLicense',(req,res) =>{
     
     try {
         let licenseDir = path.join(app.getAppPath(), 'license');
-        if(app.isPackaged){
+        if(app?.isPackaged){
             licenseDir = path.join(app.getPath('userData'), 'license');
         }
         const tempDir = path.join(licenseDir, 'temp');

@@ -18,7 +18,7 @@ fQIDAQAB
 }
 
 function getLicensePath() {
-  if (app.isPackaged) {
+  if (app?.isPackaged) {
     return path.join(app.getPath('userData'), 'license');
   } else {
     return path.join(app.getAppPath(), '/license');

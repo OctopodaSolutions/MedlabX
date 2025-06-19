@@ -183,7 +183,7 @@ function restoreFiles() {
     ];
 
   
-    const scriptPath = app.isPackaged 
+    const scriptPath = app?.isPackaged 
         ? path.join(process.resourcesPath, 'resources', 'restore-files.ps1') 
         : path.join(app.getAppPath(), 'public', 'restore-files.ps1');
 

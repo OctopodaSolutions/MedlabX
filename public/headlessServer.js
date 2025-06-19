@@ -65,7 +65,7 @@ process.on('SIGTERM', shutdown);
     logger.info('Backup files restored and backup directory removed.');
   }
 
-  await server.start();
+  await global.server.start();
   setTimeout(() => {}, 5000);
 
   logger.info("Clearing LocalStorage Sessions");

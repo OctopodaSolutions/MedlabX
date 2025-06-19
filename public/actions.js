@@ -1,7 +1,7 @@
 const { app } = require('electron');
 const path = require('path');
 const { logger } = require('./logger');
-const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : './config.json';
+const configPath = app?.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : './config.json';
 const { exec } = require('child_process');
 const wss = require('./skeleton/websockets');
 const demoMode = (require(configPath))['DEMO_MODE'];

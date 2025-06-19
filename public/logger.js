@@ -8,7 +8,7 @@ const path = require('path'); // Import path module for handling file paths
  * Determines the path to the config file based on whether the app is packaged.
  * @type {string}
  */
-const configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : './config.json';
+const configPath = app?.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : './config.json';
 
 /**
  * Loads the log level from the config file or uses 'mqtt_debug' as the default.
@@ -153,7 +153,7 @@ const productionTransports = [
  * @type {Array}
  */
 let transports = null;
-if (!app.isPackaged) {
+if (!app?.isPackaged) {
     transports = developmentTransports;
 } else {
     transports = productionTransports;

@@ -28,7 +28,7 @@ class Server {
         this.key = null;
         this.cert = null;
         this.ca = null;
-        this.configPath = app.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : path.join(app.getAppPath(), 'public/config.json');
+        this.configPath = app?.isPackaged ? path.join(process.resourcesPath, 'resources', 'config.json') : path.join(app.getAppPath(), 'public/config.json');
         this.HTTP_PORT = require(this.configPath)['HTTP_SERVER_PORT'];
         this.HTTPS_PORT = require(this.configPath)['HTTPS_SERVER_PORT'];
         this.httpsServer = null;
@@ -59,7 +59,7 @@ class Server {
      */
     loadCertificates() {
         try{
-            if (app.isPackaged) {
+            if (app?.isPackaged) {
                 this.key = this.loadCertificate('server.key.enc').toString('utf8');
                 this.cert = this.loadCertificate('server.pem.enc').toString('utf8');
                 this.ca = this.loadCertificate('rootCA.pem.enc').toString('utf8');
@@ -135,7 +135,7 @@ class Server {
      * Sets up routes for the server
      */
     setupRoutes() {
-        if (app.isPackaged) {
+        if (app?.isPackaged) {
             this.serverApp.get('/', (req, res) => {
                 res.sendFile(path.join(this.staticPath, 'index.html'));
             });
