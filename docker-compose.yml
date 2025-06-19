@@ -5,5 +5,46 @@ services:
     build:
       context: .
     ports:
-      - "80:3003"  
+      - "3003:3003"         # or use "80:3003" if you want the app on port 80, but watch for conflicts
     restart: always
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      # === Your backend env vars ===
+      - NODE_ENV=development
+      - JWT_SECRET=VarunKashyap10
+      - DEVELOPMENT_UI_URL=http://localhost:4000
+
+      # === MySQL connection ===
+      - MYSQL_HOST=mysql
+      - MYSQL_SCHEMA_NAME=medlabx   # use in your backend if needed
+      - MYSQL_ROOT_USERNAME=root
+      - MYSQL_ROOT_PASSWORD=admin
+
+      # === Redis connection ===
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+
+      # === Other configs ===
+      - DEFAULT_WINDOW_HEIGHT=1200
+      - DEFAULT_WINDOW_WIDTH=1900
+      - MQTT_MAX_CONNECTIONS=10
+      - GH_TOKEN=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
+      - __IS_PLUGIN_MODE__=false
+
+  mysql:
+    image: mysql:8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d   # auto-load SQL dumps on first run!
+
+  redis:
+    image: redis:latest
+    restart: always
+
+volumes:
+  mysql_data:
