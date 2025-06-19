@@ -1,8 +1,9 @@
 version: '3.8'
 
 services:
-  webapp:
-    build: .
+  medlabx:
+    build:
+      context: .
     ports:
-      - "5000:5000"
+      - "80:3003"  
     restart: always
